@@ -192,6 +192,32 @@
       height: 100%;
       background-color: #ffc107;
     }
+    /* Public IP and DNS Lookup Styles */
+    .network-info {
+      margin-top: 10px;
+    }
+    .network-info input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    .network-info button {
+      padding: 8px 12px;
+      background-color: #6f42c1;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .network-info button:hover {
+      background-color: #5a32a3;
+    }
+    .network-info .result {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -299,6 +325,25 @@
           <button onclick="toggleMicrophone()"><i class="fas fa-microphone"></i> Test Microphone</button>
           <div id="mic-level-container">
             <div id="mic-level"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Network Information Card -->
+      <div class="card" id="network-info-card">
+        <h2><i class="fas fa-network-wired"></i> Network Information</h2>
+        <div class="card-content">
+          <!-- Public IP Address Section -->
+          <div class="network-info">
+            <strong>Public IP Address:</strong>
+            <p id="public-ip">Fetching...</p>
+            <button onclick="updatePublicIP()" style="background-color: #17a2b8;">Refresh IP</button>
+          </div>
+          <!-- DNS Lookup Section -->
+          <div class="network-info" style="margin-top: 20px;">
+            <strong>DNS Lookup:</strong>
+            <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)">
+            <button onclick="performDNSLookup()" style="background-color: #6f42c1;">Lookup DNS</button>
+            <div class="result" id="dns-result"></div>
           </div>
         </div>
       </div>
@@ -896,6 +941,7 @@
     checkServiceWorkerStatus();
     getWebRTCIpAddresses();
     updateJsErrors();
+    updatePublicIP(); // Fetch public IP on load
 
     // Set Intervals for Live Updates
     setInterval(updateInternetConnectivity, 5000); // Update internet connectivity every 5 seconds
@@ -989,6 +1035,63 @@
           });
       }
     }
+
+    // Public IP Address Functionality
+    function updatePublicIP() {
+      const publicIPElement = document.getElementById('public-ip');
+      publicIPElement.innerHTML = 'Fetching...';
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          publicIPElement.innerHTML = data.ip;
+        })
+        .catch(() => {
+          publicIPElement.innerHTML = 'Unable to fetch IP.';
+        });
+    }
+
+    // DNS Lookup Functionality
+    function performDNSLookup() {
+      const domainInput = document.getElementById('dns-domain');
+      const domain = domainInput.value.trim();
+      const resultDiv = document.getElementById('dns-result');
+
+      if (!domain) {
+        alert('Please enter a domain name.');
+        return;
+      }
+
+      resultDiv.innerHTML = 'Looking up...';
+
+      // Perform DNS-over-HTTPS lookup using Cloudflare's API
+      fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=A`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/dns-json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.Status === 0 && data.Answer) {
+          const ips = data.Answer
+            .filter(record => record.type === 1) // Type A records
+            .map(record => record.data);
+          if (ips.length > 0) {
+            resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
+          } else {
+            resultDiv.innerHTML = 'No A records found.';
+          }
+        } else {
+          resultDiv.innerHTML = 'DNS lookup failed or no records found.';
+        }
+      })
+      .catch(() => {
+        resultDiv.innerHTML = 'Error performing DNS lookup.';
+      });
+    }
+
+    // Additional Functions and Event Listeners can be added here as needed
+
   </script>
 </body>
 </html>
