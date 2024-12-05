@@ -294,7 +294,7 @@
         <option value="yahoo">Yahoo</option>
       </select>
       <input type="text" id="search-query" placeholder="Search the web...">
-      <button onclick="performWebSearch()"><i class="fas fa-search"></i> Search</button>
+      <button onclick="performWebSearch(event)"><i class="fas fa-search"></i> Search</button>
     </div>
   </div>
   <!-- Main Container -->
@@ -324,7 +324,7 @@
           <h2><i class="fas fa-signal"></i> Ping Test</h2>
           <div class="card-content" id="ping-content">
             <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-            <button onclick="startPingTest()" style="width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Start Ping Test</button>
+            <button onclick="startPingTest(event)" style="width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Start Ping Test</button>
             <canvas id="pingChart" style="margin-top: 10px;"></canvas>
           </div>
         </div>
@@ -395,12 +395,12 @@
           <div class="card-content" id="media-content">Loading...</div>
           <!-- Webcam Test Section -->
           <div class="media-test">
-            <button onclick="toggleWebcam()"><i class="fas fa-camera"></i> Test Webcam</button>
+            <button onclick="toggleWebcam(event)"><i class="fas fa-camera"></i> Test Webcam</button>
             <video id="webcam-video" autoplay playsinline></video>
           </div>
           <!-- Microphone Test Section -->
           <div class="media-test">
-            <button onclick="toggleMicrophone()"><i class="fas fa-microphone"></i> Test Microphone</button>
+            <button onclick="toggleMicrophone(event)"><i class="fas fa-microphone"></i> Test Microphone</button>
             <div id="mic-level-container">
               <div id="mic-level"></div>
             </div>
@@ -703,7 +703,7 @@
 
     // Update Location with Map
     let mapInitialized = false;
-    let map;
+    let mapInstance;
     function updateLocation() {
       const mapDiv = document.getElementById('map');
       if (navigator.geolocation) {
@@ -711,16 +711,19 @@
           position => {
             const { latitude, longitude } = position.coords;
             if (!mapInitialized) {
-              map = L.map('map').setView([latitude, longitude], 13);
+              mapInstance = L.map('map').setView([latitude, longitude], 13);
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
-              }).addTo(map);
-              L.marker([latitude, longitude]).addTo(map)
+              }).addTo(mapInstance);
+              L.marker([latitude, longitude]).addTo(mapInstance)
                 .bindPopup('You are here.')
                 .openPopup();
               mapInitialized = true;
             } else {
-              map.setView([latitude, longitude], 13);
+              mapInstance.setView([latitude, longitude], 13);
+              L.marker([latitude, longitude]).addTo(mapInstance)
+                .bindPopup('You are here.')
+                .openPopup();
             }
           },
           () => {
@@ -744,9 +747,10 @@
     }
 
     // Memory Usage Monitoring
+    let memoryUsageData = [];
     function updateMemoryUsage() {
-      if (performance.memory) {
-        const memoryUsage = performance.memory.usedJSHeapSize / 1048576; // Convert to MB
+      const memoryUsage = performance.memory ? (performance.memory.usedJSHeapSize / 1048576).toFixed(2) : null; // Convert to MB
+      if (memoryUsage !== null) {
         memoryUsageData.push(memoryUsage);
         if (memoryUsageData.length > 30) {
           memoryUsageData.shift();
@@ -760,17 +764,14 @@
       }
     }
 
-    setInterval(updateMemoryUsage, 1000); // Update every second
-
     const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-    const memoryUsageData = [];
     const memoryChart = new Chart(memoryCtx, {
       type: 'line',
       data: {
         labels: Array(30).fill(''),
         datasets: [{
           label: 'Memory Usage (MB)',
-          data: [],
+          data: memoryUsageData,
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           borderColor: '#36a2eb',
           borderWidth: 1,
@@ -790,6 +791,8 @@
         }
       }
     });
+
+    setInterval(updateMemoryUsage, 1000); // Update every second
 
     // Update Sensors Availability with Icons
     function updateSensorsAvailability() {
@@ -918,35 +921,35 @@
       const ips = new Set();
 
       pc.onicecandidate = event => {
-        if (event && event.candidate && event.candidate.candidate) {
+        if (event.candidate) {
           const candidate = event.candidate.candidate;
           const regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
           const match = candidate.match(regex);
           if (match) {
             ips.add(match[0]);
           }
-          // Check if all candidates have been received
-          if (!event.candidate.candidate) {
-            if (ips.size > 0) {
-              webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
-            } else {
-              webrtcContent.innerHTML = "No IP addresses detected.";
-            }
-            pc.close();
+        } else {
+          // ICE gathering completed
+          if (ips.size > 0) {
+            webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
+          } else {
+            webrtcContent.innerHTML = "No IP addresses detected.";
           }
+          pc.close();
         }
       };
     }
 
     // Ping Test Functions
-    let pingChart;
+    let pingChartInstance;
     let pingResultsData = [];
     function performPingTest() {
       const pingCard = document.getElementById('ping-card');
       pingCard.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function startPingTest() {
+    function startPingTest(event) {
+      event.preventDefault(); // Prevent default button behavior if within a form
       const addressInput = document.getElementById('ping-address');
       const address = addressInput.value.trim();
       if (!address) {
@@ -955,12 +958,12 @@
       }
 
       pingResultsData = [];
-      if (pingChart) {
-        pingChart.destroy();
+      if (pingChartInstance) {
+        pingChartInstance.destroy();
       }
 
       const pingCtx = document.getElementById('pingChart').getContext('2d');
-      pingChart = new Chart(pingCtx, {
+      pingChartInstance = new Chart(pingCtx, {
         type: 'line',
         data: {
           labels: [],
@@ -978,8 +981,20 @@
         options: {
           animation: false,
           scales: {
-            x: { display: true, title: { display: true, text: 'Ping Number' } },
-            y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' } }
+            x: { 
+              display: true, 
+              title: { 
+                display: true, 
+                text: 'Ping Number' 
+              } 
+            },
+            y: { 
+              beginAtZero: true, 
+              title: { 
+                display: true, 
+                text: 'Latency (ms)' 
+              } 
+            }
           },
           plugins: {
             legend: { display: false }
@@ -996,9 +1011,9 @@
           const endTime = Date.now();
           const latency = endTime - startTime;
           pingResultsData.push(latency);
-          pingChart.data.labels.push(count + 1);
-          pingChart.data.datasets[0].data.push(latency);
-          pingChart.update();
+          pingChartInstance.data.labels.push(count + 1);
+          pingChartInstance.data.datasets[0].data.push(latency);
+          pingChartInstance.update();
           count++;
           if (count < 10) {
             setTimeout(ping, 1000);
@@ -1006,9 +1021,9 @@
         };
         img.onerror = () => {
           pingResultsData.push(null);
-          pingChart.data.labels.push(count + 1);
-          pingChart.data.datasets[0].data.push(null);
-          pingChart.update();
+          pingChartInstance.data.labels.push(count + 1);
+          pingChartInstance.data.datasets[0].data.push(null);
+          pingChartInstance.update();
           count++;
           if (count < 10) {
             setTimeout(ping, 1000);
@@ -1020,7 +1035,8 @@
     }
 
     // Web Search Functionality
-    function performWebSearch() {
+    function performWebSearch(event) {
+      event.preventDefault(); // Prevent default button behavior if within a form
       const searchEngine = document.getElementById('search-engine').value;
       const query = document.getElementById('search-query').value.trim();
       if (!query) {
@@ -1073,9 +1089,10 @@
 
     // Webcam Functionality
     let webcamStream = null;
-    function toggleWebcam() {
+    function toggleWebcam(event) {
+      event.preventDefault(); // Prevent default button behavior if within a form
       const videoElement = document.getElementById('webcam-video');
-      const button = event.target || event.srcElement;
+      const button = event.currentTarget;
 
       if (webcamStream) {
         // Stop the webcam
@@ -1104,11 +1121,12 @@
     let micStream = null;
     let audioContext = null;
     let analyser = null;
-    let microphone = null;
+    let microphoneSource = null;
     let javascriptNode = null;
-    function toggleMicrophone() {
+    function toggleMicrophone(event) {
+      event.preventDefault(); // Prevent default button behavior if within a form
       const micLevel = document.getElementById('mic-level');
-      const button = event.target || event.srcElement;
+      const button = event.currentTarget;
 
       if (micStream) {
         // Stop the microphone
@@ -1127,13 +1145,13 @@
             micStream = stream;
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioContext.createAnalyser();
-            microphone = audioContext.createMediaStreamSource(stream);
+            microphoneSource = audioContext.createMediaStreamSource(stream);
             javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
 
             analyser.smoothingTimeConstant = 0.8;
             analyser.fftSize = 1024;
 
-            microphone.connect(analyser);
+            microphoneSource.connect(analyser);
             analyser.connect(javascriptNode);
             javascriptNode.connect(audioContext.destination);
 
