@@ -156,6 +156,42 @@
         right: 0;
       }
     }
+    /* Webcam and Microphone Styles */
+    .media-test {
+      margin-top: 10px;
+    }
+    .media-test button {
+      padding: 8px 12px;
+      background-color: #17a2b8;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .media-test button:hover {
+      background-color: #138496;
+    }
+    #webcam-video {
+      width: 100%;
+      max-height: 200px;
+      background-color: #000;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    #mic-level-container {
+      width: 100%;
+      background-color: #2a2a2a;
+      border-radius: 5px;
+      overflow: hidden;
+      height: 20px;
+      margin-top: 10px;
+    }
+    #mic-level {
+      width: 0%;
+      height: 100%;
+      background-color: #ffc107;
+    }
   </style>
 </head>
 <body>
@@ -253,6 +289,18 @@
       <div class="card" id="media-card">
         <h2><i class="fas fa-video"></i> Media Devices</h2>
         <div class="card-content" id="media-content">Loading...</div>
+        <!-- Webcam Test Section -->
+        <div class="media-test">
+          <button onclick="toggleWebcam()"><i class="fas fa-camera"></i> Test Webcam</button>
+          <video id="webcam-video" autoplay playsinline></video>
+        </div>
+        <!-- Microphone Test Section -->
+        <div class="media-test">
+          <button onclick="toggleMicrophone()"><i class="fas fa-microphone"></i> Test Microphone</button>
+          <div id="mic-level-container">
+            <div id="mic-level"></div>
+          </div>
+        </div>
       </div>
       <!-- Storage Usage Card -->
       <div class="card">
@@ -853,6 +901,94 @@
     setInterval(updateInternetConnectivity, 5000); // Update internet connectivity every 5 seconds
     setInterval(updateBatteryStatus, 60000); // Update battery status every 60 seconds
     setInterval(updateSystemInfo, 60000); // Update system info every 60 seconds
+
+    // Handle Window Resize for Screen Resolution
+    window.addEventListener('resize', updateScreenResolution);
+    updateScreenResolution();
+
+    // Webcam Functionality
+    let webcamStream = null;
+    function toggleWebcam() {
+      const videoElement = document.getElementById('webcam-video');
+      const button = event.target || event.srcElement;
+
+      if (webcamStream) {
+        // Stop the webcam
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+        videoElement.srcObject = null;
+        button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
+      } else {
+        // Start the webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(stream => {
+            webcamStream = stream;
+            videoElement.srcObject = stream;
+            button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
+          })
+          .catch(err => {
+            alert('Unable to access the webcam: ' + err.message);
+          });
+      }
+    }
+
+    // Microphone Functionality
+    let micStream = null;
+    let audioContext = null;
+    let analyser = null;
+    let microphone = null;
+    let javascriptNode = null;
+    function toggleMicrophone() {
+      const micLevel = document.getElementById('mic-level');
+      const button = event.target || event.srcElement;
+
+      if (micStream) {
+        // Stop the microphone
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+        if (audioContext) {
+          audioContext.close();
+          audioContext = null;
+        }
+        micLevel.style.width = '0%';
+        button.innerHTML = '<i class="fas fa-microphone"></i> Test Microphone';
+      } else {
+        // Start the microphone
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            micStream = stream;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            microphone = audioContext.createMediaStreamSource(stream);
+            javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+            analyser.smoothingTimeConstant = 0.8;
+            analyser.fftSize = 1024;
+
+            microphone.connect(analyser);
+            analyser.connect(javascriptNode);
+            javascriptNode.connect(audioContext.destination);
+
+            javascriptNode.onaudioprocess = function() {
+              const array = new Uint8Array(analyser.frequencyBinCount);
+              analyser.getByteFrequencyData(array);
+              let values = 0;
+              const length = array.length;
+              for (let i = 0; i < length; i++) {
+                values += array[i];
+              }
+              const average = values / length;
+              const percentage = Math.min(100, Math.max(0, average));
+              micLevel.style.width = `${percentage}%`;
+            };
+
+            button.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Microphone';
+          })
+          .catch(err => {
+            alert('Unable to access the microphone: ' + err.message);
+          });
+      }
+    }
   </script>
 </body>
 </html>
