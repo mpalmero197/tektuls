@@ -44,6 +44,7 @@
       text-align: left;
       display: flex;
       align-items: center;
+      cursor: pointer;
     }
     .sidebar button i {
       margin-right: 10px;
@@ -51,7 +52,6 @@
     }
     .sidebar button:hover {
       background-color: #3a3a3a;
-      cursor: pointer;
     }
     /* Content Styles */
     .content {
@@ -178,6 +178,7 @@
       background-color: #000;
       border-radius: 5px;
       margin-top: 10px;
+      display: none; /* Initially hidden */
     }
     #mic-level-container {
       width: 100%;
@@ -245,7 +246,7 @@
       <div class="card" id="ping-card">
         <h2><i class="fas fa-signal"></i> Ping Test</h2>
         <div class="card-content" id="ping-content">
-          <input type="text" id="ping-address" placeholder="Enter server address" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
+          <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
           <button onclick="startPingTest()" style="width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Start Ping Test</button>
           <canvas id="pingChart" style="margin-top: 10px;"></canvas>
         </div>
@@ -739,7 +740,8 @@
             return `${icon} ${device.label || 'Not Named'}`;
           }).join('<br>');
           mediaContent.innerHTML = `<strong>Media Devices:</strong><br>${deviceList}`;
-        }).catch(() => {
+        }).catch(err => {
+          console.error('Error accessing media devices:', err);
           mediaContent.innerHTML = "Could not access media devices.";
         });
       } else {
@@ -831,18 +833,29 @@
       pc.createDataChannel("");
       pc.createOffer()
         .then(offer => pc.setLocalDescription(offer))
-        .catch(() => {});
+        .catch(err => {
+          console.error('Error creating offer:', err);
+        });
+
+      const ips = new Set();
 
       pc.onicecandidate = event => {
         if (event && event.candidate && event.candidate.candidate) {
           const candidate = event.candidate.candidate;
-          const ips = candidate.match(/\b\d{1,3}(\.\d{1,3}){3}\b/g);
-          if (ips && ips.length) {
-            webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${ips.join('<br>')}`;
-          } else {
-            webrtcContent.innerHTML = "No IP addresses detected.";
+          const regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
+          const match = candidate.match(regex);
+          if (match) {
+            ips.add(match[0]);
           }
-          pc.close();
+          // Check if all candidates have been received
+          if (!event.candidate.candidate) {
+            if (ips.size > 0) {
+              webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
+            } else {
+              webrtcContent.innerHTML = "No IP addresses detected.";
+            }
+            pc.close();
+          }
         }
       };
     }
@@ -887,8 +900,8 @@
         options: {
           animation: false,
           scales: {
-            x: { display: true },
-            y: { beginAtZero: true }
+            x: { display: true, title: { display: true, text: 'Ping Number' } },
+            y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' } }
           },
           plugins: {
             legend: { display: false }
@@ -899,29 +912,31 @@
       let count = 0;
       function ping() {
         const startTime = Date.now();
-        fetch(`https://${address}/?${Math.random()}`, { mode: 'no-cors' })
-          .then(() => {
-            const endTime = Date.now();
-            const latency = endTime - startTime;
-            pingResultsData.push(latency);
-            pingChart.data.labels.push(count + 1);
-            pingChart.data.datasets[0].data.push(latency);
-            pingChart.update();
-            count++;
-            if (count < 10) {
-              setTimeout(ping, 1000);
-            }
-          })
-          .catch(() => {
-            pingResultsData.push(null);
-            pingChart.data.labels.push(count + 1);
-            pingChart.data.datasets[0].data.push(null);
-            pingChart.update();
-            count++;
-            if (count < 10) {
-              setTimeout(ping, 1000);
-            }
-          });
+        // Using image ping for latency measurement
+        const img = new Image();
+        img.onload = () => {
+          const endTime = Date.now();
+          const latency = endTime - startTime;
+          pingResultsData.push(latency);
+          pingChart.data.labels.push(count + 1);
+          pingChart.data.datasets[0].data.push(latency);
+          pingChart.update();
+          count++;
+          if (count < 10) {
+            setTimeout(ping, 1000);
+          }
+        };
+        img.onerror = () => {
+          pingResultsData.push(null);
+          pingChart.data.labels.push(count + 1);
+          pingChart.data.datasets[0].data.push(null);
+          pingChart.update();
+          count++;
+          if (count < 10) {
+            setTimeout(ping, 1000);
+          }
+        };
+        img.src = `https://${address}/favicon.ico?cache=${Math.random()}`;
       }
       ping();
     }
@@ -963,6 +978,7 @@
         webcamStream.getTracks().forEach(track => track.stop());
         webcamStream = null;
         videoElement.srcObject = null;
+        videoElement.style.display = 'none';
         button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
       } else {
         // Start the webcam
@@ -970,10 +986,12 @@
           .then(stream => {
             webcamStream = stream;
             videoElement.srcObject = stream;
+            videoElement.style.display = 'block';
             button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
           })
           .catch(err => {
             alert('Unable to access the webcam: ' + err.message);
+            console.error('Webcam access error:', err);
           });
       }
     }
@@ -1032,6 +1050,7 @@
           })
           .catch(err => {
             alert('Unable to access the microphone: ' + err.message);
+            console.error('Microphone access error:', err);
           });
       }
     }
@@ -1041,12 +1060,18 @@
       const publicIPElement = document.getElementById('public-ip');
       publicIPElement.innerHTML = 'Fetching...';
       fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Network response was not ok (${response.status})`);
+          }
+          return response.json();
+        })
         .then(data => {
           publicIPElement.innerHTML = data.ip;
         })
-        .catch(() => {
+        .catch(err => {
           publicIPElement.innerHTML = 'Unable to fetch IP.';
+          console.error('Public IP fetch error:', err);
         });
     }
 
@@ -1063,14 +1088,19 @@
 
       resultDiv.innerHTML = 'Looking up...';
 
-      // Perform DNS-over-HTTPS lookup using Cloudflare's API
-      fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=A`, {
+      // Perform DNS-over-HTTPS lookup using Google's API
+      fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
         method: 'GET',
         headers: {
           'Accept': 'application/dns-json'
         }
       })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok (${response.status})`);
+        }
+        return response.json();
+      })
       .then(data => {
         if (data.Status === 0 && data.Answer) {
           const ips = data.Answer
@@ -1085,13 +1115,37 @@
           resultDiv.innerHTML = 'DNS lookup failed or no records found.';
         }
       })
-      .catch(() => {
+      .catch(err => {
         resultDiv.innerHTML = 'Error performing DNS lookup.';
+        console.error('DNS lookup error:', err);
       });
     }
 
-    // Additional Functions and Event Listeners can be added here as needed
+    // Initial Updates
+    updateSystemInfo();
+    updateInternetConnectivity();
+    updateBatteryStatus();
+    updateScreenResolution();
+    updateLocation();
+    updateTimeZone();
+    updateMemoryUsage();
+    updateSensorsAvailability();
+    updateMediaDevices();
+    checkWebGLSupport();
+    detectAdBlocker();
+    checkServiceWorkerStatus();
+    getWebRTCIpAddresses();
+    updateJsErrors();
+    updatePublicIP(); // Fetch public IP on load
 
+    // Set Intervals for Live Updates
+    setInterval(updateInternetConnectivity, 5000); // Update internet connectivity every 5 seconds
+    setInterval(updateBatteryStatus, 60000); // Update battery status every 60 seconds
+    setInterval(updateSystemInfo, 60000); // Update system info every 60 seconds
+
+    // Handle Window Resize for Screen Resolution
+    window.addEventListener('resize', updateScreenResolution);
+    updateScreenResolution();
   </script>
 </body>
 </html>
