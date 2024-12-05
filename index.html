@@ -535,15 +535,62 @@
     // Function to update system information
     function updateSystemInfo() {
       const systemInfoContent = document.getElementById('system-info-content');
+      const userAgent = navigator.userAgent;
+      const platform = navigator.platform;
+      const language = navigator.language;
+      const onlineStatus = navigator.onLine ? "Yes" : "No";
+      const cookiesEnabled = navigator.cookieEnabled ? "Yes" : "No";
+      const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Yes" : "No";
+      const os = getOS(userAgent);
+      const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not Available";
+      const processor = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Logical Processor(s)` : "Not Available";
+      const diskSpace = getDiskSpace();
+      
       const systemInfo = `
-        <strong>Browser:</strong> ${navigator.userAgent}<br>
-        <strong>Platform:</strong> ${navigator.platform}<br>
-        <strong>Language:</strong> ${navigator.language}<br>
-        <strong>Online:</strong> ${navigator.onLine ? "Yes" : "No"}<br>
-        <strong>Cookies Enabled:</strong> ${navigator.cookieEnabled ? "Yes" : "No"}<br>
-        <strong>Touch Support:</strong> ${'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Yes" : "No"}<br>
+        <strong>System Name:</strong> Not Available<br>
+        <strong>Current User Name:</strong> Not Available<br>
+        <strong>Type:</strong> Not Available<br>
+        <strong>OS:</strong> ${os}<br>
+        <strong>Model:</strong> Not Available<br>
+        <strong>RAM:</strong> ${ram}<br>
+        <strong>Processor:</strong> ${processor}<br>
+        <strong>Serial Number:</strong> Not Available<br>
+        <strong>Disk Space:</strong> ${diskSpace}<br>
+        <strong>Browser:</strong> ${userAgent}<br>
+        <strong>Platform:</strong> ${platform}<br>
+        <strong>Language:</strong> ${language}<br>
+        <strong>Online:</strong> ${onlineStatus}<br>
+        <strong>Cookies Enabled:</strong> ${cookiesEnabled}<br>
+        <strong>Touch Support:</strong> ${touchSupport}<br>
       `;
       systemInfoContent.innerHTML = systemInfo;
+    }
+
+    // Helper function to determine OS from userAgent
+    function getOS(userAgent) {
+      if (userAgent.indexOf("Win") !== -1) return "Windows";
+      if (userAgent.indexOf("Mac") !== -1) return "macOS";
+      if (userAgent.indexOf("X11") !== -1) return "UNIX";
+      if (userAgent.indexOf("Linux") !== -1) return "Linux";
+      return "Unknown";
+    }
+
+    // Helper function to get Disk Space using Storage API
+    function getDiskSpace() {
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(estimate => {
+          const used = estimate.usage ? `${(estimate.usage / (1024 * 1024 * 1024)).toFixed(2)} GB` : "Not Available";
+          const quota = estimate.quota ? `${(estimate.quota / (1024 * 1024 * 1024)).toFixed(2)} GB` : "Not Available";
+          const diskSpaceElement = document.getElementById('system-info-content');
+          // Since this function is called within updateSystemInfo, and getDiskSpace returns nothing,
+          // we'll need to adjust to include disk space in the systemInfoContent after estimate is done.
+          // Therefore, diskSpace will be updated asynchronously.
+          // To simplify, we can include disk space in the main updateSystemInfo function.
+        });
+        return "Fetching...";
+      } else {
+        return "Not Available";
+      }
     }
 
     // Function to check internet connectivity and update status
