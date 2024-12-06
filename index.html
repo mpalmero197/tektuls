@@ -171,6 +171,18 @@
       bottom: 0;
       left: 0;
       right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    .footer a {
+      color: #ffc107;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
     }
     /* Scrollbar styling */
     ::-webkit-scrollbar {
@@ -281,6 +293,43 @@
     }
     .network-info .result {
       margin-top: 10px;
+    }
+    /* JavaScript Error Analyzer Styles */
+    #js-error-analyzer-card input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    #js-error-analyzer-card button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #js-error-analyzer-card button:hover {
+      background-color: #0069d9;
+    }
+    #js-error-analyzer-result {
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #2a2a2a;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    #js-error-analyzer-iframe {
+      width: 100%;
+      height: 0;
+      border: none;
+      display: none;
     }
   </style>
 </head>
@@ -461,11 +510,26 @@
           <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
           <div class="card-content" id="js-errors-content">No errors detected.</div>
         </div>
+        <!-- JavaScript Error Analyzer Card -->
+        <div class="card" id="js-error-analyzer-card">
+          <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
+          <div class="card-content">
+            <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., https://example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
+            <button onclick="startJsErrorAnalysis()" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+              <i class="fas fa-search"></i> Analyze JavaScript Errors
+            </button>
+            <div id="js-error-analyzer-result" style="margin-top: 10px;"></div>
+            <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <!-- Footer -->
-  <div class="footer">© 2024 Michael Palmero</div>
+  <div class="footer">
+    <span>© 2024 Michael Palmero</span>
+    <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
+  </div>
 
   <script>
     // Error logging
@@ -584,7 +648,6 @@
           const diskSpaceElement = document.getElementById('system-info-content');
           // Since this function is called within updateSystemInfo, and getDiskSpace returns nothing,
           // we'll need to adjust to include disk space in the systemInfoContent after estimate is done.
-          // Therefore, diskSpace will be updated asynchronously.
           // To simplify, we can include disk space in the main updateSystemInfo function.
         });
         return "Fetching...";
@@ -1108,6 +1171,76 @@
       window.open(searchURL, '_blank');
     }
 
+    // JavaScript Error Analyzer Functions
+    function startJsErrorAnalysis() {
+      const analyzerUrlInput = document.getElementById('analyzer-url');
+      const url = analyzerUrlInput.value.trim();
+      const resultDiv = document.getElementById('js-error-analyzer-result');
+      const iframe = document.getElementById('js-error-analyzer-iframe');
+
+      if (!url) {
+        alert('Please enter a website URL.');
+        return;
+      }
+
+      // Validate URL format
+      try {
+        new URL(url);
+      } catch (e) {
+        alert('Please enter a valid URL.');
+        return;
+      }
+
+      // Clear previous results
+      resultDiv.innerHTML = 'Analyzing...';
+      iframe.style.display = 'none';
+      iframe.src = '';
+
+      // Create a unique identifier for message events
+      const messageHandler = function(event) {
+        if (event.source !== iframe.contentWindow) return;
+        if (event.data.type === 'js-error') {
+          displayJsError(event.data.error);
+        }
+      };
+
+      // Listen for messages from the iframe
+      window.addEventListener('message', messageHandler);
+
+      // Inject a script into the iframe to capture errors and send them via postMessage
+      iframe.onload = function() {
+        try {
+          iframe.contentWindow.onerror = function(message, source, lineno, colno, error) {
+            iframe.contentWindow.postMessage({
+              type: 'js-error',
+              error: {
+                message: message,
+                source: source,
+                lineno: lineno,
+                colno: colno
+              }
+            }, '*');
+          };
+        } catch (e) {
+          // Likely a cross-origin error
+          resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions.';
+          window.removeEventListener('message', messageHandler);
+        }
+      };
+
+      // Set the iframe source to the provided URL
+      iframe.src = url;
+      iframe.style.display = 'none'; // Hide the iframe
+
+      // Function to display JavaScript errors
+      function displayJsError(error) {
+        if (!resultDiv.innerHTML.startsWith('<strong>Errors Detected')) {
+          resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
+        }
+        resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
+      }
+    }
+
     // Initial Updates
     updateSystemInfo();
     updateInternetConnectivity();
@@ -1288,6 +1421,78 @@
         resultDiv.innerHTML = 'Error performing DNS lookup.';
         console.error('DNS lookup error:', err);
       });
+    }
+
+    // JavaScript Error Analyzer Functionality
+    function startJsErrorAnalysis() {
+      const analyzerUrlInput = document.getElementById('analyzer-url');
+      const url = analyzerUrlInput.value.trim();
+      const resultDiv = document.getElementById('js-error-analyzer-result');
+      const iframe = document.getElementById('js-error-analyzer-iframe');
+
+      if (!url) {
+        alert('Please enter a website URL.');
+        return;
+      }
+
+      // Validate URL format
+      try {
+        new URL(url);
+      } catch (e) {
+        alert('Please enter a valid URL.');
+        return;
+      }
+
+      // Clear previous results
+      resultDiv.innerHTML = 'Analyzing...';
+      iframe.style.display = 'none';
+      iframe.src = '';
+
+      // Create a unique identifier for message events
+      const messageHandler = function(event) {
+        if (event.source !== iframe.contentWindow) return;
+        if (event.data.type === 'js-error') {
+          displayJsError(event.data.error);
+        }
+      };
+
+      // Listen for messages from the iframe
+      window.addEventListener('message', messageHandler);
+
+      // Inject a script into the iframe to capture errors and send them via postMessage
+      iframe.onload = function() {
+        try {
+          // Only works if the iframe is same-origin
+          iframe.contentWindow.onerror = function(message, source, lineno, colno, error) {
+            iframe.contentWindow.postMessage({
+              type: 'js-error',
+              error: {
+                message: message,
+                source: source,
+                lineno: lineno,
+                colno: colno
+              }
+            }, '*');
+          };
+          resultDiv.innerHTML = 'No JavaScript errors detected.';
+        } catch (e) {
+          // Likely a cross-origin error
+          resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions.';
+          window.removeEventListener('message', messageHandler);
+        }
+      };
+
+      // Set the iframe source to the provided URL
+      iframe.src = url;
+      iframe.style.display = 'none'; // Hide the iframe
+
+      // Function to display JavaScript errors
+      function displayJsError(error) {
+        if (resultDiv.innerHTML === 'Analyzing...') {
+          resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
+        }
+        resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
+      }
     }
 
     // Initial Updates
