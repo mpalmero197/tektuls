@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Comprehensive Troubleshooting Dashboard</title>
+  <title>TekTuls - Comprehensive Troubleshooting Dashboard</title>
   <!-- Include Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Include FontAwesome for icons -->
@@ -32,7 +32,16 @@
       display: flex;
       align-items: center;
       justify-content: center; /* Centered the search container */
+      position: relative; /* For positioning the title */
       border-bottom: 1px solid #333;
+    }
+    .top-bar .title {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      font-weight: bold;
     }
     .top-bar .search-container {
       display: flex;
@@ -88,6 +97,13 @@
       padding: 20px;
       box-sizing: border-box;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
     }
     .sidebar h2 {
       margin-top: 0;
@@ -120,6 +136,16 @@
     }
     .sidebar button:hover {
       background-color: #3a3a3a;
+    }
+    .visitor-count {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #333;
+    }
+    .visitor-count p {
+      margin: 0;
+      font-size: 16px;
     }
     /* Content Styles */
     .content {
@@ -361,6 +387,9 @@
 <body>
   <!-- Top Bar -->
   <div class="top-bar">
+    <div class="title">
+      TekTuls
+    </div>
     <div class="search-container">
       <select id="search-engine">
         <option value="google">Google</option>
@@ -375,19 +404,26 @@
   <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <h2><i class="fas fa-tools"></i> Troubleshooting Tools</h2>
-      <button onclick="copySystemInfo()"><i class="fas fa-copy"></i> Copy System Info</button>
-      <button onclick="clearLocalStorage()"><i class="fas fa-database"></i> Clear Local Storage</button>
-      <button onclick="clearSessionStorage()"><i class="fas fa-window-close"></i> Clear Session Storage</button>
-      <button onclick="clearCookies()"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
-      <button onclick="resetAppData()"><i class="fas fa-sync-alt"></i> Reset App Data</button>
-      <button onclick="reloadPage()"><i class="fas fa-redo"></i> Reload Page</button>
-      <button onclick="updateInternetConnectivity()"><i class="fas fa-globe"></i> Retest Connectivity</button>
-      <button onclick="updateLocation()"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
-      <button onclick="updateMediaDevices()"><i class="fas fa-video"></i> Retest Media Devices</button>
-      <button onclick="getWebRTCIpAddresses()"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
-      <button onclick="clearErrors()"><i class="fas fa-exclamation-triangle"></i> Clear Errors</button>
-      <button onclick="performPingTest()"><i class="fas fa-signal"></i> Perform Ping Test</button>
+      <div class="sidebar-content">
+        <h2><i class="fas fa-tools"></i> Troubleshooting Tools</h2>
+        <button onclick="copySystemInfo()"><i class="fas fa-copy"></i> Copy System Info</button>
+        <button onclick="clearLocalStorage()"><i class="fas fa-database"></i> Clear Local Storage</button>
+        <button onclick="clearSessionStorage()"><i class="fas fa-window-close"></i> Clear Session Storage</button>
+        <button onclick="clearCookies()"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
+        <button onclick="resetAppData()"><i class="fas fa-sync-alt"></i> Reset App Data</button>
+        <button onclick="reloadPage()"><i class="fas fa-redo"></i> Reload Page</button>
+        <button onclick="updateInternetConnectivity()"><i class="fas fa-globe"></i> Retest Connectivity</button>
+        <button onclick="updateLocation()"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
+        <button onclick="updateMediaDevices()"><i class="fas fa-video"></i> Retest Media Devices</button>
+        <button onclick="getWebRTCIpAddresses()"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
+        <button onclick="clearErrors()"><i class="fas fa-exclamation-triangle"></i> Clear Errors</button>
+        <button onclick="performPingTest()"><i class="fas fa-signal"></i> Perform Ping Test</button>
+      </div>
+      <!-- Visitor Count -->
+      <div class="visitor-count">
+        <p>Visitor Count</p>
+        <p id="visitor-count">0</p>
+      </div>
     </div>
     <!-- Content -->
     <div class="content">
@@ -614,6 +650,19 @@
       return false;
     };
 
+    // Visitor Count Functionality
+    function updateVisitorCount() {
+      const visitorCountElement = document.getElementById('visitor-count');
+      let count = localStorage.getItem('visitorCount');
+      if (count === null) {
+        count = 1;
+      } else {
+        count = parseInt(count) + 1;
+      }
+      localStorage.setItem('visitorCount', count);
+      visitorCountElement.innerText = count;
+    }
+
     // Troubleshooting functions
     function copySystemInfo() {
       const systemInfoContent = document.getElementById('system-info-content').innerText;
@@ -627,6 +676,9 @@
     function clearLocalStorage() {
       localStorage.clear();
       alert('Local storage cleared.');
+      // Reset visitor count after clearing
+      localStorage.setItem('visitorCount', 0);
+      document.getElementById('visitor-count').innerText = 0;
     }
 
     function clearSessionStorage() {
@@ -1246,7 +1298,7 @@
       window.open(searchURL, '_blank');
     }
 
-    // JavaScript Error Analyzer Functions
+    // JavaScript Error Analyzer Functionality
     function startJsErrorAnalysis() {
       const analyzerUrlInput = document.getElementById('analyzer-url');
       const url = analyzerUrlInput.value.trim();
@@ -1560,6 +1612,7 @@
     getWebRTCIpAddresses();
     updateJsErrors();
     updatePublicIP(); // Fetch public IP on load
+    updateVisitorCount(); // Initialize visitor count
 
     // Set Intervals for Live Updates
     setInterval(updateInternetConnectivity, 5000); // Update internet connectivity every 5 seconds
