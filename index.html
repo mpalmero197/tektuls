@@ -31,7 +31,7 @@
       padding: 10px 20px;
       display: flex;
       align-items: center;
-      justify-content: center; /* Changed from space-between to center */
+      justify-content: center; /* Centered the search container */
       border-bottom: 1px solid #333;
     }
     .top-bar .search-container {
@@ -93,6 +93,12 @@
       margin-top: 0;
       font-size: 20px;
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .sidebar h2 i {
+      margin-right: 10px;
+      font-size: 24px;
     }
     .sidebar button {
       width: 100%;
@@ -122,6 +128,21 @@
       padding: 20px;
       box-sizing: border-box;
     }
+    /* Category Section Styles */
+    .category-section {
+      margin-bottom: 40px;
+    }
+    .category-section h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .category-section h2 i {
+      margin-right: 10px;
+      font-size: 28px;
+    }
+    /* Dashboard Grid */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -229,6 +250,10 @@
       }
       .top-bar .search-container {
         max-width: 100%;
+      }
+      /* Adjust category headers for smaller screens */
+      .category-section h2 {
+        font-size: 20px;
       }
     }
     /* Webcam and Microphone Styles */
@@ -367,162 +392,210 @@
     <!-- Content -->
     <div class="content">
       <h1><i class="fas fa-chart-bar"></i> Comprehensive Troubleshooting Dashboard</h1>
-      <div class="dashboard-grid">
-        <!-- Ping Test Card -->
-        <div class="card" id="ping-card">
-          <h2><i class="fas fa-signal"></i> Ping Test</h2>
-          <div class="card-content" id="ping-content">
-            <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-            <button onclick="startPingTest(event)" style="width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Start Ping Test</button>
-            <canvas id="pingChart" style="margin-top: 10px;"></canvas>
-          </div>
-        </div>
-        <!-- System Info Card -->
-        <div class="card" id="system-info-card">
-          <h2><i class="fas fa-desktop"></i> System Information</h2>
-          <div class="card-content" id="system-info-content">Loading...</div>
-        </div>
-        <!-- Internet Connectivity Card -->
-        <div class="card" id="internet-card">
-          <h2><i class="fas fa-globe"></i> Internet Connectivity</h2>
-          <div class="card-content" id="internet-content" style="text-align: center;">
-            <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #28a745;"></i>
-            <p id="internet-status-text">Online</p>
-          </div>
-        </div>
-        <!-- FPS Monitor Card -->
-        <div class="card">
-          <h2><i class="fas fa-tachometer-alt"></i> FPS Monitor</h2>
-          <canvas id="performanceChart"></canvas>
-        </div>
-        <!-- Network Speed Chart Card -->
-        <div class="card">
-          <h2><i class="fas fa-chart-line"></i> Network Speed</h2>
-          <canvas id="networkSpeedChart"></canvas>
-        </div>
-        <!-- Battery Status Card -->
-        <div class="card" id="battery-card">
-          <h2><i class="fas fa-battery-half"></i> Battery Status</h2>
-          <div class="card-content" id="battery-content">
-            <div class="progress-bar-container">
-              <div id="battery-progress-bar" class="progress-bar"></div>
-            </div>
-            <p id="battery-status-text">Loading...</p>
-          </div>
-        </div>
-        <!-- Screen Resolution Card -->
-        <div class="card" id="screen-card">
-          <h2><i class="fas fa-tv"></i> Screen Resolution</h2>
-          <div class="card-content" id="screen-content" style="text-align: center;">
-            <div id="screen-rectangle" style="display: inline-block; background-color: #17a2b8;"></div>
-            <p id="screen-dimensions-text"></p>
-          </div>
-        </div>
-        <!-- Location Card -->
-        <div class="card" id="location-card">
-          <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
-          <div id="map" style="height: 200px;"></div>
-        </div>
-        <!-- Time Zone Card -->
-        <div class="card" id="timezone-card">
-          <h2><i class="fas fa-clock"></i> Time Zone & Locale</h2>
-          <div class="card-content" id="timezone-content">Loading...</div>
-        </div>
-        <!-- Memory Usage Card -->
-        <div class="card">
-          <h2><i class="fas fa-memory"></i> Memory Usage</h2>
-          <canvas id="memoryChart"></canvas>
-        </div>
-        <!-- Sensors Availability Card -->
-        <div class="card" id="sensors-card">
-          <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
-          <div class="card-content" id="sensors-content">Checking...</div>
-        </div>
-        <!-- Media Devices Card -->
-        <div class="card" id="media-card">
-          <h2><i class="fas fa-video"></i> Media Devices</h2>
-          <div class="card-content" id="media-content">Loading...</div>
-          <!-- Webcam Test Section -->
-          <div class="media-test">
-            <button onclick="toggleWebcam(event)"><i class="fas fa-camera"></i> Test Webcam</button>
-            <video id="webcam-video" autoplay playsinline></video>
-          </div>
-          <!-- Microphone Test Section -->
-          <div class="media-test">
-            <button onclick="toggleMicrophone(event)"><i class="fas fa-microphone"></i> Test Microphone</button>
-            <div id="mic-level-container">
-              <div id="mic-level"></div>
+      
+      <!-- Category: Network Tools -->
+      <div class="category-section">
+        <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
+        <div class="dashboard-grid">
+          <!-- Ping Test Card -->
+          <div class="card" id="ping-card">
+            <h2><i class="fas fa-signal"></i> Ping Test</h2>
+            <div class="card-content" id="ping-content">
+              <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
+              <button onclick="startPingTest(event)" style="width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Start Ping Test</button>
+              <canvas id="pingChart" style="margin-top: 10px;"></canvas>
             </div>
           </div>
-        </div>
-        <!-- Network Information Card -->
-        <div class="card" id="network-info-card">
-          <h2><i class="fas fa-network-wired"></i> Network Information</h2>
-          <div class="card-content">
-            <!-- Public IP Address Section -->
-            <div class="network-info">
-              <strong>Public IP Address:</strong>
-              <p id="public-ip">Fetching...</p>
-              <button onclick="updatePublicIP()" style="background-color: #17a2b8;">Refresh IP</button>
-            </div>
-            <!-- DNS Lookup Section -->
-            <div class="network-info" style="margin-top: 20px;">
-              <strong>DNS Lookup:</strong>
-              <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)">
-              <button onclick="performDNSLookup()" style="background-color: #6f42c1;">Lookup DNS</button>
-              <div class="result" id="dns-result"></div>
+          <!-- Internet Connectivity Card -->
+          <div class="card" id="internet-card">
+            <h2><i class="fas fa-globe"></i> Internet Connectivity</h2>
+            <div class="card-content" id="internet-content" style="text-align: center;">
+              <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #28a745;"></i>
+              <p id="internet-status-text">Online</p>
             </div>
           </div>
-        </div>
-        <!-- Storage Usage Card -->
-        <div class="card">
-          <h2><i class="fas fa-database"></i> Storage Usage</h2>
-          <div class="card-content" id="storage-usage-content">
-            <div id="storage-progress-bar-container" class="progress-bar-container">
-              <div id="storage-progress-bar" class="progress-bar"></div>
-            </div>
-            <p id="storage-usage-text">Calculating storage usage...</p>
-            <p>This shows the storage used by this web application within your browser.</p>
+          <!-- Network Speed Chart Card -->
+          <div class="card">
+            <h2><i class="fas fa-chart-line"></i> Network Speed</h2>
+            <canvas id="networkSpeedChart"></canvas>
           </div>
-        </div>
-        <!-- WebGL Support Card -->
-        <div class="card" id="webgl-card">
-          <h2><i class="fas fa-cube"></i> WebGL Support</h2>
-          <div class="card-content" id="webgl-content" style="text-align: center;">Checking...</div>
-        </div>
-        <!-- Ad Blocker Detection Card -->
-        <div class="card" id="adblocker-card">
-          <h2><i class="fas fa-ban"></i> Ad Blocker Detection</h2>
-          <div class="card-content" id="adblocker-content" style="text-align: center;">Detecting...</div>
-        </div>
-        <!-- Service Worker Status Card -->
-        <div class="card" id="serviceworker-card">
-          <h2><i class="fas fa-robot"></i> Service Worker Status</h2>
-          <div class="card-content" id="serviceworker-content" style="text-align: center;">Checking...</div>
-        </div>
-        <!-- WebRTC IP Addresses Card -->
-        <div class="card" id="webrtc-card">
-          <h2><i class="fas fa-network-wired"></i> WebRTC IP Addresses</h2>
-          <div class="card-content" id="webrtc-content">Retrieving...</div>
-        </div>
-        <!-- JavaScript Errors Card -->
-        <div class="card" id="js-errors-card">
-          <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
-          <div class="card-content" id="js-errors-content">No errors detected.</div>
-        </div>
-        <!-- JavaScript Error Analyzer Card -->
-        <div class="card" id="js-error-analyzer-card">
-          <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
-          <div class="card-content">
-            <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., https://example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-            <button onclick="startJsErrorAnalysis()" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-              <i class="fas fa-search"></i> Analyze JavaScript Errors
-            </button>
-            <div id="js-error-analyzer-result" style="margin-top: 10px;"></div>
-            <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
+          <!-- Network Information Card -->
+          <div class="card" id="network-info-card">
+            <h2><i class="fas fa-network-wired"></i> Network Information</h2>
+            <div class="card-content">
+              <!-- Public IP Address Section -->
+              <div class="network-info">
+                <strong>Public IP Address:</strong>
+                <p id="public-ip">Fetching...</p>
+                <button onclick="updatePublicIP()" style="background-color: #17a2b8;">Refresh IP</button>
+              </div>
+              <!-- DNS Lookup Section -->
+              <div class="network-info" style="margin-top: 20px;">
+                <strong>DNS Lookup:</strong>
+                <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)">
+                <button onclick="performDNSLookup()" style="background-color: #6f42c1;">Lookup DNS</button>
+                <div class="result" id="dns-result"></div>
+              </div>
+            </div>
+          </div>
+          <!-- WebRTC IP Addresses Card -->
+          <div class="card" id="webrtc-card">
+            <h2><i class="fas fa-network-wired"></i> WebRTC IP Addresses</h2>
+            <div class="card-content" id="webrtc-content">Retrieving...</div>
           </div>
         </div>
       </div>
+
+      <!-- Category: System Information -->
+      <div class="category-section">
+        <h2><i class="fas fa-desktop"></i> System Information</h2>
+        <div class="dashboard-grid">
+          <!-- System Info Card -->
+          <div class="card" id="system-info-card">
+            <h2><i class="fas fa-desktop"></i> System Information</h2>
+            <div class="card-content" id="system-info-content">Loading...</div>
+          </div>
+          <!-- Memory Usage Card -->
+          <div class="card">
+            <h2><i class="fas fa-memory"></i> Memory Usage</h2>
+            <canvas id="memoryChart"></canvas>
+          </div>
+          <!-- Battery Status Card -->
+          <div class="card" id="battery-card">
+            <h2><i class="fas fa-battery-half"></i> Battery Status</h2>
+            <div class="card-content" id="battery-content">
+              <div class="progress-bar-container">
+                <div id="battery-progress-bar" class="progress-bar"></div>
+              </div>
+              <p id="battery-status-text">Loading...</p>
+            </div>
+          </div>
+          <!-- Screen Resolution Card -->
+          <div class="card" id="screen-card">
+            <h2><i class="fas fa-tv"></i> Screen Resolution</h2>
+            <div class="card-content" id="screen-content" style="text-align: center;">
+              <div id="screen-rectangle" style="display: inline-block; background-color: #17a2b8;"></div>
+              <p id="screen-dimensions-text"></p>
+            </div>
+          </div>
+          <!-- Time Zone Card -->
+          <div class="card" id="timezone-card">
+            <h2><i class="fas fa-clock"></i> Time Zone & Locale</h2>
+            <div class="card-content" id="timezone-content">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category: Device Sensors and Media -->
+      <div class="category-section">
+        <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
+        <div class="dashboard-grid">
+          <!-- Sensors Availability Card -->
+          <div class="card" id="sensors-card">
+            <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
+            <div class="card-content" id="sensors-content">Checking...</div>
+          </div>
+          <!-- Media Devices Card -->
+          <div class="card" id="media-card">
+            <h2><i class="fas fa-video"></i> Media Devices</h2>
+            <div class="card-content" id="media-content">Loading...</div>
+            <!-- Webcam Test Section -->
+            <div class="media-test">
+              <button onclick="toggleWebcam(event)"><i class="fas fa-camera"></i> Test Webcam</button>
+              <video id="webcam-video" autoplay playsinline></video>
+            </div>
+            <!-- Microphone Test Section -->
+            <div class="media-test">
+              <button onclick="toggleMicrophone(event)"><i class="fas fa-microphone"></i> Test Microphone</button>
+              <div id="mic-level-container">
+                <div id="mic-level"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category: Security and Privacy -->
+      <div class="category-section">
+        <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
+        <div class="dashboard-grid">
+          <!-- Ad Blocker Detection Card -->
+          <div class="card" id="adblocker-card">
+            <h2><i class="fas fa-ban"></i> Ad Blocker Detection</h2>
+            <div class="card-content" id="adblocker-content" style="text-align: center;">Detecting...</div>
+          </div>
+          <!-- Service Worker Status Card -->
+          <div class="card" id="serviceworker-card">
+            <h2><i class="fas fa-robot"></i> Service Worker Status</h2>
+            <div class="card-content" id="serviceworker-content" style="text-align: center;">Checking...</div>
+          </div>
+          <!-- JavaScript Errors Card -->
+          <div class="card" id="js-errors-card">
+            <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
+            <div class="card-content" id="js-errors-content">No errors detected.</div>
+          </div>
+          <!-- JavaScript Error Analyzer Card -->
+          <div class="card" id="js-error-analyzer-card">
+            <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
+            <div class="card-content">
+              <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., https://example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
+              <button onclick="startJsErrorAnalysis()" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-search"></i> Analyze JavaScript Errors
+              </button>
+              <div id="js-error-analyzer-result" style="margin-top: 10px;"></div>
+              <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category: Storage Management -->
+      <div class="category-section">
+        <h2><i class="fas fa-database"></i> Storage Management</h2>
+        <div class="dashboard-grid">
+          <!-- Storage Usage Card -->
+          <div class="card">
+            <h2><i class="fas fa-database"></i> Storage Usage</h2>
+            <div class="card-content" id="storage-usage-content">
+              <div id="storage-progress-bar-container" class="progress-bar-container">
+                <div id="storage-progress-bar" class="progress-bar"></div>
+              </div>
+              <p id="storage-usage-text">Calculating storage usage...</p>
+              <p>This shows the storage used by this web application within your browser.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category: Performance Monitoring -->
+      <div class="category-section">
+        <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
+        <div class="dashboard-grid">
+          <!-- FPS Monitor Card -->
+          <div class="card">
+            <h2><i class="fas fa-tachometer-alt"></i> FPS Monitor</h2>
+            <canvas id="performanceChart"></canvas>
+          </div>
+          <!-- WebGL Support Card -->
+          <div class="card" id="webgl-card">
+            <h2><i class="fas fa-cube"></i> WebGL Support</h2>
+            <div class="card-content" id="webgl-content" style="text-align: center;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category: Location Tools -->
+      <div class="category-section">
+        <h2><i class="fas fa-map-marker-alt"></i> Location Tools</h2>
+        <div class="dashboard-grid">
+          <!-- Location Card -->
+          <div class="card" id="location-card">
+            <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
+            <div id="map" style="height: 200px;"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
   <!-- Footer -->
@@ -608,8 +681,10 @@
       const os = getOS(userAgent);
       const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not Available";
       const processor = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Logical Processor(s)` : "Not Available";
-      const diskSpace = getDiskSpace();
       
+      // Initialize disk space as "Fetching..."
+      let diskSpace = "Fetching...";
+
       const systemInfo = `
         <strong>System Name:</strong> Not Available<br>
         <strong>Current User Name:</strong> Not Available<br>
@@ -628,6 +703,24 @@
         <strong>Touch Support:</strong> ${touchSupport}<br>
       `;
       systemInfoContent.innerHTML = systemInfo;
+
+      // Fetch Disk Space
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(estimate => {
+          const used = estimate.usage || 0;
+          const quota = estimate.quota || 1;
+          const usedPercentage = ((used / quota) * 100).toFixed(2);
+          const usedMB = (used / (1024 * 1024)).toFixed(2);
+          const quotaMB = (quota / (1024 * 1024)).toFixed(2);
+
+          // Update Disk Space in System Info
+          systemInfoContent.innerHTML = systemInfoContent.innerHTML.replace('Disk Space:</strong> Fetching...', `Disk Space:</strong> Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`);
+        }).catch(() => {
+          systemInfoContent.innerHTML = systemInfoContent.innerHTML.replace('Disk Space:</strong> Fetching...', 'Disk Space:</strong> Not Available');
+        });
+      } else {
+        systemInfoContent.innerHTML = systemInfoContent.innerHTML.replace('Disk Space:</strong> Fetching...', 'Disk Space:</strong> Not Available');
+      }
     }
 
     // Helper function to determine OS from userAgent
@@ -637,23 +730,6 @@
       if (userAgent.indexOf("X11") !== -1) return "UNIX";
       if (userAgent.indexOf("Linux") !== -1) return "Linux";
       return "Unknown";
-    }
-
-    // Helper function to get Disk Space using Storage API
-    function getDiskSpace() {
-      if (navigator.storage && navigator.storage.estimate) {
-        navigator.storage.estimate().then(estimate => {
-          const used = estimate.usage ? `${(estimate.usage / (1024 * 1024 * 1024)).toFixed(2)} GB` : "Not Available";
-          const quota = estimate.quota ? `${(estimate.quota / (1024 * 1024 * 1024)).toFixed(2)} GB` : "Not Available";
-          const diskSpaceElement = document.getElementById('system-info-content');
-          // Since this function is called within updateSystemInfo, and getDiskSpace returns nothing,
-          // we'll need to adjust to include disk space in the systemInfoContent after estimate is done.
-          // To simplify, we can include disk space in the main updateSystemInfo function.
-        });
-        return "Fetching...";
-      } else {
-        return "Not Available";
-      }
     }
 
     // Function to check internet connectivity and update status
@@ -869,8 +945,7 @@
         memoryChart.update();
       } else {
         console.log('Memory API not supported in this browser.');
-        memoryChart.data.datasets[0].data.push(null);
-        memoryChart.update();
+        // Optionally handle the case when memory API is not supported
       }
     }
 
@@ -1221,6 +1296,7 @@
               }
             }, '*');
           };
+          resultDiv.innerHTML = 'No JavaScript errors detected.';
         } catch (e) {
           // Likely a cross-origin error
           resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions.';
@@ -1234,38 +1310,12 @@
 
       // Function to display JavaScript errors
       function displayJsError(error) {
-        if (!resultDiv.innerHTML.startsWith('<strong>Errors Detected')) {
+        if (resultDiv.innerHTML === 'Analyzing...') {
           resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
         }
         resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
       }
     }
-
-    // Initial Updates
-    updateSystemInfo();
-    updateInternetConnectivity();
-    updateBatteryStatus();
-    updateScreenResolution();
-    updateLocation();
-    updateTimeZone();
-    updateMemoryUsage();
-    updateSensorsAvailability();
-    updateMediaDevices();
-    checkWebGLSupport();
-    detectAdBlocker();
-    checkServiceWorkerStatus();
-    getWebRTCIpAddresses();
-    updateJsErrors();
-    updatePublicIP(); // Fetch public IP on load
-
-    // Set Intervals for Live Updates
-    setInterval(updateInternetConnectivity, 5000); // Update internet connectivity every 5 seconds
-    setInterval(updateBatteryStatus, 60000); // Update battery status every 60 seconds
-    setInterval(updateSystemInfo, 60000); // Update system info every 60 seconds
-
-    // Handle Window Resize for Screen Resolution
-    window.addEventListener('resize', updateScreenResolution);
-    updateScreenResolution();
 
     // Webcam Functionality
     let webcamStream = null;
@@ -1462,7 +1512,6 @@
       // Inject a script into the iframe to capture errors and send them via postMessage
       iframe.onload = function() {
         try {
-          // Only works if the iframe is same-origin
           iframe.contentWindow.onerror = function(message, source, lineno, colno, error) {
             iframe.contentWindow.postMessage({
               type: 'js-error',
