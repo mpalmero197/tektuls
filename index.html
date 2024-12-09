@@ -11,29 +11,29 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
-    /* Reset and Basic Styles */
     * {
       box-sizing: border-box;
     }
     body {
       margin: 0;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1c1c2b 100%);
       font-family: Arial, sans-serif;
-      background-color: #121212;
       color: #ffffff;
       display: flex;
       flex-direction: column;
       height: 100vh;
+      overflow-x: hidden;
     }
-    /* Top Bar Styles */
     .top-bar {
       width: 100%;
       background-color: #1f1f1f;
       padding: 10px 20px;
       display: flex;
       align-items: center;
-      justify-content: center; /* Centered the search container */
-      position: relative; /* For positioning the title */
+      justify-content: center;
+      position: relative;
       border-bottom: 1px solid #333;
+      z-index: 10;
     }
     .top-bar .title {
       position: absolute;
@@ -47,7 +47,7 @@
       display: flex;
       align-items: center;
       max-width: 600px;
-      width: 100%; /* Allows the search bar to be responsive */
+      width: 100%;
     }
     .top-bar select {
       padding: 8px;
@@ -57,15 +57,16 @@
       background-color: #2a2a2a;
       color: #fff;
       cursor: pointer;
+      font-size: 14px;
     }
     .top-bar input[type="text"] {
       flex-grow: 1;
       padding: 8px;
       border: none;
       outline: none;
-      border-radius: 0;
       background-color: #2a2a2a;
       color: #fff;
+      font-size: 14px;
     }
     .top-bar button {
       padding: 8px 12px;
@@ -77,6 +78,8 @@
       border-radius: 0 5px 5px 0;
       display: flex;
       align-items: center;
+      font-size: 14px;
+      transition: background-color 0.3s;
     }
     .top-bar button:hover {
       background-color: #218838;
@@ -84,13 +87,11 @@
     .top-bar button i {
       margin-right: 5px;
     }
-    /* Main Container */
     .main-container {
       display: flex;
       flex-grow: 1;
       overflow: hidden;
     }
-    /* Sidebar Styles */
     .sidebar {
       width: 250px;
       background-color: #1f1f1f;
@@ -129,6 +130,7 @@
       display: flex;
       align-items: center;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
     .sidebar button i {
       margin-right: 10px;
@@ -137,14 +139,45 @@
     .sidebar button:hover {
       background-color: #3a3a3a;
     }
-    /* Content Styles */
     .content {
       flex-grow: 1;
       overflow-y: auto;
       padding: 20px;
       box-sizing: border-box;
+      position: relative;
     }
-    /* Category Section Styles */
+
+    /* Hero Section (Bento Style) */
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+      position: relative;
+    }
+    .hero__title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 10px;
+      position: relative;
+    }
+    .hero__title::after {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle at center, #6f42c1 0%, transparent 60%);
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    .hero__subtitle {
+      font-size: 1.2rem;
+      color: #bbbbbb;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
     .category-section {
       margin-bottom: 40px;
     }
@@ -158,17 +191,47 @@
       margin-right: 10px;
       font-size: 28px;
     }
-    /* Dashboard Grid */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       grid-gap: 20px;
     }
+
+    /* Card Styles (Bento Inspired) */
     .card {
-      background-color: #1e1e1e;
+      background-color: rgba(30,30,30,0.9);
       padding: 20px;
       border-radius: 10px;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      min-height: 250px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left:0; right:0; bottom:0;
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+      pointer-events: none;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at center, #6f42c1 0%, transparent 70%);
+      top: -20px;
+      right: -20px;
+      opacity: 0.5;
+      pointer-events: none;
     }
     .card h2 {
       margin-top: 0;
@@ -183,8 +246,30 @@
     }
     .card-content {
       color: #ffffff;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    /* Progress Bar Styles */
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .info-table th, .info-table td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #333;
+      font-size: 14px;
+    }
+    .info-table th {
+      width: 40%;
+      color: #ffc107;
+    }
+    .info-table td {
+      width: 60%;
+    }
+
     .progress-bar-container {
       width: 100%;
       background-color: #2a2a2a;
@@ -196,8 +281,9 @@
       width: 0%;
       height: 20px;
       background-color: #28a745;
+      transition: width 0.3s;
     }
-    /* Footer Styles */
+
     .footer {
       background-color: #1f1f1f;
       color: #aaaaaa;
@@ -213,6 +299,7 @@
       align-items: center;
       gap: 20px;
       flex-wrap: wrap;
+      z-index: 20;
     }
     .footer a {
       color: #ffc107;
@@ -230,7 +317,7 @@
       font-weight: bold;
       margin-right: 5px;
     }
-    /* Scrollbar styling */
+
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -241,7 +328,7 @@
     ::-webkit-scrollbar-track {
       background-color: #1e1e1e;
     }
-    /* Responsive Styles */
+
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
@@ -267,6 +354,7 @@
       }
       .card {
         margin-bottom: 20px;
+        min-height: 250px;
       }
       .footer {
         position: relative;
@@ -276,14 +364,16 @@
       .top-bar .search-container {
         max-width: 100%;
       }
-      /* Adjust category headers for smaller screens */
       .category-section h2 {
         font-size: 20px;
       }
     }
-    /* Webcam and Microphone Styles */
+
     .media-test {
       margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     .media-test button {
       padding: 8px 12px;
@@ -292,18 +382,21 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      margin-right: 10px;
+      margin-bottom: 10px;
+      width: 100%;
+      font-size: 14px;
+      transition: background-color 0.3s;
     }
     .media-test button:hover {
       background-color: #138496;
     }
     #webcam-video {
       width: 100%;
-      max-height: 200px;
+      max-height: 100px;
       background-color: #000;
       border-radius: 5px;
-      margin-top: 10px;
-      display: none; /* Initially hidden */
+      display: none;
+      object-fit: cover;
     }
     #mic-level-container {
       width: 100%;
@@ -317,8 +410,9 @@
       width: 0%;
       height: 100%;
       background-color: #ffc107;
+      transition: width 0.3s;
     }
-    /* Public IP and DNS Lookup Styles */
+
     .network-info {
       margin-top: 10px;
     }
@@ -328,6 +422,7 @@
       margin-bottom: 10px;
       border-radius: 5px;
       border: none;
+      font-size: 14px;
     }
     .network-info button {
       padding: 8px 12px;
@@ -337,20 +432,24 @@
       border-radius: 5px;
       cursor: pointer;
       margin-right: 10px;
+      font-size: 14px;
+      transition: background-color 0.3s;
     }
     .network-info button:hover {
       background-color: #5a32a3;
     }
     .network-info .result {
       margin-top: 10px;
+      font-size: 14px;
     }
-    /* JavaScript Error Analyzer Styles */
+
     #js-error-analyzer-card input[type="text"] {
       width: 100%;
       padding: 8px;
       margin-bottom: 10px;
       border-radius: 5px;
       border: none;
+      font-size: 14px;
     }
     #js-error-analyzer-card button {
       width: 100%;
@@ -363,6 +462,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
+      transition: background-color 0.3s;
     }
     #js-error-analyzer-card button:hover {
       background-color: #0069d9;
@@ -374,6 +475,7 @@
       background-color: #2a2a2a;
       padding: 10px;
       border-radius: 5px;
+      font-size: 14px;
     }
     #js-error-analyzer-iframe {
       width: 100%;
@@ -381,10 +483,24 @@
       border: none;
       display: none;
     }
+
+    .network-speed-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 250px;
+    }
+    .network-speed-chart-container {
+      flex-grow: 1;
+      position: relative;
+      height: 200px;
+    }
+    #networkSpeedChart {
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
-  <!-- Top Bar -->
   <div class="top-bar">
     <div class="title">
       TekTuls
@@ -396,49 +512,46 @@
         <option value="yahoo">Yahoo</option>
       </select>
       <input type="text" id="search-query" placeholder="Search the web...">
-      <button onclick="performWebSearch(event)"><i class="fas fa-search"></i> Search</button>
+      <button id="search-button"><i class="fas fa-search"></i> Search</button>
     </div>
   </div>
   
-  <!-- Main Container -->
   <div class="main-container">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-content">
         <h2><i class="fas fa-tools"></i> Troubleshooting Tools</h2>
-        <button onclick="copySystemInfo()"><i class="fas fa-copy"></i> Copy System Info</button>
-        <button onclick="clearLocalStorage()"><i class="fas fa-database"></i> Clear Local Storage</button>
-        <button onclick="clearSessionStorage()"><i class="fas fa-window-close"></i> Clear Session Storage</button>
-        <button onclick="clearCookies()"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
-        <button onclick="resetAppData()"><i class="fas fa-sync-alt"></i> Reset App Data</button>
-        <button onclick="reloadPage()"><i class="fas fa-redo"></i> Reload Page</button>
-        <button onclick="updateInternetConnectivity()"><i class="fas fa-globe"></i> Retest Connectivity</button>
-        <button onclick="updateLocation()"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
-        <button onclick="updateMediaDevices()"><i class="fas fa-video"></i> Retest Media Devices</button>
-        <button onclick="getWebRTCIpAddresses()"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
-        <button onclick="clearErrors()"><i class="fas fa-exclamation-triangle"></i> Clear Errors</button>
-        <button onclick="performPingTest()"><i class="fas fa-signal"></i> Perform Ping Test</button>
+        <button id="copy-system-info-btn"><i class="fas fa-copy"></i> Copy System Info</button>
+        <button id="clear-local-storage-btn"><i class="fas fa-database"></i> Clear Local Storage</button>
+        <button id="clear-session-storage-btn"><i class="fas fa-window-close"></i> Clear Session Storage</button>
+        <button id="clear-cookies-btn"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
+        <button id="reset-app-data-btn"><i class="fas fa-sync-alt"></i> Reset App Data</button>
+        <button id="reload-page-btn"><i class="fas fa-redo"></i> Reload Page</button>
+        <button id="retest-connectivity-btn"><i class="fas fa-globe"></i> Retest Connectivity</button>
+        <button id="retest-location-btn"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
+        <button id="retest-media-devices-btn"><i class="fas fa-video"></i> Retest Media Devices</button>
+        <button id="retest-webrtc-btn"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
+        <button id="clear-errors-btn"><i class="fas fa-exclamation-triangle"></i> Clear Errors</button>
+        <button id="perform-ping-test-btn"><i class="fas fa-signal"></i> Perform Ping Test</button>
       </div>
     </div>
     
-    <!-- Content -->
     <div class="content">
-      <h1><i class="fas fa-chart-bar"></i> Comprehensive Troubleshooting Dashboard</h1>
-      
-      <!-- Category: Network Tools -->
+      <div class="hero">
+        <h1 class="hero__title"><i class="fas fa-chart-bar"></i> Comprehensive Troubleshooting Dashboard</h1>
+        <p class="hero__subtitle">A full suite of interactive troubleshooting tools at your fingertips.</p>
+      </div>
+
       <div class="category-section">
         <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
         <div class="dashboard-grid">
-          <!-- Ping Test Card -->
           <div class="card" id="ping-card">
             <h2><i class="fas fa-signal"></i> Ping Test</h2>
             <div class="card-content" id="ping-content">
-              <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-              <button onclick="startPingTest(event)" style="width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Start Ping Test</button>
+              <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)">
+              <button id="start-ping-test-btn"><i class="fas fa-play"></i> Start Ping Test</button>
               <canvas id="pingChart" style="margin-top: 10px;"></canvas>
             </div>
           </div>
-          <!-- Internet Connectivity Card -->
           <div class="card" id="internet-card">
             <h2><i class="fas fa-globe"></i> Internet Connectivity</h2>
             <div class="card-content" id="internet-content" style="text-align: center;">
@@ -446,31 +559,31 @@
               <p id="internet-status-text">Online</p>
             </div>
           </div>
-          <!-- Network Speed Chart Card -->
-          <div class="card">
+          <div class="card network-speed-card">
             <h2><i class="fas fa-chart-line"></i> Network Speed</h2>
-            <canvas id="networkSpeedChart"></canvas>
+            <div class="network-speed-chart-container">
+              <canvas id="networkSpeedChart"></canvas>
+            </div>
+            <p id="current-speed" style="text-align: center; margin-top: 10px; font-size: 16px;">
+              Current Speed: <strong>-- Mbps</strong>
+            </p>
           </div>
-          <!-- Network Information Card -->
           <div class="card" id="network-info-card">
             <h2><i class="fas fa-network-wired"></i> Network Information</h2>
             <div class="card-content">
-              <!-- Public IP Address Section -->
               <div class="network-info">
                 <strong>Public IP Address:</strong>
                 <p id="public-ip">Fetching...</p>
-                <button onclick="updatePublicIP()" style="background-color: #17a2b8;">Refresh IP</button>
+                <button id="refresh-ip-btn">Refresh IP</button>
               </div>
-              <!-- DNS Lookup Section -->
-              <div class="network-info" style="margin-top: 20px;">
+              <div class="network-info">
                 <strong>DNS Lookup:</strong>
                 <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)">
-                <button onclick="performDNSLookup()" style="background-color: #6f42c1;">Lookup DNS</button>
+                <button id="dns-lookup-btn">Lookup DNS</button>
                 <div class="result" id="dns-result"></div>
               </div>
             </div>
           </div>
-          <!-- WebRTC IP Addresses Card -->
           <div class="card" id="webrtc-card">
             <h2><i class="fas fa-network-wired"></i> WebRTC IP Addresses</h2>
             <div class="card-content" id="webrtc-content">Retrieving...</div>
@@ -478,21 +591,66 @@
         </div>
       </div>
 
-      <!-- Category: System Information -->
       <div class="category-section">
         <h2><i class="fas fa-desktop"></i> System Information</h2>
         <div class="dashboard-grid">
-          <!-- System Info Card -->
           <div class="card" id="system-info-card">
             <h2><i class="fas fa-desktop"></i> System Information</h2>
-            <div class="card-content" id="system-info-content">Loading...</div>
+            <div class="card-content" id="system-info-content">
+              <table class="info-table">
+                <tbody>
+                  <tr>
+                    <th>Operating System:</th>
+                    <td id="os-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Device Type:</th>
+                    <td id="device-type-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>RAM:</th>
+                    <td id="ram-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Processor:</th>
+                    <td id="processor-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Disk Space:</th>
+                    <td id="disk-space-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Browser:</th>
+                    <td id="browser-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Platform:</th>
+                    <td id="platform-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Language:</th>
+                    <td id="language-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Online:</th>
+                    <td id="online-status-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Cookies Enabled:</th>
+                    <td id="cookies-enabled-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Touch Support:</th>
+                    <td id="touch-support-info">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <!-- Memory Usage Card -->
           <div class="card">
             <h2><i class="fas fa-memory"></i> Memory Usage</h2>
-            <canvas id="memoryChart"></canvas>
+            <canvas id="memoryChart" style="height: 200px;"></canvas>
           </div>
-          <!-- Battery Status Card -->
           <div class="card" id="battery-card">
             <h2><i class="fas fa-battery-half"></i> Battery Status</h2>
             <div class="card-content" id="battery-content">
@@ -502,78 +660,93 @@
               <p id="battery-status-text">Loading...</p>
             </div>
           </div>
-          <!-- Screen Resolution Card -->
           <div class="card" id="screen-card">
             <h2><i class="fas fa-tv"></i> Screen Resolution</h2>
-            <div class="card-content" id="screen-content" style="text-align: center;">
-              <div id="screen-rectangle" style="display: inline-block; background-color: #17a2b8;"></div>
-              <p id="screen-dimensions-text"></p>
+            <div class="card-content" id="screen-content">
+              <div id="screen-rectangle" style="background-color: #17a2b8; width: 200px; height: 200px; margin: 0 auto;"></div>
+              <p id="screen-dimensions-text" style="text-align: center; margin-top: 10px;"></p>
             </div>
           </div>
-          <!-- Time Zone Card -->
           <div class="card" id="timezone-card">
             <h2><i class="fas fa-clock"></i> Time Zone & Locale</h2>
-            <div class="card-content" id="timezone-content">Loading...</div>
+            <div class="card-content" id="timezone-content">
+              <table class="info-table">
+                <tbody>
+                  <tr>
+                    <th>Time Zone:</th>
+                    <td id="timezone-info">Loading...</td>
+                  </tr>
+                  <tr>
+                    <th>Locale:</th>
+                    <td id="locale-info">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Category: Device Sensors and Media -->
       <div class="category-section">
         <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
         <div class="dashboard-grid">
-          <!-- Sensors Availability Card -->
           <div class="card" id="sensors-card">
             <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
-            <div class="card-content" id="sensors-content">Checking...</div>
+            <div class="card-content" id="sensors-content">
+              <ul>
+                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Accelerometer</li>
+                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Gyroscope</li>
+                <li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>
+              </ul>
+            </div>
           </div>
-          <!-- Media Devices Card -->
           <div class="card" id="media-card">
             <h2><i class="fas fa-video"></i> Media Devices</h2>
-            <div class="card-content" id="media-content">Loading...</div>
-            <!-- Webcam Test Section -->
-            <div class="media-test">
-              <button onclick="toggleWebcam(event)"><i class="fas fa-camera"></i> Test Webcam</button>
-              <video id="webcam-video" autoplay playsinline></video>
-            </div>
-            <!-- Microphone Test Section -->
-            <div class="media-test">
-              <button onclick="toggleMicrophone(event)"><i class="fas fa-microphone"></i> Test Microphone</button>
-              <div id="mic-level-container">
-                <div id="mic-level"></div>
+            <div class="card-content" id="media-content">
+              <strong>Media Devices:</strong>
+              <ul id="media-devices-list" style="margin-top: 10px; list-style: none; padding-left: 0;">
+              </ul>
+              <div class="media-test">
+                <button id="toggle-webcam-btn"><i class="fas fa-camera"></i> Test Webcam</button>
+                <video id="webcam-video" autoplay playsinline></video>
+              </div>
+              <div class="media-test">
+                <button id="toggle-microphone-btn"><i class="fas fa-microphone"></i> Test Microphone</button>
+                <div id="mic-level-container">
+                  <div id="mic-level"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Category: Security and Privacy -->
       <div class="category-section">
         <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
         <div class="dashboard-grid">
-          <!-- Ad Blocker Detection Card -->
           <div class="card" id="adblocker-card">
             <h2><i class="fas fa-ban"></i> Ad Blocker Detection</h2>
-            <div class="card-content" id="adblocker-content" style="text-align: center;">Detecting...</div>
+            <div class="card-content" id="adblocker-content" style="text-align: center;">
+              Detecting...
+            </div>
           </div>
-          <!-- Service Worker Status Card -->
           <div class="card" id="serviceworker-card">
             <h2><i class="fas fa-robot"></i> Service Worker Status</h2>
-            <div class="card-content" id="serviceworker-content" style="text-align: center;">Checking...</div>
+            <div class="card-content" id="serviceworker-content" style="text-align: center;">
+              Checking...
+            </div>
           </div>
-          <!-- JavaScript Errors Card -->
           <div class="card" id="js-errors-card">
             <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
-            <div class="card-content" id="js-errors-content">No errors detected.</div>
+            <div class="card-content" id="js-errors-content">
+              No errors detected.
+            </div>
           </div>
-          <!-- JavaScript Error Analyzer Card -->
           <div class="card" id="js-error-analyzer-card">
             <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
             <div class="card-content">
-              <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: none;">
-              <button onclick="startJsErrorAnalysis()" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-                <i class="fas fa-search"></i> Analyze JavaScript Errors
-              </button>
+              <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)">
+              <button id="start-js-error-analysis-btn"><i class="fas fa-search"></i> Analyze JavaScript Errors</button>
               <div id="js-error-analyzer-result" style="margin-top: 10px;"></div>
               <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
             </div>
@@ -581,11 +754,9 @@
         </div>
       </div>
 
-      <!-- Category: Storage Management -->
       <div class="category-section">
         <h2><i class="fas fa-database"></i> Storage Management</h2>
         <div class="dashboard-grid">
-          <!-- Storage Usage Card -->
           <div class="card">
             <h2><i class="fas fa-database"></i> Storage Usage</h2>
             <div class="card-content" id="storage-usage-content">
@@ -593,37 +764,34 @@
                 <div id="storage-progress-bar" class="progress-bar"></div>
               </div>
               <p id="storage-usage-text">Calculating storage usage...</p>
-              <p>This shows the storage used by this web application within your browser.</p>
+              <p style="font-size: 14px;">This shows the storage used by this web application within your browser.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Category: Performance Monitoring -->
       <div class="category-section">
         <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
         <div class="dashboard-grid">
-          <!-- FPS Monitor Card -->
           <div class="card">
             <h2><i class="fas fa-tachometer-alt"></i> FPS Monitor</h2>
-            <canvas id="performanceChart"></canvas>
+            <canvas id="performanceChart" style="height: 200px;"></canvas>
           </div>
-          <!-- WebGL Support Card -->
           <div class="card" id="webgl-card">
             <h2><i class="fas fa-cube"></i> WebGL Support</h2>
-            <div class="card-content" id="webgl-content" style="text-align: center;"></div>
+            <div class="card-content" id="webgl-content" style="text-align: center;">
+              Checking...
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Category: Location Tools -->
       <div class="category-section">
         <h2><i class="fas fa-map-marker-alt"></i> Location Tools</h2>
         <div class="dashboard-grid">
-          <!-- Location Card -->
           <div class="card" id="location-card">
             <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
-            <div id="map" style="height: 200px;"></div>
+            <div class="card-content" id="map" style="height: 200px;"></div>
           </div>
         </div>
       </div>
@@ -631,7 +799,6 @@
     </div>
   </div>
   
-  <!-- Footer -->
   <div class="footer">
     <span>© 2024 Michael Palmero</span>
     <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
@@ -641,874 +808,773 @@
   </div>
 
   <script>
-    // Global Variables
-    let pingChartInstance = null;
+    let errorLogs = [];
+    window.onerror = function(message, source, lineno, colno, error) {
+      const errorMessage = `${message} at ${source}:${lineno}:${colno}`;
+      errorLogs.push(errorMessage);
+      updateJsErrors();
+      return false;
+    };
 
-    // Ensure the DOM is fully loaded before executing scripts
-    document.addEventListener('DOMContentLoaded', function() {
-      // Error logging
-      let errorLogs = [];
-      window.onerror = function(message, source, lineno, colno, error) {
-        const errorMessage = `${message} at ${source}:${lineno}:${colno}`;
-        errorLogs.push(errorMessage);
-        updateJsErrors();
-        return false;
-      };
-
-      // Visitor Count Functionality
-      function updateVisitorCount() {
-        const visitorCountElement = document.getElementById('visitor-count');
-        let count = localStorage.getItem('visitorCount');
-        if (count === null) {
-          count = 1;
-        } else {
-          count = parseInt(count) + 1;
-        }
-        localStorage.setItem('visitorCount', count);
-        visitorCountElement.innerText = count;
+    function updateVisitorCount() {
+      const visitorCountElement = document.getElementById('visitor-count');
+      let count = localStorage.getItem('visitorCount');
+      if (count === null) {
+        count = 1;
+      } else {
+        count = parseInt(count) + 1;
       }
+      localStorage.setItem('visitorCount', count);
+      visitorCountElement.innerText = count;
+    }
 
-      // Troubleshooting functions
-      function copySystemInfo() {
-        const systemInfoContent = document.getElementById('system-info-content').innerText;
-        navigator.clipboard.writeText(systemInfoContent).then(() => {
-          alert('System information copied to clipboard.');
-        }, () => {
-          alert('Failed to copy system information.');
-        });
-      }
-
-      function clearLocalStorage() {
-        localStorage.clear();
-        alert('Local storage cleared.');
-        // Reset visitor count after clearing
-        localStorage.setItem('visitorCount', 0);
-        document.getElementById('visitor-count').innerText = 0;
-      }
-
-      function clearSessionStorage() {
-        sessionStorage.clear();
-        alert('Session storage cleared.');
-      }
-
-      function clearCookies() {
-        document.cookie.split(";").forEach(function(c) {
-          document.cookie = c.trim().startsWith("=") ? c : c.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-        alert('Cookies cleared.');
-      }
-
-      function resetAppData() {
-        clearLocalStorage();
-        clearSessionStorage();
-        clearCookies();
-        alert('Application data reset. Reloading page...');
-        reloadPage();
-      }
-
-      function reloadPage() {
-        location.reload();
-      }
-
-      function clearErrors() {
-        errorLogs = [];
-        updateJsErrors();
-        alert('Error logs cleared.');
-      }
-
-      // Update JavaScript Errors
-      function updateJsErrors() {
-        const jsErrorsContent = document.getElementById('js-errors-content');
-        if (errorLogs.length > 0) {
-          jsErrorsContent.innerHTML = `<strong>Errors Detected (${errorLogs.length}):</strong><br>${errorLogs.join('<br>')}`;
-        } else {
-          jsErrorsContent.innerHTML = 'No errors detected.';
-        }
-      }
-
-      // Function to update system information
-      function updateSystemInfo() {
-        const systemInfoContent = document.getElementById('system-info-content');
-        const userAgent = navigator.userAgent;
-        const platform = navigator.platform;
-        const language = navigator.language;
-        const onlineStatus = navigator.onLine ? "Yes" : "No";
-        const cookiesEnabled = navigator.cookieEnabled ? "Yes" : "No";
-        const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Yes" : "No";
-        const os = getOS(userAgent);
-        const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not Available";
-        const processor = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Logical Processor(s)` : "Not Available";
-        const deviceType = getDeviceType();
-
-        // Initialize disk space as "Fetching..."
-        let diskSpace = "Fetching...";
-
-        const systemInfo = `
-          <strong>Operating System:</strong> ${os}<br>
-          <strong>Device Type:</strong> ${deviceType}<br>
-          <strong>RAM:</strong> ${ram}<br>
-          <strong>Processor:</strong> ${processor}<br>
-          <strong>Disk Space:</strong> ${diskSpace}<br>
-          <strong>Browser:</strong> ${userAgent}<br>
-          <strong>Platform:</strong> ${platform}<br>
-          <strong>Language:</strong> ${language}<br>
-          <strong>Online:</strong> ${onlineStatus}<br>
-          <strong>Cookies Enabled:</strong> ${cookiesEnabled}<br>
-          <strong>Touch Support:</strong> ${touchSupport}<br>
-        `;
-        systemInfoContent.innerHTML = systemInfo;
-
-        // Fetch Disk Space
-        if (navigator.storage && navigator.storage.estimate) {
-          navigator.storage.estimate().then(estimate => {
-            const used = estimate.usage || 0;
-            const quota = estimate.quota || 1;
-            const usedPercentage = ((used / quota) * 100).toFixed(2);
-            const usedMB = (used / (1024 * 1024)).toFixed(2);
-            const quotaMB = (quota / (1024 * 1024)).toFixed(2);
-
-            // Update Disk Space in System Info
-            systemInfoContent.innerHTML = systemInfoContent.innerHTML.replace('Disk Space:</strong> Fetching...', `Disk Space:</strong> Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`);
-          }).catch(() => {
-            systemInfoContent.innerHTML = systemInfoContent.innerHTML.replace('Disk Space:</strong> Fetching...', 'Disk Space:</strong> Not Available');
-          });
-        } else {
-          systemInfoContent.innerHTML = systemInfoContent.innerHTML.replace('Disk Space:</strong> Fetching...', 'Disk Space:</strong> Not Available');
-        }
-      }
-
-      // Helper function to determine OS from userAgent
-      function getOS(userAgent) {
-        if (userAgent.indexOf("Win") !== -1) return "Windows";
-        if (userAgent.indexOf("Mac") !== -1) return "macOS";
-        if (userAgent.indexOf("X11") !== -1) return "UNIX";
-        if (userAgent.indexOf("Linux") !== -1) return "Linux";
-        return "Unknown";
-      }
-
-      // Function to determine device type
-      function getDeviceType() {
-        const ua = navigator.userAgent;
-        if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-          return "Mobile";
-        }
-        return "Desktop";
-      }
-
-      // Function to check internet connectivity and update status
-      function updateInternetConnectivity() {
-        const internetStatusIcon = document.getElementById('internet-status-icon');
-        const internetStatusText = document.getElementById('internet-status-text');
-        fetch('https://www.google.com/', { mode: 'no-cors' })
-          .then(() => {
-            internetStatusIcon.style.color = '#28a745'; // Green
-            internetStatusText.innerHTML = 'Online';
-          })
-          .catch(() => {
-            internetStatusIcon.style.color = '#dc3545'; // Red
-            internetStatusText.innerHTML = 'Offline';
-          });
-      }
-
-      // FPS Monitor
-      let fpsData = [];
-      let fpsTimestamps = [];
-      function updateFPSChart() {
-        const now = performance.now();
-        while (fpsTimestamps.length > 0 && fpsTimestamps[0] <= now - 1000) {
-          fpsTimestamps.shift();
-        }
-        fpsTimestamps.push(now);
-        const fps = fpsTimestamps.length;
-        fpsData.push(fps);
-        if (fpsData.length > 30) {
-          fpsData.shift();
-        }
-        fpsChart.data.datasets[0].data = fpsData;
-        fpsChart.update();
-      }
-
-      function trackFPS() {
-        requestAnimationFrame(() => {
-          updateFPSChart();
-          trackFPS();
-        });
-      }
-
-      const fpsCtx = document.getElementById('performanceChart').getContext('2d');
-      const fpsChart = new Chart(fpsCtx, {
-        type: 'line',
-        data: {
-          labels: Array(30).fill(''),
-          datasets: [{
-            label: 'FPS',
-            data: fpsData,
-            backgroundColor: 'rgba(255, 193, 7, 0.2)',
-            borderColor: '#ffc107',
-            borderWidth: 1,
-            fill: true,
-            pointRadius: 0,
-            tension: 0.4
-          }]
-        },
-        options: {
-          animation: false,
-          scales: {
-            x: { display: false },
-            y: { beginAtZero: true, max: 60 }
-          },
-          plugins: {
-            legend: { display: false }
-          }
-        }
+    function copySystemInfo() {
+      const systemInfoContent = document.getElementById('system-info-content').innerText;
+      navigator.clipboard.writeText(systemInfoContent).then(() => {
+        alert('System information copied to clipboard.');
+      }, () => {
+        alert('Failed to copy system information.');
       });
+    }
 
-      trackFPS(); // Start tracking FPS
+    function clearLocalStorage() {
+      localStorage.clear();
+      alert('Local storage cleared.');
+      localStorage.setItem('visitorCount', 0);
+      document.getElementById('visitor-count').innerText = 0;
+    }
 
-      // Network Speed Chart
-      let networkSpeedData = [];
-      function updateNetworkSpeedChart() {
-        const image = new Image();
-        const startTime = performance.now();
-        image.onload = () => {
-          const endTime = performance.now();
-          const duration = (endTime - startTime) / 1000;
-          const bitsLoaded = 50000 * 8; // Approximate image size in bits
-          const speedBps = bitsLoaded / duration;
-          const speedMbps = (speedBps / 1024 / 1024).toFixed(2);
-          networkSpeedData.push(speedMbps);
-          if (networkSpeedData.length > 10) {
-            networkSpeedData.shift();
-          }
-          networkSpeedChart.data.datasets[0].data = networkSpeedData;
-          networkSpeedChart.update();
-        };
-        image.onerror = () => {
-          console.log('Network speed test failed.');
-        };
-        image.src = 'https://via.placeholder.com/100x100.png?' + Date.now();
-      }
+    function clearSessionStorage() {
+      sessionStorage.clear();
+      alert('Session storage cleared.');
+    }
 
-      const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
-      const networkSpeedChart = new Chart(networkSpeedCtx, {
-        type: 'line',
-        data: {
-          labels: Array(10).fill(''),
-          datasets: [{
-            label: 'Speed (Mbps)',
-            data: [],
-            backgroundColor: 'rgba(40, 167, 69, 0.2)',
-            borderColor: '#28a745',
-            borderWidth: 1,
-            fill: true,
-            pointRadius: 0,
-            tension: 0.4
-          }]
-        },
-        options: {
-          animation: false,
-          scales: {
-            x: { display: false },
-            y: { beginAtZero: true }
-          },
-          plugins: {
-            legend: { display: false }
-          }
-        }
+    function clearCookies() {
+      document.cookie.split(";").forEach(function(c) {
+        document.cookie = c.trim().startsWith("=") ? c : c.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
+      alert('Cookies cleared.');
+    }
 
-      setInterval(updateNetworkSpeedChart, 5000); // Update every 5 seconds
+    function resetAppData() {
+      clearLocalStorage();
+      clearSessionStorage();
+      clearCookies();
+      alert('Application data reset. Reloading page...');
+      reloadPage();
+    }
 
-      // Update Battery Status
-      function updateBatteryStatus() {
-        const batteryContent = document.getElementById('battery-content');
-        const batteryProgressBar = document.getElementById('battery-progress-bar');
-        const batteryStatusText = document.getElementById('battery-status-text');
-        if (navigator.getBattery) {
-          navigator.getBattery().then(battery => {
-            const batteryLevel = (battery.level * 100).toFixed(0);
-            const chargingStatus = battery.charging ? "Charging" : "Not Charging";
-            batteryProgressBar.style.width = `${batteryLevel}%`;
-            batteryStatusText.innerHTML = `${batteryLevel}% - ${chargingStatus}`;
-          });
-        } else {
-          batteryContent.innerHTML = "Battery status not supported by your browser.";
-        }
+    function reloadPage() {
+      location.reload();
+    }
+
+    function clearErrors() {
+      errorLogs = [];
+      updateJsErrors();
+      alert('Error logs cleared.');
+    }
+
+    function updateJsErrors() {
+      const jsErrorsContent = document.getElementById('js-errors-content');
+      if (errorLogs.length > 0) {
+        jsErrorsContent.innerHTML = `<strong>Errors Detected (${errorLogs.length}):</strong><br>${errorLogs.join('<br>')}`;
+      } else {
+        jsErrorsContent.innerHTML = 'No errors detected.';
       }
+    }
 
-      // Update Screen Resolution
-      function updateScreenResolution() {
-        const screenRectangle = document.getElementById('screen-rectangle');
-        const screenDimensionsText = document.getElementById('screen-dimensions-text');
-        const width = window.screen.width;
-        const height = window.screen.height;
-        const maxDimension = Math.max(width, height);
-        const scaledWidth = (width / maxDimension) * 200; // Scale to max 200px
-        const scaledHeight = (height / maxDimension) * 200;
-        screenRectangle.style.width = `${scaledWidth}px`;
-        screenRectangle.style.height = `${scaledHeight}px`;
-        screenDimensionsText.innerHTML = `<strong>${width}px</strong> x <strong>${height}px</strong>`;
-      }
+    function updateSystemInfo() {
+      const osInfo = document.getElementById('os-info');
+      const deviceTypeInfo = document.getElementById('device-type-info');
+      const ramInfo = document.getElementById('ram-info');
+      const processorInfo = document.getElementById('processor-info');
+      const diskSpaceInfo = document.getElementById('disk-space-info');
+      const browserInfo = document.getElementById('browser-info');
+      const platformInfo = document.getElementById('platform-info');
+      const languageInfo = document.getElementById('language-info');
+      const onlineStatusInfo = document.getElementById('online-status-info');
+      const cookiesEnabledInfo = document.getElementById('cookies-enabled-info');
+      const touchSupportInfo = document.getElementById('touch-support-info');
 
-      // Update Location with Map
-      let mapInitialized = false;
-      let mapInstance;
-      function updateLocation() {
-        const mapDiv = document.getElementById('map');
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            position => {
-              const { latitude, longitude } = position.coords;
-              if (!mapInitialized) {
-                mapInstance = L.map('map').setView([latitude, longitude], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                  attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(mapInstance);
-                L.marker([latitude, longitude]).addTo(mapInstance)
-                  .bindPopup('You are here.')
-                  .openPopup();
-                mapInitialized = true;
-              } else {
-                mapInstance.setView([latitude, longitude], 13);
-                L.marker([latitude, longitude]).addTo(mapInstance)
-                  .bindPopup('You are here.')
-                  .openPopup();
-              }
-            },
-            () => {
-              mapDiv.innerHTML = "Location access denied.";
-            }
-          );
-        } else {
-          mapDiv.innerHTML = "Geolocation not supported.";
-        }
-      }
+      const userAgent = navigator.userAgent;
+      const platform = navigator.platform;
+      const language = navigator.language;
+      const onlineStatus = navigator.onLine ? "Yes" : "No";
+      const cookiesEnabled = navigator.cookieEnabled ? "Yes" : "No";
+      const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Yes" : "No";
+      const os = getOS(userAgent);
+      const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not Available";
+      const processor = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Logical Processor(s)` : "Not Available";
+      const deviceType = getDeviceType();
 
-      // Update Time Zone and Locale
-      function updateTimeZone() {
-        const timezoneContent = document.getElementById('timezone-content');
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const locale = navigator.language;
-        timezoneContent.innerHTML = `
-          <strong>Time Zone:</strong> ${timeZone}<br>
-          <strong>Locale:</strong> ${locale}
-        `;
-      }
+      osInfo.innerText = os;
+      deviceTypeInfo.innerText = deviceType;
+      ramInfo.innerText = ram;
+      processorInfo.innerText = processor;
+      browserInfo.innerText = userAgent;
+      platformInfo.innerText = platform;
+      languageInfo.innerText = language;
+      onlineStatusInfo.innerText = onlineStatus;
+      cookiesEnabledInfo.innerText = cookiesEnabled;
+      touchSupportInfo.innerText = touchSupport;
 
-      // Memory Usage Monitoring
-      let memoryUsageData = [];
-      function updateMemoryUsage() {
-        const memoryUsage = performance.memory ? (performance.memory.usedJSHeapSize / 1048576).toFixed(2) : null; // Convert to MB
-        if (memoryUsage !== null) {
-          memoryUsageData.push(memoryUsage);
-          if (memoryUsageData.length > 30) {
-            memoryUsageData.shift();
-          }
-          memoryChart.data.datasets[0].data = memoryUsageData;
-          memoryChart.update();
-        } else {
-          console.log('Memory API not supported in this browser.');
-          // Optionally handle the case when memory API is not supported
-        }
-      }
-
-      const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-      const memoryChart = new Chart(memoryCtx, {
-        type: 'line',
-        data: {
-          labels: Array(30).fill(''),
-          datasets: [{
-            label: 'Memory Usage (MB)',
-            data: memoryUsageData,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: '#36a2eb',
-            borderWidth: 1,
-            fill: true,
-            pointRadius: 0,
-            tension: 0.4
-          }]
-        },
-        options: {
-          animation: false,
-          scales: {
-            x: { display: false },
-            y: { beginAtZero: true }
-          },
-          plugins: {
-            legend: { display: false }
-          }
-        }
-      });
-
-      setInterval(updateMemoryUsage, 1000); // Update every second
-
-      // Update Sensors Availability with Icons
-      function updateSensorsAvailability() {
-        const sensorsContent = document.getElementById('sensors-content');
-        const sensors = [];
-        if ('Accelerometer' in window) sensors.push('<i class="fas fa-arrows-alt-v"></i> Accelerometer');
-        if ('Gyroscope' in window) sensors.push('<i class="fas fa-sync-alt"></i> Gyroscope');
-        if ('Magnetometer' in window) sensors.push('<i class="fas fa-magnet"></i> Magnetometer');
-        if (sensors.length > 0) {
-          sensorsContent.innerHTML = `<strong>Available Sensors:</strong><br>${sensors.join('<br>')}`;
-        } else {
-          sensorsContent.innerHTML = "No motion sensors available.";
-        }
-      }
-
-      // Update Media Devices with Icons
-      function updateMediaDevices() {
-        const mediaContent = document.getElementById('media-content');
-        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-          navigator.mediaDevices.enumerateDevices().then(devices => {
-            const deviceList = devices.map(device => {
-              let icon = '';
-              if (device.kind === 'audioinput') icon = '<i class="fas fa-microphone"></i>';
-              if (device.kind === 'audiooutput') icon = '<i class="fas fa-volume-up"></i>';
-              if (device.kind === 'videoinput') icon = '<i class="fas fa-video"></i>';
-              return `${icon} ${device.label || 'Not Named'}`;
-            }).join('<br>');
-            mediaContent.innerHTML = `<strong>Media Devices:</strong><br>${deviceList}`;
-          }).catch(err => {
-            console.error('Error accessing media devices:', err);
-            mediaContent.innerHTML = "Could not access media devices.";
-          });
-        } else {
-          mediaContent.innerHTML = "Media Devices API not supported.";
-        }
-      }
-
-      // Update Storage Usage with Progress Bar
-      function updateStorageUsage() {
-        const storageContent = document.getElementById('storage-usage-content');
-        if (navigator.storage && navigator.storage.estimate) {
-          navigator.storage.estimate().then(estimate => {
-            const used = estimate.usage || 0;
-            const quota = estimate.quota || 1;
-            const usedPercentage = ((used / quota) * 100).toFixed(2);
-            const usedMB = (used / (1024 * 1024)).toFixed(2);
-            const quotaMB = (quota / (1024 * 1024)).toFixed(2);
-
-            const progressBar = document.getElementById('storage-progress-bar');
-            const usageText = document.getElementById('storage-usage-text');
-
-            progressBar.style.width = `${usedPercentage}%`;
-
-            usageText.innerHTML = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
-          });
-        } else {
-          storageContent.innerHTML = "Storage API not supported by your browser.";
-        }
-      }
-
-      // Check WebGL Support with Visual Indicator
-      function checkWebGLSupport() {
-        const webglContent = document.getElementById('webgl-content');
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if (gl && gl instanceof WebGLRenderingContext) {
-          webglContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>WebGL is supported.';
-        } else {
-          webglContent.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 48px;"></i><br>WebGL is not supported.';
-        }
-      }
-
-      // Detect Ad Blocker with Visual Indicator
-      function detectAdBlocker() {
-        const adblockerContent = document.getElementById('adblocker-content');
-        const ad = document.createElement('div');
-        ad.innerHTML = '&nbsp;';
-        ad.className = 'adsbox';
-        ad.style.position = 'absolute';
-        ad.style.top = '-9999px';
-        document.body.appendChild(ad);
-        window.setTimeout(() => {
-          if (ad.offsetHeight === 0) {
-            adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ffc107; font-size: 48px;"></i><br>Ad blocker detected.';
-          } else {
-            adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>No ad blocker detected.';
-          }
-          ad.remove();
-        }, 100);
-      }
-
-      // Check Service Worker Status with Icon
-      function checkServiceWorkerStatus() {
-        const serviceworkerContent = document.getElementById('serviceworker-content');
-        if ('serviceWorker' in navigator) {
-          if (navigator.serviceWorker.controller) {
-            serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>Service Worker is active.';
-          } else {
-            serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="color: #17a2b8; font-size: 48px;"></i><br>Service Worker is supported but not registered.';
-          }
-        } else {
-          serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 48px;"></i><br>Service Workers are not supported.';
-        }
-      }
-
-      // Get WebRTC IP Addresses
-      function getWebRTCIpAddresses() {
-        const webrtcContent = document.getElementById('webrtc-content');
-        const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
-        if (!RTCPeerConnection) {
-          webrtcContent.innerHTML = "WebRTC not supported.";
-          return;
-        }
-
-        const pc = new RTCPeerConnection({ iceServers: [] });
-        pc.createDataChannel("");
-        pc.createOffer()
-          .then(offer => pc.setLocalDescription(offer))
-          .catch(err => {
-            console.error('Error creating offer:', err);
-          });
-
-        const ips = new Set();
-
-        pc.onicecandidate = event => {
-          if (event.candidate) {
-            const candidate = event.candidate.candidate;
-            const regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
-            const match = candidate.match(regex);
-            if (match) {
-              ips.add(match[0]);
-            }
-          } else {
-            // ICE gathering completed
-            if (ips.size > 0) {
-              webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
-            } else {
-              webrtcContent.innerHTML = "No IP addresses detected.";
-            }
-            pc.close();
-          }
-        };
-      }
-
-      // Ping Test Functions
-      function performPingTest() {
-        const pingCard = document.getElementById('ping-card');
-        pingCard.scrollIntoView({ behavior: 'smooth' });
-      }
-
-      function startPingTest(event) {
-        event.preventDefault(); // Prevent default button behavior if within a form
-        const addressInput = document.getElementById('ping-address');
-        const address = addressInput.value.trim();
-        if (!address) {
-          alert('Please enter a server address.');
-          return;
-        }
-
-        // Destroy existing pingChartInstance if exists
-        if (pingChartInstance) {
-          pingChartInstance.destroy();
-          pingChartInstance = null;
-        }
-
-        const pingCtx = document.getElementById('pingChart').getContext('2d');
-        pingChartInstance = new Chart(pingCtx, {
-          type: 'line',
-          data: {
-            labels: [],
-            datasets: [{
-              label: 'Ping (ms)',
-              data: [],
-              backgroundColor: 'rgba(220, 53, 69, 0.2)',
-              borderColor: '#dc3545',
-              borderWidth: 1,
-              fill: true,
-              pointRadius: 3,
-              tension: 0.1
-            }]
-          },
-          options: {
-            animation: false,
-            scales: {
-              x: { 
-                display: true, 
-                title: { 
-                  display: true, 
-                  text: 'Ping Number' 
-                } 
-              },
-              y: { 
-                beginAtZero: true, 
-                title: { 
-                  display: true, 
-                  text: 'Latency (ms)' 
-                },
-                suggestedMax: 1000
-              }
-            },
-            plugins: {
-              legend: { display: false }
-            }
-          }
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(estimate => {
+          const used = estimate.usage || 0;
+          const quota = estimate.quota || 1;
+          const usedPercentage = ((used / quota) * 100).toFixed(2);
+          const usedMB = (used / (1024 * 1024)).toFixed(2);
+          const quotaMB = (quota / (1024 * 1024)).toFixed(2);
+          diskSpaceInfo.innerText = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
+        }).catch(() => {
+          diskSpaceInfo.innerText = 'Not Available';
         });
-
-        let count = 0;
-        function ping() {
-          const startTime = Date.now();
-          // Using image ping for latency measurement
-          const img = new Image();
-          img.onload = () => {
-            const endTime = Date.now();
-            const latency = endTime - startTime;
-            pingChartInstance.data.labels.push(count + 1);
-            pingChartInstance.data.datasets[0].data.push(latency);
-            pingChartInstance.update();
-            count++;
-            if (count < 10) {
-              setTimeout(ping, 1000);
-            }
-          };
-          img.onerror = () => {
-            pingChartInstance.data.labels.push(count + 1);
-            pingChartInstance.data.datasets[0].data.push(null);
-            pingChartInstance.update();
-            count++;
-            if (count < 10) {
-              setTimeout(ping, 1000);
-            }
-          };
-          img.src = `https://${address}/favicon.ico?cache=${Math.random()}`;
-        }
-        ping();
+      } else {
+        diskSpaceInfo.innerText = 'Not Available';
       }
+    }
 
-      // Web Search Functionality
-      function performWebSearch(event) {
-        event.preventDefault(); // Prevent default button behavior if within a form
-        const searchEngine = document.getElementById('search-engine').value;
-        const query = document.getElementById('search-query').value.trim();
-        if (!query) {
-          alert('Please enter a search query.');
-          return;
-        }
-        let searchURL = '';
-        switch(searchEngine) {
-          case 'google':
-            searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            break;
-          case 'duckduckgo':
-            searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-            break;
-          case 'yahoo':
-            searchURL = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
-            break;
-          default:
-            alert('Invalid search engine selected.');
-            return;
-        }
-        window.open(searchURL, '_blank');
+    function getOS(userAgent) {
+      if (userAgent.indexOf("Win") !== -1) return "Windows";
+      if (userAgent.indexOf("Mac") !== -1) return "macOS";
+      if (userAgent.indexOf("X11") !== -1) return "UNIX";
+      if (userAgent.indexOf("Linux") !== -1) return "Linux";
+      return "Unknown";
+    }
+
+    function getDeviceType() {
+      const ua = navigator.userAgent;
+      if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+        return "Mobile";
       }
+      return "Desktop";
+    }
 
-      // JavaScript Error Analyzer Functionality
-      function startJsErrorAnalysis() {
-        const analyzerUrlInput = document.getElementById('analyzer-url');
-        const url = analyzerUrlInput.value.trim();
-        const resultDiv = document.getElementById('js-error-analyzer-result');
-        const iframe = document.getElementById('js-error-analyzer-iframe');
-
-        if (!url) {
-          alert('Please enter a website URL.');
-          return;
-        }
-
-        // Validate URL format
-        try {
-          new URL(url);
-        } catch (e) {
-          alert('Please enter a valid URL.');
-          return;
-        }
-
-        // Clear previous results
-        resultDiv.innerHTML = 'Analyzing...';
-        iframe.style.display = 'none';
-        iframe.src = '';
-
-        // Set the iframe source to the provided URL
-        iframe.src = url;
-        iframe.style.display = 'none'; // Hide the iframe
-
-        // Once the iframe loads, attempt to set window.onerror
-        iframe.onload = function() {
-          try {
-            // Check if iframe is same-origin
-            const iframeWindow = iframe.contentWindow;
-            // Attempt to access a property to test same-origin
-            void iframeWindow.location.href;
-            
-            // If no error, set window.onerror
-            iframeWindow.onerror = function(message, source, lineno, colno, error) {
-              iframeWindow.postMessage({
-                type: 'js-error',
-                error: {
-                  message: message,
-                  source: source,
-                  lineno: lineno,
-                  colno: colno
-                }
-              }, '*');
-            };
-
-            // Listen for messages from the iframe
-            window.addEventListener('message', function messageHandler(event) {
-              if (event.source !== iframeWindow) return;
-              if (event.data.type === 'js-error') {
-                displayJsError(event.data.error);
-              }
-            });
-
-            resultDiv.innerHTML = 'No JavaScript errors detected.';
-          } catch (e) {
-            // Likely a cross-origin error
-            resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server to serve the dashboard and target pages.';
-            console.error('Cross-origin error:', e);
-          }
-        };
-
-        // Function to display JavaScript errors
-        function displayJsError(error) {
-          if (resultDiv.innerHTML === 'Analyzing...') {
-            resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
-          }
-          resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
-        }
-      }
-
-      // Webcam Functionality
-      let webcamStream = null;
-      function toggleWebcam(event) {
-        event.preventDefault(); // Prevent default button behavior if within a form
-        const videoElement = document.getElementById('webcam-video');
-        const button = event.currentTarget;
-
-        if (webcamStream) {
-          // Stop the webcam
-          webcamStream.getTracks().forEach(track => track.stop());
-          webcamStream = null;
-          videoElement.srcObject = null;
-          videoElement.style.display = 'none';
-          button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
-        } else {
-          // Start the webcam
-          navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-              webcamStream = stream;
-              videoElement.srcObject = stream;
-              videoElement.style.display = 'block';
-              button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
-            })
-            .catch(err => {
-              alert('Unable to access the webcam: ' + err.message);
-              console.error('Webcam access error:', err);
-            });
-        }
-      }
-
-      // Microphone Functionality
-      let micStream = null;
-      let audioContext = null;
-      let analyserMic = null;
-      let microphoneSource = null;
-      let javascriptNodeMic = null;
-      function toggleMicrophone(event) {
-        event.preventDefault(); // Prevent default button behavior if within a form
-        const micLevel = document.getElementById('mic-level');
-        const button = event.currentTarget;
-
-        if (micStream) {
-          // Stop the microphone
-          micStream.getTracks().forEach(track => track.stop());
-          micStream = null;
-          if (audioContext) {
-            audioContext.close();
-            audioContext = null;
-          }
-          micLevel.style.width = '0%';
-          button.innerHTML = '<i class="fas fa-microphone"></i> Test Microphone';
-        } else {
-          // Start the microphone
-          navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-              micStream = stream;
-              audioContext = new (window.AudioContext || window.webkitAudioContext)();
-              analyserMic = audioContext.createAnalyser();
-              microphoneSource = audioContext.createMediaStreamSource(stream);
-              javascriptNodeMic = audioContext.createScriptProcessor(2048, 1, 1);
-
-              analyserMic.smoothingTimeConstant = 0.8;
-              analyserMic.fftSize = 1024;
-
-              microphoneSource.connect(analyserMic);
-              analyserMic.connect(javascriptNodeMic);
-              javascriptNodeMic.connect(audioContext.destination);
-
-              javascriptNodeMic.onaudioprocess = function() {
-                const array = new Uint8Array(analyserMic.frequencyBinCount);
-                analyserMic.getByteFrequencyData(array);
-                let values = 0;
-                const length = array.length;
-                for (let i = 0; i < length; i++) {
-                  values += array[i];
-                }
-                const average = values / length;
-                const percentage = Math.min(100, Math.max(0, average));
-                micLevel.style.width = `${percentage}%`;
-              };
-
-              button.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Microphone';
-            })
-            .catch(err => {
-              alert('Unable to access the microphone: ' + err.message);
-              console.error('Microphone access error:', err);
-            });
-        }
-      }
-
-      // Public IP Address Functionality
-      function updatePublicIP() {
-        const publicIPElement = document.getElementById('public-ip');
-        publicIPElement.innerHTML = 'Fetching...';
-        fetch('https://api.ipify.org?format=json')
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`Network response was not ok (${response.status})`);
-            }
-            return response.json();
-          })
-          .then(data => {
-            publicIPElement.innerHTML = data.ip;
-          })
-          .catch(err => {
-            publicIPElement.innerHTML = 'Unable to fetch IP.';
-            console.error('Public IP fetch error:', err);
-          });
-      }
-
-      // DNS Lookup Functionality
-      function performDNSLookup() {
-        const domainInput = document.getElementById('dns-domain');
-        const domain = domainInput.value.trim();
-        const resultDiv = document.getElementById('dns-result');
-
-        if (!domain) {
-          alert('Please enter a domain name.');
-          return;
-        }
-
-        resultDiv.innerHTML = 'Looking up...';
-
-        // Perform DNS-over-HTTPS lookup using Google's API
-        fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/dns-json'
-          }
+    function updateInternetConnectivity() {
+      const internetStatusIcon = document.getElementById('internet-status-icon');
+      const internetStatusText = document.getElementById('internet-status-text');
+      fetch('https://www.google.com/', { mode: 'no-cors' })
+        .then(() => {
+          internetStatusIcon.style.color = '#28a745';
+          internetStatusText.innerHTML = 'Online';
         })
+        .catch(() => {
+          internetStatusIcon.style.color = '#dc3545';
+          internetStatusText.innerHTML = 'Offline';
+        });
+    }
+
+    let fpsData = [];
+    let fpsTimestamps = [];
+    function updateFPSChart() {
+      const now = performance.now();
+      while (fpsTimestamps.length > 0 && fpsTimestamps[0] <= now - 1000) {
+        fpsTimestamps.shift();
+      }
+      fpsTimestamps.push(now);
+      const fps = fpsTimestamps.length;
+      fpsData.push(fps);
+      if (fpsData.length > 30) {
+        fpsData.shift();
+      }
+      fpsChart.data.datasets[0].data = fpsData;
+      fpsChart.update();
+    }
+
+    function trackFPS() {
+      requestAnimationFrame(() => {
+        updateFPSChart();
+        trackFPS();
+      });
+    }
+
+    const fpsCtx = document.getElementById('performanceChart').getContext('2d');
+    const fpsChart = new Chart(fpsCtx, {
+      type: 'line',
+      data: {
+        labels: Array(30).fill(''),
+        datasets: [{
+          label: 'FPS',
+          data: fpsData,
+          backgroundColor: 'rgba(255, 193, 7, 0.2)',
+          borderColor: '#ffc107',
+          borderWidth: 1,
+          fill: true,
+          pointRadius: 0,
+          tension: 0.4
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          x: { display: false },
+          y: { beginAtZero: true, max: 60 }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+    trackFPS();
+
+    async function measureNetworkSpeed() {
+      const startTime = performance.now();
+      const response = await fetch('5MB.bin', { cache: 'no-cache' });
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+      const reader = response.body.getReader();
+      let receivedLength = 0;
+      while(true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        receivedLength += value.length;
+      }
+      const endTime = performance.now();
+      const durationInSeconds = (endTime - startTime) / 1000;
+      const bitsLoaded = receivedLength * 8;
+      const speedBps = bitsLoaded / durationInSeconds;
+      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+      return speedMbps;
+    }
+
+    let networkSpeedData = [];
+    const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
+    const networkSpeedChart = new Chart(networkSpeedCtx, {
+      type: 'line',
+      data: {
+        labels: Array(10).fill(''),
+        datasets: [{
+          label: 'Speed (Mbps)',
+          data: networkSpeedData,
+          backgroundColor: 'rgba(40, 167, 69, 0.2)',
+          borderColor: '#28a745',
+          borderWidth: 1,
+          fill: true,
+          pointRadius: 3,
+          tension: 0.4
+        }]
+      },
+      options: {
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { display: false },
+          y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Speed: ${context.parsed.y} Mbps`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    async function updateNetworkSpeedChart() {
+      try {
+        const speedMbps = await measureNetworkSpeed();
+        networkSpeedData.push(speedMbps);
+        if (networkSpeedData.length > 10) {
+          networkSpeedData.shift();
+          networkSpeedChart.data.labels.shift();
+        }
+        networkSpeedChart.data.datasets[0].data = networkSpeedData;
+        networkSpeedChart.update();
+        const currentSpeedElement = document.getElementById('current-speed');
+        currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
+      } catch (error) {
+        console.error('Network speed test failed:', error);
+        const currentSpeedElement = document.getElementById('current-speed');
+        currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
+      }
+    }
+    updateNetworkSpeedChart();
+    setInterval(updateNetworkSpeedChart, 60000);
+
+    function updateBatteryStatus() {
+      const batteryContent = document.getElementById('battery-content');
+      const batteryProgressBar = document.getElementById('battery-progress-bar');
+      const batteryStatusText = document.getElementById('battery-status-text');
+      if (navigator.getBattery) {
+        navigator.getBattery().then(battery => {
+          const batteryLevel = (battery.level * 100).toFixed(0);
+          const chargingStatus = battery.charging ? "Charging" : "Not Charging";
+          batteryProgressBar.style.width = `${batteryLevel}%`;
+          batteryProgressBar.style.backgroundColor = battery.charging ? '#ffc107' : '#28a745';
+          batteryStatusText.innerHTML = `${batteryLevel}% - ${chargingStatus}`;
+        });
+      } else {
+        batteryContent.innerHTML = "Battery status not supported by your browser.";
+      }
+    }
+
+    function updateScreenResolution() {
+      const screenRectangle = document.getElementById('screen-rectangle');
+      const screenDimensionsText = document.getElementById('screen-dimensions-text');
+      const width = window.screen.width;
+      const height = window.screen.height;
+      const maxDimension = Math.max(width, height);
+      const scaledWidth = (width / maxDimension) * 200;
+      const scaledHeight = (height / maxDimension) * 200;
+      screenRectangle.style.width = `${scaledWidth}px`;
+      screenRectangle.style.height = `${scaledHeight}px`;
+      screenDimensionsText.innerHTML = `<strong>${width}px</strong> x <strong>${height}px</strong>`;
+    }
+
+    let mapInitialized = false;
+    let mapInstance;
+    function updateLocation() {
+      const mapDiv = document.getElementById('map');
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const { latitude, longitude } = position.coords;
+            if (!mapInitialized) {
+              mapInstance = L.map('map').setView([latitude, longitude], 13);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+              }).addTo(mapInstance);
+              L.marker([latitude, longitude]).addTo(mapInstance)
+                .bindPopup('You are here.')
+                .openPopup();
+              mapInitialized = true;
+            } else {
+              mapInstance.setView([latitude, longitude], 13);
+              L.marker([latitude, longitude]).addTo(mapInstance)
+                .bindPopup('You are here.')
+                .openPopup();
+            }
+          },
+          () => {
+            mapDiv.innerHTML = "Location access denied.";
+          }
+        );
+      } else {
+        mapDiv.innerHTML = "Geolocation not supported.";
+      }
+    }
+
+    function updateTimeZone() {
+      const timezoneInfo = document.getElementById('timezone-info');
+      const localeInfo = document.getElementById('locale-info');
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const locale = navigator.language;
+      timezoneInfo.innerText = timeZone;
+      localeInfo.innerText = locale;
+    }
+
+    let memoryUsageData = [];
+    function updateMemoryUsage() {
+      const memoryUsage = performance.memory ? (performance.memory.usedJSHeapSize / 1048576).toFixed(2) : null;
+      if (memoryUsage !== null) {
+        memoryUsageData.push(memoryUsage);
+        if (memoryUsageData.length > 30) {
+          memoryUsageData.shift();
+        }
+        memoryChart.data.datasets[0].data = memoryUsageData;
+        memoryChart.update();
+      } else {
+        console.log('Memory API not supported in this browser.');
+      }
+    }
+
+    const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+    const memoryChart = new Chart(memoryCtx, {
+      type: 'line',
+      data: {
+        labels: Array(30).fill(''),
+        datasets: [{
+          label: 'Memory Usage (MB)',
+          data: memoryUsageData,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: '#36a2eb',
+          borderWidth: 1,
+          fill: true,
+          pointRadius: 0,
+          tension: 0.4
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          x: { display: false },
+          y: { beginAtZero: true }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+    setInterval(updateMemoryUsage, 1000);
+
+    function updateSensorsAvailability() {
+      const sensorsContent = document.getElementById('sensors-content');
+      const sensors = [];
+      if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Accelerometer</li>');
+      if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Gyroscope</li>');
+      if ('Magnetometer' in window) sensors.push('<li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>');
+      if (sensors.length > 0) {
+        sensorsContent.innerHTML = `<ul style="list-style: none; padding-left: 0;">${sensors.join('')}</ul>`;
+      } else {
+        sensorsContent.innerHTML = "No motion sensors available.";
+      }
+    }
+
+    function updateMediaDevices() {
+      const mediaDevicesList = document.getElementById('media-devices-list');
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+          const deviceList = devices.map(device => {
+            let icon = '';
+            if (device.kind === 'audioinput') icon = '<i class="fas fa-microphone" style="color: #17a2b8;"></i>';
+            if (device.kind === 'audiooutput') icon = '<i class="fas fa-volume-up" style="color: #17a2b8;"></i>';
+            if (device.kind === 'videoinput') icon = '<i class="fas fa-video" style="color: #17a2b8;"></i>';
+            return `<li>${icon} ${device.label || 'Not Named'}</li>`;
+          }).join('');
+          mediaDevicesList.innerHTML = `<ul style="list-style: none; padding-left: 0;">${deviceList}</ul>`;
+        }).catch(err => {
+          console.error('Error accessing media devices:', err);
+          mediaDevicesList.innerHTML = "Could not access media devices.";
+        });
+      } else {
+        mediaDevicesList.innerHTML = "Media Devices API not supported.";
+      }
+    }
+
+    function updateStorageUsage() {
+      const storageContent = document.getElementById('storage-usage-content');
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(estimate => {
+          const used = estimate.usage || 0;
+          const quota = estimate.quota || 1;
+          const usedPercentage = ((used / quota) * 100).toFixed(2);
+          const usedMB = (used / (1024 * 1024)).toFixed(2);
+          const quotaMB = (quota / (1024 * 1024)).toFixed(2);
+          const progressBar = document.getElementById('storage-progress-bar');
+          const usageText = document.getElementById('storage-usage-text');
+          progressBar.style.width = `${usedPercentage}%`;
+          progressBar.style.backgroundColor = usedPercentage > 80 ? '#dc3545' : '#28a745';
+          usageText.innerHTML = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
+        });
+      } else {
+        storageContent.innerHTML = "Storage API not supported by your browser.";
+      }
+    }
+
+    function checkWebGLSupport() {
+      const webglContent = document.getElementById('webgl-content');
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (gl && gl instanceof WebGLRenderingContext) {
+        webglContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>WebGL is supported.';
+      } else {
+        webglContent.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 48px;"></i><br>WebGL is not supported.';
+      }
+    }
+
+    function detectAdBlocker() {
+      const adblockerContent = document.getElementById('adblocker-content');
+      const ad = document.createElement('div');
+      ad.innerHTML = '&nbsp;';
+      ad.className = 'adsbox';
+      ad.style.position = 'absolute';
+      ad.style.top = '-9999px';
+      document.body.appendChild(ad);
+      window.setTimeout(() => {
+        if (ad.offsetHeight === 0) {
+          adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ffc107; font-size: 48px;"></i><br>Ad blocker detected.';
+        } else {
+          adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>No ad blocker detected.';
+        }
+        ad.remove();
+      }, 100);
+    }
+
+    function checkServiceWorkerStatus() {
+      const serviceworkerContent = document.getElementById('serviceworker-content');
+      if ('serviceWorker' in navigator) {
+        if (navigator.serviceWorker.controller) {
+          serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>Service Worker is active.';
+        } else {
+          serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="color: #17a2b8; font-size: 48px;"></i><br>Service Worker is supported but not registered.';
+        }
+      } else {
+        serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 48px;"></i><br>Service Workers are not supported.';
+      }
+    }
+
+    function getWebRTCIpAddresses() {
+      const webrtcContent = document.getElementById('webrtc-content');
+      const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
+      if (!RTCPeerConnection) {
+        webrtcContent.innerHTML = "WebRTC not supported.";
+        return;
+      }
+      const pc = new RTCPeerConnection({ iceServers: [] });
+      pc.createDataChannel("");
+      pc.createOffer()
+        .then(offer => pc.setLocalDescription(offer))
+        .catch(err => {
+          console.error('Error creating offer:', err);
+        });
+      const ips = new Set();
+      pc.onicecandidate = event => {
+        if (event.candidate) {
+          const candidate = event.candidate.candidate;
+          const regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
+          const match = candidate.match(regex);
+          if (match) {
+            ips.add(match[0]);
+          }
+        } else {
+          if (ips.size > 0) {
+            webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
+          } else {
+            webrtcContent.innerHTML = "No IP addresses detected.";
+          }
+          pc.close();
+        }
+      };
+    }
+
+    function performPingTest() {
+      const pingCard = document.getElementById('ping-card');
+      pingCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    let pingChartInstance = null;
+    function startPingTest(event) {
+      event.preventDefault();
+      const addressInput = document.getElementById('ping-address');
+      const address = addressInput.value.trim();
+      if (!address) {
+        alert('Please enter a server address.');
+        return;
+      }
+      if (pingChartInstance) {
+        pingChartInstance.destroy();
+        pingChartInstance = null;
+      }
+      const pingCtx = document.getElementById('pingChart').getContext('2d');
+      pingChartInstance = new Chart(pingCtx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Ping (ms)',
+            data: [],
+            backgroundColor: 'rgba(220, 53, 69, 0.2)',
+            borderColor: '#dc3545',
+            borderWidth: 1,
+            fill: true,
+            pointRadius: 3,
+            tension: 0.1
+          }]
+        },
+        options: {
+          animation: false,
+          scales: {
+            x: { display: true, title: { display: true, text: 'Ping Number' } },
+            y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' }, suggestedMax: 1000 }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+      let count = 0;
+      function ping() {
+        const startTime = Date.now();
+        const img = new Image();
+        img.onload = () => {
+          const endTime = Date.now();
+          const latency = endTime - startTime;
+          pingChartInstance.data.labels.push(count + 1);
+          pingChartInstance.data.datasets[0].data.push(latency);
+          pingChartInstance.update();
+          count++;
+          if (count < 10) {
+            setTimeout(ping, 1000);
+          }
+        };
+        img.onerror = () => {
+          pingChartInstance.data.labels.push(count + 1);
+          pingChartInstance.data.datasets[0].data.push(null);
+          pingChartInstance.update();
+          count++;
+          if (count < 10) {
+            setTimeout(ping, 1000);
+          }
+        };
+        img.src = `https://${address}/favicon.ico?cache=${Math.random()}`;
+      }
+      ping();
+    }
+
+    function performWebSearch(event) {
+      event.preventDefault();
+      const searchEngine = document.getElementById('search-engine').value;
+      const query = document.getElementById('search-query').value.trim();
+      if (!query) {
+        alert('Please enter a search query.');
+        return;
+      }
+      let searchURL = '';
+      switch(searchEngine) {
+        case 'google':
+          searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+          break;
+        case 'duckduckgo':
+          searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+          break;
+        case 'yahoo':
+          searchURL = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+          break;
+        default:
+          alert('Invalid search engine selected.');
+          return;
+      }
+      window.open(searchURL, '_blank');
+    }
+
+    function startJsErrorAnalysis() {
+      const analyzerUrlInput = document.getElementById('analyzer-url');
+      const url = analyzerUrlInput.value.trim();
+      const resultDiv = document.getElementById('js-error-analyzer-result');
+      const iframe = document.getElementById('js-error-analyzer-iframe');
+      if (!url) {
+        alert('Please enter a website URL.');
+        return;
+      }
+      try {
+        new URL(url);
+      } catch (e) {
+        alert('Please enter a valid URL.');
+        return;
+      }
+      resultDiv.innerHTML = 'Analyzing...';
+      iframe.style.display = 'none';
+      iframe.src = '';
+      iframe.src = url;
+      iframe.style.display = 'none';
+      iframe.onload = function() {
+        try {
+          const iframeWindow = iframe.contentWindow;
+          void iframeWindow.location.href;
+          iframeWindow.onerror = function(message, source, lineno, colno, error) {
+            iframeWindow.postMessage({
+              type: 'js-error',
+              error: { message: message, source: source, lineno: lineno, colno: colno }
+            }, '*');
+          };
+          window.addEventListener('message', function messageHandler(event) {
+            if (event.source !== iframeWindow) return;
+            if (event.data.type === 'js-error') {
+              displayJsError(event.data.error);
+            }
+          });
+          resultDiv.innerHTML = 'No JavaScript errors detected.';
+        } catch (e) {
+          resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.';
+          console.error('Cross-origin error:', e);
+        }
+      };
+      function displayJsError(error) {
+        if (resultDiv.innerHTML === 'Analyzing...') {
+          resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
+        }
+        resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
+      }
+    }
+
+    let webcamStream = null;
+    function toggleWebcam(event) {
+      event.preventDefault();
+      const videoElement = document.getElementById('webcam-video');
+      const button = event.currentTarget;
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+        videoElement.srcObject = null;
+        videoElement.style.display = 'none';
+        button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
+      } else {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(stream => {
+            webcamStream = stream;
+            videoElement.srcObject = stream;
+            videoElement.style.display = 'block';
+            button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
+          })
+          .catch(err => {
+            alert('Unable to access the webcam: ' + err.message);
+            console.error('Webcam access error:', err);
+          });
+      }
+    }
+
+    let micStream = null;
+    let audioContext = null;
+    let analyserMic = null;
+    let microphoneSource = null;
+    let javascriptNodeMic = null;
+    function toggleMicrophone(event) {
+      event.preventDefault();
+      const micLevel = document.getElementById('mic-level');
+      const button = event.currentTarget;
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+        if (audioContext) {
+          audioContext.close();
+          audioContext = null;
+        }
+        micLevel.style.width = '0%';
+        button.innerHTML = '<i class="fas fa-microphone"></i> Test Microphone';
+      } else {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            micStream = stream;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyserMic = audioContext.createAnalyser();
+            microphoneSource = audioContext.createMediaStreamSource(stream);
+            javascriptNodeMic = audioContext.createScriptProcessor(2048, 1, 1);
+            analyserMic.smoothingTimeConstant = 0.8;
+            analyserMic.fftSize = 1024;
+            microphoneSource.connect(analyserMic);
+            analyserMic.connect(javascriptNodeMic);
+            javascriptNodeMic.connect(audioContext.destination);
+            javascriptNodeMic.onaudioprocess = function() {
+              const array = new Uint8Array(analyserMic.frequencyBinCount);
+              analyserMic.getByteFrequencyData(array);
+              let values = 0;
+              const length = array.length;
+              for (let i = 0; i < length; i++) {
+                values += array[i];
+              }
+              const average = values / length;
+              const percentage = Math.min(100, Math.max(0, average));
+              micLevel.style.width = `${percentage}%`;
+            };
+            button.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Microphone';
+          })
+          .catch(err => {
+            alert('Unable to access the microphone: ' + err.message);
+            console.error('Microphone access error:', err);
+          });
+      }
+    }
+
+    function updatePublicIP() {
+      const publicIPElement = document.getElementById('public-ip');
+      publicIPElement.innerHTML = 'Fetching...';
+      fetch('https://api.ipify.org?format=json')
         .then(response => {
           if (!response.ok) {
             throw new Error(`Network response was not ok (${response.status})`);
@@ -1516,234 +1582,100 @@
           return response.json();
         })
         .then(data => {
-          if (data.Status === 0 && data.Answer) {
-            const ips = data.Answer
-              .filter(record => record.type === 1) // Type A records
-              .map(record => record.data);
-            if (ips.length > 0) {
-              resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
-            } else {
-              resultDiv.innerHTML = 'No A records found.';
-            }
-          } else {
-            resultDiv.innerHTML = 'DNS lookup failed or no records found.';
-          }
+          publicIPElement.innerHTML = data.ip;
         })
         .catch(err => {
-          resultDiv.innerHTML = 'Error performing DNS lookup.';
-          console.error('DNS lookup error:', err);
+          publicIPElement.innerHTML = 'Unable to fetch IP.';
+          console.error('Public IP fetch error:', err);
         });
+    }
+
+    function performDNSLookup() {
+      const domainInput = document.getElementById('dns-domain');
+      const domain = domainInput.value.trim();
+      const resultDiv = document.getElementById('dns-result');
+      if (!domain) {
+        alert('Please enter a domain name.');
+        return;
       }
-
-      // JavaScript Error Analyzer Functionality
-      function startJsErrorAnalysis() {
-        const analyzerUrlInput = document.getElementById('analyzer-url');
-        const url = analyzerUrlInput.value.trim();
-        const resultDiv = document.getElementById('js-error-analyzer-result');
-        const iframe = document.getElementById('js-error-analyzer-iframe');
-
-        if (!url) {
-          alert('Please enter a website URL.');
-          return;
+      resultDiv.innerHTML = 'Looking up...';
+      fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/dns-json'
         }
-
-        // Validate URL format
-        try {
-          new URL(url);
-        } catch (e) {
-          alert('Please enter a valid URL.');
-          return;
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok (${response.status})`);
         }
-
-        // Clear previous results
-        resultDiv.innerHTML = 'Analyzing...';
-        iframe.style.display = 'none';
-        iframe.src = '';
-
-        // Set the iframe source to the provided URL
-        iframe.src = url;
-        iframe.style.display = 'none'; // Hide the iframe
-
-        // Once the iframe loads, attempt to set window.onerror
-        iframe.onload = function() {
-          try {
-            // Check if iframe is same-origin
-            const iframeWindow = iframe.contentWindow;
-            // Attempt to access a property to test same-origin
-            void iframeWindow.location.href;
-            
-            // If no error, set window.onerror
-            iframeWindow.onerror = function(message, source, lineno, colno, error) {
-              iframeWindow.postMessage({
-                type: 'js-error',
-                error: {
-                  message: message,
-                  source: source,
-                  lineno: lineno,
-                  colno: colno
-                }
-              }, '*');
-            };
-
-            // Listen for messages from the iframe
-            window.addEventListener('message', function messageHandler(event) {
-              if (event.source !== iframeWindow) return;
-              if (event.data.type === 'js-error') {
-                displayJsError(event.data.error);
-              }
-            });
-
-            resultDiv.innerHTML = 'No JavaScript errors detected.';
-          } catch (e) {
-            // Likely a cross-origin error
-            resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server to serve the dashboard and target pages.';
-            console.error('Cross-origin error:', e);
+        return response.json();
+      })
+      .then(data => {
+        if (data.Status === 0 && data.Answer) {
+          const ips = data.Answer.filter(record => record.type === 1).map(record => record.data);
+          if (ips.length > 0) {
+            resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
+          } else {
+            resultDiv.innerHTML = 'No A records found.';
           }
-        };
-
-        // Function to display JavaScript errors
-        function displayJsError(error) {
-          if (resultDiv.innerHTML === 'Analyzing...') {
-            resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
-          }
-          resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
-        }
-      }
-
-      // Webcam Functionality
-      function toggleWebcam(event) {
-        event.preventDefault(); // Prevent default button behavior if within a form
-        const videoElement = document.getElementById('webcam-video');
-        const button = event.currentTarget;
-
-        if (webcamStream) {
-          // Stop the webcam
-          webcamStream.getTracks().forEach(track => track.stop());
-          webcamStream = null;
-          videoElement.srcObject = null;
-          videoElement.style.display = 'none';
-          button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
         } else {
-          // Start the webcam
-          navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-              webcamStream = stream;
-              videoElement.srcObject = stream;
-              videoElement.style.display = 'block';
-              button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
-            })
-            .catch(err => {
-              alert('Unable to access the webcam: ' + err.message);
-              console.error('Webcam access error:', err);
-            });
+          resultDiv.innerHTML = 'DNS lookup failed or no records found.';
         }
-      }
+      })
+      .catch(err => {
+        resultDiv.innerHTML = 'Error performing DNS lookup.';
+        console.error('DNS lookup error:', err);
+      });
+    }
 
-      // Microphone Functionality
-      function toggleMicrophone(event) {
-        event.preventDefault(); // Prevent default button behavior if within a form
-        const micLevel = document.getElementById('mic-level');
-        const button = event.currentTarget;
-
-        if (micStream) {
-          // Stop the microphone
-          micStream.getTracks().forEach(track => track.stop());
-          micStream = null;
-          if (audioContext) {
-            audioContext.close();
-            audioContext = null;
-          }
-          micLevel.style.width = '0%';
-          button.innerHTML = '<i class="fas fa-microphone"></i> Test Microphone';
-        } else {
-          // Start the microphone
-          navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-              micStream = stream;
-              audioContext = new (window.AudioContext || window.webkitAudioContext)();
-              analyserMic = audioContext.createAnalyser();
-              microphoneSource = audioContext.createMediaStreamSource(stream);
-              javascriptNodeMic = audioContext.createScriptProcessor(2048, 1, 1);
-
-              analyserMic.smoothingTimeConstant = 0.8;
-              analyserMic.fftSize = 1024;
-
-              microphoneSource.connect(analyserMic);
-              analyserMic.connect(javascriptNodeMic);
-              javascriptNodeMic.connect(audioContext.destination);
-
-              javascriptNodeMic.onaudioprocess = function() {
-                const array = new Uint8Array(analyserMic.frequencyBinCount);
-                analyserMic.getByteFrequencyData(array);
-                let values = 0;
-                const length = array.length;
-                for (let i = 0; i < length; i++) {
-                  values += array[i];
-                }
-                const average = values / length;
-                const percentage = Math.min(100, Math.max(0, average));
-                micLevel.style.width = `${percentage}%`;
-              };
-
-              button.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Microphone';
-            })
-            .catch(err => {
-              alert('Unable to access the microphone: ' + err.message);
-              console.error('Microphone access error:', err);
-            });
-        }
-      }
-
-      // Initialize all functionalities
-      function initializeDashboard() {
-        updateSystemInfo();
-        updateInternetConnectivity();
-        updateBatteryStatus();
-        updateScreenResolution();
-        updateLocation();
-        updateTimeZone();
-        updateMemoryUsage();
-        updateSensorsAvailability();
-        updateMediaDevices();
-        checkWebGLSupport();
-        detectAdBlocker();
-        checkServiceWorkerStatus();
-        getWebRTCIpAddresses();
-        updateJsErrors();
-        updatePublicIP(); // Fetch public IP on load
-        updateVisitorCount(); // Initialize visitor count
-
-        // Set Intervals for Live Updates
-        setInterval(updateInternetConnectivity, 5000); // Update internet connectivity every 5 seconds
-        setInterval(updateBatteryStatus, 60000); // Update battery status every 60 seconds
-        setInterval(updateSystemInfo, 60000); // Update system info every 60 seconds
-      }
-
-      // Handle Window Resize for Screen Resolution
-      window.addEventListener('resize', updateScreenResolution);
+    function initializeDashboard() {
+      updateSystemInfo();
+      updateInternetConnectivity();
+      updateBatteryStatus();
       updateScreenResolution();
+      updateLocation();
+      updateTimeZone();
+      updateMemoryUsage();
+      updateSensorsAvailability();
+      updateMediaDevices();
+      checkWebGLSupport();
+      detectAdBlocker();
+      checkServiceWorkerStatus();
+      getWebRTCIpAddresses();
+      updateJsErrors();
+      updatePublicIP();
+      updateVisitorCount();
+      setInterval(updateInternetConnectivity, 5000);
+      setInterval(updateBatteryStatus, 60000);
+      setInterval(updateSystemInfo, 60000);
+    }
 
-      // Start Initialization
-      initializeDashboard();
+    window.addEventListener('resize', updateScreenResolution);
+    updateScreenResolution();
+    initializeDashboard();
 
-      // Expose functions to global scope for onclick handlers
-      window.copySystemInfo = copySystemInfo;
-      window.clearLocalStorage = clearLocalStorage;
-      window.clearSessionStorage = clearSessionStorage;
-      window.clearCookies = clearCookies;
-      window.resetAppData = resetAppData;
-      window.reloadPage = reloadPage;
-      window.clearErrors = clearErrors;
-      window.performPingTest = performPingTest;
-      window.startPingTest = startPingTest;
-      window.performWebSearch = performWebSearch;
-      window.startJsErrorAnalysis = startJsErrorAnalysis;
-      window.toggleWebcam = toggleWebcam;
-      window.toggleMicrophone = toggleMicrophone;
-      window.updatePublicIP = updatePublicIP;
-      window.performDNSLookup = performDNSLookup;
-      window.getWebRTCIpAddresses = getWebRTCIpAddresses;
-    });
+    document.getElementById('copy-system-info-btn').addEventListener('click', copySystemInfo);
+    document.getElementById('clear-local-storage-btn').addEventListener('click', clearLocalStorage);
+    document.getElementById('clear-session-storage-btn').addEventListener('click', clearSessionStorage);
+    document.getElementById('clear-cookies-btn').addEventListener('click', clearCookies);
+    document.getElementById('reset-app-data-btn').addEventListener('click', resetAppData);
+    document.getElementById('reload-page-btn').addEventListener('click', reloadPage);
+    document.getElementById('retest-connectivity-btn').addEventListener('click', updateInternetConnectivity);
+    document.getElementById('retest-location-btn').addEventListener('click', updateLocation);
+    document.getElementById('retest-media-devices-btn').addEventListener('click', updateMediaDevices);
+    document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
+    document.getElementById('clear-errors-btn').addEventListener('click', clearErrors);
+    document.getElementById('perform-ping-test-btn').addEventListener('click', performPingTest);
+
+    document.getElementById('search-button').addEventListener('click', performWebSearch);
+    document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
+    document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
+    document.getElementById('dns-lookup-btn').addEventListener('click', performDNSLookup);
+    document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
+
+    document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
+    document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
   </script>
 </body>
 </html>
