@@ -213,11 +213,13 @@
       transform: translateY(-5px);
       box-shadow: 0 8px 30px rgba(0,0,0,0.6);
     }
+    /* Softer gradient overlays */
     .card::before {
       content: "";
       position: absolute;
       top: 0; left:0; right:0; bottom:0;
-      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+      /* Softer white overlay */
+      background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
       pointer-events: none;
     }
     .card::after {
@@ -225,10 +227,11 @@
       position: absolute;
       width: 100px;
       height: 100px;
-      background: radial-gradient(circle at center, #6f42c1 0%, transparent 70%);
+      /* Softer radial gradient highlight */
+      background: radial-gradient(circle at center, rgba(111,66,193,0.2) 0%, transparent 80%);
       top: -20px;
       right: -20px;
-      opacity: 0.5;
+      opacity: 0.4;
       pointer-events: none;
     }
     .card h2 {
@@ -853,7 +856,6 @@
     // Modified resetAppData to preserve visitor count
     function resetAppData() {
       let count = localStorage.getItem('visitorCount');
-      // Manually clear local storage except visitorCount
       const keys = Object.keys(localStorage);
       for (let i=0; i<keys.length; i++) {
         if (keys[i] !== 'visitorCount') {
@@ -924,7 +926,6 @@
       cookiesEnabledInfo.innerText = cookiesEnabled;
       touchSupportInfo.innerText = touchSupport;
 
-      // Only shows browser storage usage, not entire system disk usage.
       if (navigator.storage && navigator.storage.estimate) {
         navigator.storage.estimate().then(estimate => {
           const used = estimate.usage || 0;
