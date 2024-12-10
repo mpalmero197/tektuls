@@ -213,12 +213,10 @@
       transform: translateY(-5px);
       box-shadow: 0 8px 30px rgba(0,0,0,0.6);
     }
-    /* Softer gradient overlays */
     .card::before {
       content: "";
       position: absolute;
       top: 0; left:0; right:0; bottom:0;
-      /* Softer white overlay */
       background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
       pointer-events: none;
     }
@@ -227,7 +225,6 @@
       position: absolute;
       width: 100px;
       height: 100px;
-      /* Softer radial gradient highlight */
       background: radial-gradient(circle at center, rgba(111,66,193,0.2) 0%, transparent 80%);
       top: -20px;
       right: -20px;
@@ -504,7 +501,6 @@
       height: 100%;
     }
 
-    /* Ping Test styling */
     .ping-test input[type="text"] {
       width: 100%;
       padding: 8px;
@@ -853,7 +849,6 @@
       alert('Cookies cleared.');
     }
 
-    // Modified resetAppData to preserve visitor count
     function resetAppData() {
       let count = localStorage.getItem('visitorCount');
       const keys = Object.keys(localStorage);
@@ -974,6 +969,7 @@
 
     let fpsData = [];
     let fpsTimestamps = [];
+
     function updateFPSChart() {
       const now = performance.now();
       while (fpsTimestamps.length > 0 && fpsTimestamps[0] <= now - 1000) {
@@ -985,6 +981,12 @@
       if (fpsData.length > 30) {
         fpsData.shift();
       }
+
+      // Dynamically adjust the chart's y-axis max
+      const maxFPS = Math.max(...fpsData);
+      const nextHundred = Math.ceil(maxFPS / 100) * 100 || 100;
+      fpsChart.options.scales.y.max = nextHundred;
+
       fpsChart.data.datasets[0].data = fpsData;
       fpsChart.update();
     }
@@ -1016,7 +1018,7 @@
         animation: false,
         scales: {
           x: { display: false },
-          y: { beginAtZero: true, max: 60 }
+          y: { beginAtZero: true }
         },
         plugins: {
           legend: { display: false }
