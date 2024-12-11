@@ -224,7 +224,7 @@
       display: flex;
       flex-direction: column;
       border-right: 1px solid #333;
-      transition: transform var(--transition-speed), margin-left var(--transition-speed);
+      transition: transform var(--transition-speed), margin-left var(--transition-speed), width var(--transition-speed);
       position: fixed;
       top: 64px; /* Height of top-bar */
       left: 0;
@@ -621,19 +621,34 @@
     }
 
     @media (max-width: 768px) {
+      /* Sidebar Adjustments for Mobile */
       .sidebar {
-        width: var(--sidebar-width);
+        width: 80%; /* Sidebar takes 80% width on mobile */
         padding: 15px;
         border-right: none;
         border-bottom: 1px solid #333;
         height: calc(100vh - 64px - 60px); /* Adjust based on top-bar and footer heights */
+        transform: translateX(-100%); /* Hidden by default */
       }
 
-      .content {
-        padding: 15px;
-        height: calc(100vh - 64px - 60px);
+      .sidebar.active {
+        transform: translateX(0);
       }
 
+      .main-container.shifted {
+        margin-left: 80%; /* Push main content by 80% when sidebar is active */
+      }
+
+      /* Adjust overlay to cover remaining 20% */
+      .overlay {
+        display: none;
+      }
+
+      .overlay.active {
+        display: block;
+      }
+
+      /* Cards Layout: Single Column */
       .dashboard-grid {
         grid-template-columns: 1fr;
       }
@@ -649,6 +664,29 @@
       .footer {
         flex-direction: column;
         gap: 15px;
+      }
+
+      /* Adjust Top Bar for Mobile */
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .top-bar .search-container {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 15px;
+      }
+
+      .top-bar button {
+        width: 100%;
+        border-radius: 4px;
+        margin-top: 10px;
+      }
+
+      .sidebar button {
+        font-size: 1rem;
+        padding: 10px 15px;
       }
     }
   </style>
@@ -748,11 +786,9 @@
           <div class="card" id="network-info-card">
             <h2><i class="fas fa-network-wired"></i> Network Information</h2>
             <div class="card-content">
-              <div class="network-info">
-                <strong>Public IP Address:</strong>
-                <p id="public-ip" style="margin-top: 5px; color: #198754;">Fetching...</p>
-                <button id="refresh-ip-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-sync-alt"></i> Refresh IP</button>
-              </div>
+              <strong>Public IP Address:</strong>
+              <p id="public-ip" style="margin-top: 5px; color: #198754;">Fetching...</p>
+              <button id="refresh-ip-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-sync-alt"></i> Refresh IP</button>
               <div class="network-info" style="margin-top: 20px;">
                 <strong>DNS Lookup:</strong>
                 <input type="text" id="dns-domain" class="input-field" placeholder="Enter domain name (e.g., example.com)">
