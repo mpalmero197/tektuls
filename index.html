@@ -528,6 +528,36 @@
     .ping-test button:hover {
       background-color: #218838;
     }
+
+    /* New style classes for the Accessibility & Compatibility cards */
+    .check-button {
+      padding: 10px;
+      background-color: #17a2b8;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .check-button:hover {
+      background-color: #138496;
+    }
+    .check-input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 14px;
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+
   </style>
 </head>
 <body>
@@ -568,6 +598,7 @@
         <p class="hero__subtitle">A full suite of interactive troubleshooting tools at your fingertips.</p>
       </div>
 
+      <!-- Network Tools Section -->
       <div class="category-section">
         <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
         <div class="dashboard-grid">
@@ -620,6 +651,7 @@
         </div>
       </div>
 
+      <!-- System Information Section -->
       <div class="category-section">
         <h2><i class="fas fa-desktop"></i> System Information</h2>
         <div class="dashboard-grid">
@@ -680,17 +712,14 @@
         </div>
       </div>
 
+      <!-- Device Sensors and Media Section -->
       <div class="category-section">
         <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
         <div class="dashboard-grid">
           <div class="card" id="sensors-card">
             <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
             <div class="card-content" id="sensors-content">
-              <ul>
-                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Accelerometer</li>
-                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Gyroscope</li>
-                <li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>
-              </ul>
+              <!-- Sensors Availability populated by JS -->
             </div>
           </div>
           <div class="card" id="media-card">
@@ -713,6 +742,7 @@
         </div>
       </div>
 
+      <!-- Security and Privacy Section -->
       <div class="category-section">
         <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
         <div class="dashboard-grid">
@@ -746,6 +776,7 @@
         </div>
       </div>
 
+      <!-- Storage Management Section -->
       <div class="category-section">
         <h2><i class="fas fa-database"></i> Storage Management</h2>
         <div class="dashboard-grid">
@@ -762,6 +793,7 @@
         </div>
       </div>
 
+      <!-- Performance Monitoring Section -->
       <div class="category-section">
         <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
         <div class="dashboard-grid">
@@ -778,12 +810,25 @@
         </div>
       </div>
 
+      <!-- Accessibility & Compatibility Section -->
       <div class="category-section">
-        <h2><i class="fas fa-map-marker-alt"></i> Location Tools</h2>
+        <h2><i class="fas fa-universal-access"></i> Accessibility & Compatibility</h2>
         <div class="dashboard-grid">
-          <div class="card" id="location-card">
-            <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
-            <div class="card-content" id="map" style="height: 200px;"></div>
+          <div class="card" id="accessibility-card">
+            <h2><i class="fas fa-universal-access"></i> Accessibility Checker</h2>
+            <div class="card-content" id="accessibility-content">
+              <p>Check for basic accessibility issues like missing alt attributes on images and form labels.</p>
+              <button id="run-accessibility-check" class="check-button"><i class="fas fa-check"></i> Run Accessibility Check</button>
+              <div id="accessibility-results" style="margin-top:10px;"></div>
+            </div>
+          </div>
+          <div class="card" id="compatibility-card">
+            <h2><i class="fas fa-browser"></i> Browser Compatibility Checker</h2>
+            <div class="card-content" id="compatibility-content">
+              <p>Check if your browser supports key modern web features.</p>
+              <button id="run-compatibility-check" class="check-button"><i class="fas fa-check"></i> Run Compatibility Check</button>
+              <div id="compatibility-results" style="margin-top:10px;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -879,11 +924,29 @@
 
     function updateJsErrors() {
       const jsErrorsContent = document.getElementById('js-errors-content');
-      if (errorLogs.length > 0) {
-        jsErrorsContent.innerHTML = `<strong>Errors Detected (${errorLogs.length}):</strong><br>${errorLogs.join('<br>')}`;
-      } else {
-        jsErrorsContent.innerHTML = 'No errors detected.';
+      if (jsErrorsContent) {
+        if (errorLogs.length > 0) {
+          jsErrorsContent.innerHTML = `<strong>Errors Detected (${errorLogs.length}):</strong><br>${errorLogs.join('<br>')}`;
+        } else {
+          jsErrorsContent.innerHTML = 'No errors detected.';
+        }
       }
+    }
+
+    function getOS(userAgent) {
+      if (userAgent.indexOf("Win") !== -1) return "Windows";
+      if (userAgent.indexOf("Mac") !== -1) return "macOS";
+      if (userAgent.indexOf("X11") !== -1) return "UNIX";
+      if (userAgent.indexOf("Linux") !== -1) return "Linux";
+      return "Unknown";
+    }
+
+    function getDeviceType() {
+      const ua = navigator.userAgent;
+      if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+        return "Mobile";
+      }
+      return "Desktop";
     }
 
     function updateSystemInfo() {
@@ -937,22 +1000,6 @@
       }
     }
 
-    function getOS(userAgent) {
-      if (userAgent.indexOf("Win") !== -1) return "Windows";
-      if (userAgent.indexOf("Mac") !== -1) return "macOS";
-      if (userAgent.indexOf("X11") !== -1) return "UNIX";
-      if (userAgent.indexOf("Linux") !== -1) return "Linux";
-      return "Unknown";
-    }
-
-    function getDeviceType() {
-      const ua = navigator.userAgent;
-      if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-        return "Mobile";
-      }
-      return "Desktop";
-    }
-
     function updateInternetConnectivity() {
       const internetStatusIcon = document.getElementById('internet-status-icon');
       const internetStatusText = document.getElementById('internet-status-text');
@@ -982,7 +1029,6 @@
         fpsData.shift();
       }
 
-      // Dynamically adjust the chart's y-axis max
       const maxFPS = Math.max(...fpsData);
       const nextHundred = Math.ceil(maxFPS / 100) * 100 || 100;
       fpsChart.options.scales.y.max = nextHundred;
@@ -1028,24 +1074,28 @@
     trackFPS();
 
     async function measureNetworkSpeed() {
-      const startTime = performance.now();
-      const response = await fetch('5MB.bin', { cache: 'no-cache' });
-      if (!response.ok) {
-        throw new Error(`Network response was not ok (${response.status})`);
+      try {
+        const startTime = performance.now();
+        const response = await fetch('5MB.bin', { cache: 'no-cache' });
+        if (!response.ok) {
+          throw new Error(`Network response was not ok (${response.status})`);
+        }
+        const reader = response.body.getReader();
+        let receivedLength = 0;
+        while(true) {
+          const {done, value} = await reader.read();
+          if (done) break;
+          receivedLength += value.length;
+        }
+        const endTime = performance.now();
+        const durationInSeconds = (endTime - startTime) / 1000;
+        const bitsLoaded = receivedLength * 8;
+        const speedBps = bitsLoaded / durationInSeconds;
+        const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+        return speedMbps;
+      } catch {
+        return null;
       }
-      const reader = response.body.getReader();
-      let receivedLength = 0;
-      while(true) {
-        const {done, value} = await reader.read();
-        if (done) break;
-        receivedLength += value.length;
-      }
-      const endTime = performance.now();
-      const durationInSeconds = (endTime - startTime) / 1000;
-      const bitsLoaded = receivedLength * 8;
-      const speedBps = bitsLoaded / durationInSeconds;
-      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
-      return speedMbps;
     }
 
     let networkSpeedData = [];
@@ -1087,8 +1137,8 @@
     });
 
     async function updateNetworkSpeedChart() {
-      try {
-        const speedMbps = await measureNetworkSpeed();
+      const speedMbps = await measureNetworkSpeed();
+      if (speedMbps !== null) {
         networkSpeedData.push(speedMbps);
         if (networkSpeedData.length > 10) {
           networkSpeedData.shift();
@@ -1098,8 +1148,7 @@
         networkSpeedChart.update();
         const currentSpeedElement = document.getElementById('current-speed');
         currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
-      } catch (error) {
-        console.error('Network speed test failed:', error);
+      } else {
         const currentSpeedElement = document.getElementById('current-speed');
         currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
       }
@@ -1162,11 +1211,15 @@
             }
           },
           () => {
-            mapDiv.innerHTML = "Location access denied.";
+            if (mapDiv) {
+              mapDiv.innerHTML = "Location access denied.";
+            }
           }
         );
       } else {
-        mapDiv.innerHTML = "Geolocation not supported.";
+        if (mapDiv) {
+          mapDiv.innerHTML = "Geolocation not supported.";
+        }
       }
     }
 
@@ -1189,8 +1242,6 @@
         }
         memoryChart.data.datasets[0].data = memoryUsageData;
         memoryChart.update();
-      } else {
-        console.log('Memory API not supported in this browser.');
       }
     }
 
@@ -1228,7 +1279,11 @@
       const sensors = [];
       if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Accelerometer</li>');
       if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Gyroscope</li>');
-      if ('Magnetometer' in window) sensors.push('<li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>');
+      if ('Magnetometer' in window) {
+        sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Magnetometer</li>');
+      } else {
+        sensors.push('<li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>');
+      }
       if (sensors.length > 0) {
         sensorsContent.innerHTML = `<ul style="list-style: none; padding-left: 0;">${sensors.join('')}</ul>`;
       } else {
@@ -1637,6 +1692,55 @@
       });
     }
 
+    function runAccessibilityCheck() {
+      const resultsDiv = document.getElementById('accessibility-results');
+      resultsDiv.innerHTML = 'Checking...';
+
+      let missingAlts = 0;
+      let missingLabels = 0;
+
+      const images = document.querySelectorAll('img');
+      images.forEach(img => {
+        if (!img.hasAttribute('alt') || img.getAttribute('alt').trim() === '') {
+          missingAlts++;
+        }
+      });
+
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        const id = input.id;
+        const hasLabel = id && document.querySelector(`label[for="${id}"]`);
+        const ariaLabel = input.getAttribute('aria-label');
+        if (!hasLabel && !ariaLabel) {
+          missingLabels++;
+        }
+      });
+
+      let report = `<strong>Accessibility Report:</strong><br>`;
+      report += `Images missing alt attributes: ${missingAlts}<br>`;
+      report += `Form fields missing labels or aria-label: ${missingLabels}<br>`;
+      resultsDiv.innerHTML = report;
+    }
+
+    function runCompatibilityCheck() {
+      const resultsDiv = document.getElementById('compatibility-results');
+      resultsDiv.innerHTML = 'Checking...';
+
+      const features = {
+        'Service Workers': 'serviceWorker' in navigator,
+        'WebAssembly': typeof WebAssembly === 'object',
+        'Web Components (customElements)': 'customElements' in window,
+        'Intersection Observer': 'IntersectionObserver' in window,
+        'Fetch API': 'fetch' in window
+      };
+
+      let report = `<strong>Browser Compatibility Report:</strong><br>`;
+      for (const [feature, supported] of Object.entries(features)) {
+        report += `${feature}: ${supported ? '<span style="color: #28a745;">Supported</span>' : '<span style="color: #dc3545;">Not Supported</span>'}<br>`;
+      }
+      resultsDiv.innerHTML = report;
+    }
+
     function initializeDashboard() {
       updateSystemInfo();
       updateInternetConnectivity();
@@ -1654,6 +1758,8 @@
       updateJsErrors();
       updatePublicIP();
       updateVisitorCount();
+      updateStorageUsage();
+
       setInterval(updateInternetConnectivity, 5000);
       setInterval(updateBatteryStatus, 60000);
       setInterval(updateSystemInfo, 60000);
@@ -1675,15 +1781,15 @@
     document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
     document.getElementById('clear-errors-btn').addEventListener('click', clearErrors);
     document.getElementById('perform-ping-test-btn').addEventListener('click', performPingTest);
-
     document.getElementById('search-button').addEventListener('click', performWebSearch);
     document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
     document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
     document.getElementById('dns-lookup-btn').addEventListener('click', performDNSLookup);
     document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
-
     document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
     document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
+    document.getElementById('run-accessibility-check').addEventListener('click', runAccessibilityCheck);
+    document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
   </script>
 </body>
 </html>
