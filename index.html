@@ -106,6 +106,7 @@
       background-color: var(--input-bg);
       color: var(--text-color);
       font-size: 1rem;
+      border-radius: 0;
       transition: background-color var(--transition-speed), color var(--transition-speed);
     }
 
@@ -129,7 +130,7 @@
       justify-content: center;
       background-color: var(--primary-color);
       color: #ffffff;
-      transition: background-color var(--transition-speed);
+      transition: background-color var(--transition-speed), transform var(--transition-speed);
     }
 
     .top-bar button:hover {
@@ -138,6 +139,7 @@
 
     .top-bar button:active {
       background-color: var(--button-active-bg);
+      transform: translateY(0);
     }
 
     .top-bar button i {
@@ -345,11 +347,8 @@
       margin-right: 8px;
     }
 
-    .network-info, .ping-test, .network-speed-card, .network-info, .js-error-analyzer-card, .media-test, .storage-usage-content, .accessibility-content, .compatibility-content, .website-snapshot-card {
-      width: 100%;
-    }
-
-    .ping-test input[type="text"], .network-info input[type="text"], .js-error-analyzer-card input[type="text"], .accessibility-card input[type="text"], .compatibility-content input[type="text"], .website-snapshot-card input[type="text"] {
+    /* Unified Input Field Styling */
+    .input-field {
       width: 100%;
       padding: 10px 15px;
       margin-bottom: 15px;
@@ -362,11 +361,11 @@
       transition: background-color var(--transition-speed), color var(--transition-speed);
     }
 
-    .ping-test input[type="text"]::placeholder, .network-info input[type="text"]::placeholder, .js-error-analyzer-card input[type="text"]::placeholder, .accessibility-card input[type="text"]::placeholder, .compatibility-content input[type="text"]::placeholder, .website-snapshot-card input[type="text"]::placeholder {
+    .input-field::placeholder {
       color: var(--muted-text);
     }
 
-    .ping-test input[type="text"]:focus, .network-info input[type="text"]:focus, .js-error-analyzer-card input[type="text"]:focus, .accessibility-card input[type="text"]:focus, .compatibility-content input[type="text"]:focus, .website-snapshot-card input[type="text"]:focus {
+    .input-field:focus {
       background-color: var(--input-focus-bg);
     }
 
@@ -573,7 +572,7 @@
         <option value="duckduckgo">DuckDuckGo</option>
         <option value="yahoo">Yahoo</option>
       </select>
-      <input type="text" id="search-query" placeholder="Search the web...">
+      <input type="text" id="search-query" class="input-field" placeholder="Search the web...">
       <button id="search-button" class="btn-primary"><i class="fas fa-search"></i> Search</button>
     </div>
   </div>
@@ -616,7 +615,7 @@
             <h2><i class="fas fa-signal"></i> Ping Test</h2>
             <div class="card-content">
               <div class="ping-test">
-                <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)">
+                <input type="text" id="ping-address" class="input-field" placeholder="Enter server address (e.g., example.com)">
                 <button id="start-ping-test-btn" class="btn-primary"><i class="fas fa-play"></i> Start Ping Test</button>
               </div>
               <canvas id="pingChart" style="margin-top: 20px; height: 150px;"></canvas>
@@ -656,7 +655,7 @@
               </div>
               <div class="network-info" style="margin-top: 20px;">
                 <strong>DNS Lookup:</strong>
-                <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)" style="margin-top: 10px;">
+                <input type="text" id="dns-domain" class="input-field" placeholder="Enter domain name (e.g., example.com)">
                 <button id="dns-lookup-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-search"></i> Lookup DNS</button>
                 <div class="result" id="dns-result"></div>
               </div>
@@ -814,7 +813,7 @@
           <div class="card" id="js-error-analyzer-card">
             <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
             <div class="card-content">
-              <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)" style="margin-top: 10px;">
+              <input type="text" id="analyzer-url" class="input-field" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)">
               <button id="start-js-error-analysis-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-search"></i> Analyze JavaScript Errors</button>
               <div id="js-error-analyzer-result" style="margin-top: 15px;"></div>
               <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
@@ -876,7 +875,7 @@
               <p style="font-size: 0.95rem; color: var(--muted-text);">
                 Enter a website URL to check for basic accessibility issues (missing alt attributes, unlabeled form fields). Note that cross-origin restrictions may apply.
               </p>
-              <input type="text" id="accessibility-url" placeholder="Enter website URL (e.g., http://example.com)" style="margin-top: 10px;">
+              <input type="text" id="accessibility-url" class="input-field" placeholder="Enter website URL (e.g., http://example.com)">
               <button id="check-website-accessibility" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-check"></i> Check Website Accessibility</button>
               <div id="accessibility-results" style="margin-top: 15px;"></div>
               <iframe id="accessibility-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
@@ -905,7 +904,7 @@
           <div class="card website-snapshot-card">
             <h2><i class="fas fa-camera"></i> Website Snapshot</h2>
             <div class="card-content">
-              <input type="text" id="snapshot-url" placeholder="Enter website URL (e.g., https://example.com)" style="margin-top: 10px;">
+              <input type="text" id="snapshot-url" class="input-field" placeholder="Enter website URL (e.g., https://example.com)">
               <button id="snapshot-button" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-camera"></i> Capture Snapshot</button>
               <img id="website-snapshot-image" src="" alt="Website Snapshot" style="margin-top: 20px; border: 2px solid #b0b0b0; border-radius: var(--border-radius); display: none;">
               <div id="snapshot-message" style="margin-top: 15px; font-size: 0.95rem; color: var(--muted-text);"></div>
