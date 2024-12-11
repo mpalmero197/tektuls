@@ -250,6 +250,35 @@
       justify-content: space-between;
     }
 
+    .check-button {
+      padding: 10px;
+      background-color: #17a2b8;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .check-button:hover {
+      background-color: #138496;
+    }
+
+    .check-input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 14px;
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+
     .info-table {
       width: 100%;
       border-collapse: collapse;
@@ -280,91 +309,6 @@
       height: 20px;
       background-color: #28a745;
       transition: width 0.3s;
-    }
-
-    .footer {
-      background-color: #1f1f1f;
-      color: #aaaaaa;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      z-index: 20;
-    }
-    .footer a {
-      color: #ffc107;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .footer a:hover {
-      text-decoration: underline;
-    }
-    .footer .visitor-count {
-      display: flex;
-      align-items: center;
-    }
-    .footer .visitor-count span.label {
-      font-weight: bold;
-      margin-right: 5px;
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background-color: #1e1e1e;
-    }
-
-    @media (max-width: 768px) {
-      .main-container {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-        padding: 10px;
-      }
-      .sidebar h2 {
-        font-size: 18px;
-        margin-bottom: 10px;
-      }
-      .sidebar button {
-        font-size: 14px;
-        margin-bottom: 5px;
-        padding: 8px;
-      }
-      .content {
-        padding: 10px;
-      }
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-      .card {
-        margin-bottom: 20px;
-        min-height: 250px;
-      }
-      .footer {
-        position: relative;
-        left: 0;
-        right: 0;
-      }
-      .top-bar .search-container {
-        max-width: 100%;
-      }
-      .category-section h2 {
-        font-size: 20px;
-      }
     }
 
     .media-test {
@@ -529,35 +473,79 @@
       background-color: #218838;
     }
 
-    /* New style classes for the Accessibility & Compatibility cards */
-    .check-button {
+    .footer {
+      background-color: #1f1f1f;
+      color: #aaaaaa;
+      text-align: center;
       padding: 10px;
-      background-color: #17a2b8;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.3s;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      z-index: 20;
+    }
+    .footer a {
+      color: #ffc107;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .footer .visitor-count {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin-top: 10px;
     }
-    .check-button:hover {
-      background-color: #138496;
-    }
-    .check-input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 14px;
-      background-color: #2a2a2a;
-      color: #fff;
+    .footer .visitor-count span.label {
+      font-weight: bold;
+      margin-right: 5px;
     }
 
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        padding: 10px;
+      }
+      .sidebar h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      .sidebar button {
+        font-size: 14px;
+        margin-bottom: 5px;
+        padding: 8px;
+      }
+      .content {
+        padding: 10px;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .card {
+        margin-bottom: 20px;
+        min-height: 250px;
+      }
+      .footer {
+        position: relative;
+        left: 0;
+        right: 0;
+      }
+      .top-bar .search-container {
+        max-width: 100%;
+      }
+      .category-section h2 {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -598,7 +586,7 @@
         <p class="hero__subtitle">A full suite of interactive troubleshooting tools at your fingertips.</p>
       </div>
 
-      <!-- Network Tools Section -->
+      <!-- Network Tools -->
       <div class="category-section">
         <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
         <div class="dashboard-grid">
@@ -651,7 +639,7 @@
         </div>
       </div>
 
-      <!-- System Information Section -->
+      <!-- System Information -->
       <div class="category-section">
         <h2><i class="fas fa-desktop"></i> System Information</h2>
         <div class="dashboard-grid">
@@ -712,14 +700,14 @@
         </div>
       </div>
 
-      <!-- Device Sensors and Media Section -->
+      <!-- Device Sensors and Media -->
       <div class="category-section">
         <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
         <div class="dashboard-grid">
           <div class="card" id="sensors-card">
             <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
             <div class="card-content" id="sensors-content">
-              <!-- Sensors Availability populated by JS -->
+              <!-- Populated by JS -->
             </div>
           </div>
           <div class="card" id="media-card">
@@ -742,7 +730,7 @@
         </div>
       </div>
 
-      <!-- Security and Privacy Section -->
+      <!-- Security and Privacy -->
       <div class="category-section">
         <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
         <div class="dashboard-grid">
@@ -776,7 +764,7 @@
         </div>
       </div>
 
-      <!-- Storage Management Section -->
+      <!-- Storage Management -->
       <div class="category-section">
         <h2><i class="fas fa-database"></i> Storage Management</h2>
         <div class="dashboard-grid">
@@ -793,7 +781,7 @@
         </div>
       </div>
 
-      <!-- Performance Monitoring Section -->
+      <!-- Performance Monitoring -->
       <div class="category-section">
         <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
         <div class="dashboard-grid">
@@ -810,16 +798,18 @@
         </div>
       </div>
 
-      <!-- Accessibility & Compatibility Section -->
+      <!-- Accessibility & Compatibility -->
       <div class="category-section">
         <h2><i class="fas fa-universal-access"></i> Accessibility & Compatibility</h2>
         <div class="dashboard-grid">
           <div class="card" id="accessibility-card">
             <h2><i class="fas fa-universal-access"></i> Accessibility Checker</h2>
             <div class="card-content" id="accessibility-content">
-              <p>Check for basic accessibility issues like missing alt attributes on images and form labels.</p>
-              <button id="run-accessibility-check" class="check-button"><i class="fas fa-check"></i> Run Accessibility Check</button>
+              <p>Enter a website URL to check for basic accessibility issues (missing alt attributes, unlabeled form fields). Note that cross-origin restrictions may apply.</p>
+              <input type="text" id="accessibility-url" class="check-input" placeholder="Enter website URL (e.g., http://example.com)">
+              <button id="check-website-accessibility" class="check-button"><i class="fas fa-check"></i> Check Website Accessibility</button>
               <div id="accessibility-results" style="margin-top:10px;"></div>
+              <iframe id="accessibility-iframe" style="width:0; height:0; border:none; display:none;"></iframe>
             </div>
           </div>
           <div class="card" id="compatibility-card">
@@ -1194,7 +1184,7 @@
         navigator.geolocation.getCurrentPosition(
           position => {
             const { latitude, longitude } = position.coords;
-            if (!mapInitialized) {
+            if (!mapInitialized && mapDiv) {
               mapInstance = L.map('map').setView([latitude, longitude], 13);
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
@@ -1203,7 +1193,7 @@
                 .bindPopup('You are here.')
                 .openPopup();
               mapInitialized = true;
-            } else {
+            } else if (mapInstance) {
               mapInstance.setView([latitude, longitude], 13);
               L.marker([latitude, longitude]).addTo(mapInstance)
                 .bindPopup('You are here.')
@@ -1692,24 +1682,21 @@
       });
     }
 
-    function runAccessibilityCheck() {
-      const resultsDiv = document.getElementById('accessibility-results');
-      resultsDiv.innerHTML = 'Checking...';
-
+    function runAccessibilityCheckOnDocument(doc) {
       let missingAlts = 0;
       let missingLabels = 0;
 
-      const images = document.querySelectorAll('img');
+      const images = doc.querySelectorAll('img');
       images.forEach(img => {
         if (!img.hasAttribute('alt') || img.getAttribute('alt').trim() === '') {
           missingAlts++;
         }
       });
 
-      const inputs = document.querySelectorAll('input, select, textarea');
+      const inputs = doc.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
         const id = input.id;
-        const hasLabel = id && document.querySelector(`label[for="${id}"]`);
+        const hasLabel = id && doc.querySelector(`label[for="${id}"]`);
         const ariaLabel = input.getAttribute('aria-label');
         if (!hasLabel && !ariaLabel) {
           missingLabels++;
@@ -1719,7 +1706,52 @@
       let report = `<strong>Accessibility Report:</strong><br>`;
       report += `Images missing alt attributes: ${missingAlts}<br>`;
       report += `Form fields missing labels or aria-label: ${missingLabels}<br>`;
-      resultsDiv.innerHTML = report;
+      return report;
+    }
+
+    function checkWebsiteAccessibility() {
+      const resultsDiv = document.getElementById('accessibility-results');
+      const iframe = document.getElementById('accessibility-iframe');
+      const urlInput = document.getElementById('accessibility-url');
+      const url = urlInput.value.trim();
+
+      if (!url) {
+        alert('Please enter a website URL.');
+        return;
+      }
+
+      try {
+        new URL(url);
+      } catch {
+        alert('Please enter a valid URL.');
+        return;
+      }
+
+      resultsDiv.innerHTML = 'Checking...';
+      iframe.src = '';
+      iframe.style.display = 'none';
+
+      iframe.onload = function() {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (!iframeDoc) {
+            throw new Error('No iframe document');
+          }
+          const report = runAccessibilityCheckOnDocument(iframeDoc);
+          resultsDiv.innerHTML = report;
+        } catch (e) {
+          console.error('Cross-origin or access error:', e);
+          resultsDiv.innerHTML = 'Unable to analyze accessibility due to cross-origin restrictions or inaccessible content.';
+        }
+      };
+
+      iframe.src = url;
+      // Timeout in case onload doesn't fire due to cross-origin
+      setTimeout(() => {
+        if (resultsDiv.innerHTML === 'Checking...') {
+          resultsDiv.innerHTML = 'Unable to analyze accessibility due to cross-origin restrictions or time-out accessing content.';
+        }
+      }, 5000);
     }
 
     function runCompatibilityCheck() {
@@ -1766,30 +1798,31 @@
     }
 
     window.addEventListener('resize', updateScreenResolution);
-    updateScreenResolution();
-    initializeDashboard();
+    window.addEventListener('load', () => {
+      initializeDashboard();
 
-    document.getElementById('copy-system-info-btn').addEventListener('click', copySystemInfo);
-    document.getElementById('clear-local-storage-btn').addEventListener('click', clearLocalStorage);
-    document.getElementById('clear-session-storage-btn').addEventListener('click', clearSessionStorage);
-    document.getElementById('clear-cookies-btn').addEventListener('click', clearCookies);
-    document.getElementById('reset-app-data-btn').addEventListener('click', resetAppData);
-    document.getElementById('reload-page-btn').addEventListener('click', reloadPage);
-    document.getElementById('retest-connectivity-btn').addEventListener('click', updateInternetConnectivity);
-    document.getElementById('retest-location-btn').addEventListener('click', updateLocation);
-    document.getElementById('retest-media-devices-btn').addEventListener('click', updateMediaDevices);
-    document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
-    document.getElementById('clear-errors-btn').addEventListener('click', clearErrors);
-    document.getElementById('perform-ping-test-btn').addEventListener('click', performPingTest);
-    document.getElementById('search-button').addEventListener('click', performWebSearch);
-    document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
-    document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
-    document.getElementById('dns-lookup-btn').addEventListener('click', performDNSLookup);
-    document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
-    document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
-    document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
-    document.getElementById('run-accessibility-check').addEventListener('click', runAccessibilityCheck);
-    document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
+      document.getElementById('copy-system-info-btn').addEventListener('click', copySystemInfo);
+      document.getElementById('clear-local-storage-btn').addEventListener('click', clearLocalStorage);
+      document.getElementById('clear-session-storage-btn').addEventListener('click', clearSessionStorage);
+      document.getElementById('clear-cookies-btn').addEventListener('click', clearCookies);
+      document.getElementById('reset-app-data-btn').addEventListener('click', resetAppData);
+      document.getElementById('reload-page-btn').addEventListener('click', reloadPage);
+      document.getElementById('retest-connectivity-btn').addEventListener('click', updateInternetConnectivity);
+      document.getElementById('retest-location-btn').addEventListener('click', updateLocation);
+      document.getElementById('retest-media-devices-btn').addEventListener('click', updateMediaDevices);
+      document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
+      document.getElementById('clear-errors-btn').addEventListener('click', clearErrors);
+      document.getElementById('perform-ping-test-btn').addEventListener('click', performPingTest);
+      document.getElementById('search-button').addEventListener('click', performWebSearch);
+      document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
+      document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
+      document.getElementById('dns-lookup-btn').addEventListener('click', performDNSLookup);
+      document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
+      document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
+      document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
+      document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
+      document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
+    });
   </script>
 </body>
 </html>
