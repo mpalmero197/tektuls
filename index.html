@@ -35,6 +35,9 @@
       --button-active-bg: #0a58ca;
       --sidebar-width: 250px;
       --sidebar-collapsed-width: 80px;
+      --scrollbar-width: 8px;
+      --scrollbar-thumb-bg: #555; /* Medium Gray */
+      --scrollbar-thumb-hover-bg: #777; /* Lighter Gray on hover */
     }
 
     * {
@@ -53,6 +56,34 @@
       overflow: hidden; /* Prevent body from scrolling */
     }
 
+    /* Scrollbar Styling */
+    /* Webkit Browsers */
+    ::-webkit-scrollbar {
+      width: var(--scrollbar-width);
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent; /* No background */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb-bg);
+      border-radius: var(--border-radius);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--scrollbar-thumb-hover-bg);
+    }
+
+    /* Firefox */
+    /* For Firefox, scrollbar-color and scrollbar-width are limited */
+    /* Scrollbar color: thumb and track */
+    body, .sidebar, .content {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+    }
+
+    /* Top Bar */
     .top-bar {
       width: 100%;
       background-color: var(--secondary-color);
@@ -148,6 +179,7 @@
       margin-right: 8px;
     }
 
+    /* Main Container */
     .main-container {
       display: flex;
       flex-grow: 1;
@@ -449,6 +481,7 @@
       height: 100%;
       background-color: var(--primary-color);
       transition: width 0.3s, background-color 0.3s;
+      border-radius: var(--border-radius);
     }
 
     #webcam-video {
@@ -615,7 +648,7 @@
 
       .content {
         padding: 20px;
-        height: calc(100vh - 64px - 60px); /* Adjust based on top-bar and footer heights */
+        height: auto; /* Allow height to adjust */
       }
 
       .dashboard-grid {
