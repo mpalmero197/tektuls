@@ -378,6 +378,10 @@
       margin-right: 10px;
       font-size: 14px;
       transition: background-color 0.3s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .network-info button:hover {
       background-color: #5a32a3;
@@ -471,6 +475,20 @@
     }
     .ping-test button:hover {
       background-color: #218838;
+    }
+
+    /* New Styles for Website Preview Card */
+    .website-preview-card iframe {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .website-preview-card .preview-message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ffc107;
     }
 
     .footer {
@@ -695,7 +713,7 @@
                   <tr><th>Locale:</th><td id="locale-info">Loading...</td></tr>
                 </tbody>
               </table>
-              <!-- Added the map here -->
+              <!-- Map -->
               <div id="map" style="height: 200px; margin-top: 10px;"></div>
             </div>
           </div>
@@ -820,6 +838,22 @@
               <p>Check if your browser supports key modern web features.</p>
               <button id="run-compatibility-check" class="check-button"><i class="fas fa-check"></i> Run Compatibility Check</button>
               <div id="compatibility-results" style="margin-top:10px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Website Tools -->
+      <div class="category-section">
+        <h2><i class="fas fa-globe"></i> Website Tools</h2>
+        <div class="dashboard-grid">
+          <div class="card website-preview-card">
+            <h2><i class="fas fa-eye"></i> Website Preview</h2>
+            <div class="card-content">
+              <input type="text" id="preview-url" class="check-input" placeholder="Enter website URL (e.g., https://example.com)">
+              <button id="preview-button" class="check-button"><i class="fas fa-eye"></i> Preview Website</button>
+              <iframe id="website-preview-iframe" style="width:100%; height:0; border:none; display:none;"></iframe>
+              <div id="preview-message" class="preview-message"></div>
             </div>
           </div>
         </div>
@@ -1068,7 +1102,7 @@
     async function measureNetworkSpeed() {
       try {
         const startTime = performance.now();
-        const response = await fetch('5MB.bin', { cache: 'no-cache' });
+        const response = await fetch('https://speed.hetzner.de/10MB.bin', { cache: 'no-cache' });
         if (!response.ok) {
           throw new Error(`Network response was not ok (${response.status})`);
         }
@@ -1776,6 +1810,50 @@
       resultsDiv.innerHTML = report;
     }
 
+    // Website Preview Functionality
+    function previewWebsite() {
+      const previewUrlInput = document.getElementById('preview-url');
+      const previewButton = document.getElementById('preview-button');
+      const iframe = document.getElementById('website-preview-iframe');
+      const previewMessage = document.getElementById('preview-message');
+      const url = previewUrlInput.value.trim();
+
+      if (!url) {
+        alert('Please enter a website URL.');
+        return;
+      }
+
+      try {
+        new URL(url);
+      } catch {
+        alert('Please enter a valid URL.');
+        return;
+      }
+
+      previewMessage.innerHTML = 'Loading preview...';
+      iframe.src = '';
+      iframe.style.display = 'none';
+
+      iframe.onload = function() {
+        // Check if iframe content is accessible
+        try {
+          const iframeWindow = iframe.contentWindow;
+          void iframeWindow.location.href; // Trigger a security exception if cross-origin
+          previewMessage.innerHTML = 'Preview loaded successfully.';
+        } catch (e) {
+          console.error('Cross-origin error:', e);
+          previewMessage.innerHTML = 'Unable to load preview due to cross-origin restrictions.';
+        }
+      };
+
+      iframe.onerror = function() {
+        previewMessage.innerHTML = 'Error loading the website preview.';
+      };
+
+      iframe.src = url;
+      iframe.style.display = 'block';
+    }
+
     function initializeDashboard() {
       updateSystemInfo();
       updateInternetConnectivity();
@@ -1825,6 +1903,9 @@
       document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
       document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
+      
+      // Add event listener for Website Preview
+      document.getElementById('preview-button').addEventListener('click', previewWebsite);
     });
   </script>
 </body>
