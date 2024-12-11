@@ -10,24 +10,51 @@
   <!-- Include Leaflet.js for maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Include Roboto Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
   <style>
+    :root {
+      --primary-color: #0d6efd; /* Deep Blue */
+      --secondary-color: #121212; /* Very Dark Gray */
+      --accent-color: #20c997; /* Cyan */
+      --success-color: #198754; /* Green */
+      --danger-color: #dc3545; /* Red */
+      --warning-color: #ffc107; /* Yellow */
+      --info-color: #0dcaf0; /* Light Blue */
+      --light-bg: #1e1e1e; /* Darker Gray */
+      --card-bg: #2a2a2a; /* Slightly Lighter Gray */
+      --text-color: #ffffff; /* Pure White */
+      --muted-text: #b0b0b0; /* Medium Gray */
+      --border-radius: 6px;
+      --transition-speed: 0.3s;
+      --font-family: 'Roboto', sans-serif;
+      --input-bg: #1e1e1e;
+      --input-border: none;
+      --input-focus-bg: #2a2a2a;
+      --button-hover-bg: #0b5ed7;
+      --button-active-bg: #0a58ca;
+    }
+
     * {
       box-sizing: border-box;
-    }
-    body {
       margin: 0;
-      background: linear-gradient(135deg, #0f0f0f 0%, #1c1c2b 100%);
-      font-family: Arial, sans-serif;
-      color: #ffffff;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--secondary-color);
+      color: var(--text-color);
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
       overflow-x: hidden;
     }
+
     .top-bar {
       width: 100%;
-      background-color: #1f1f1f;
-      padding: 10px 20px;
+      background-color: var(--secondary-color);
+      padding: 15px 30px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -35,468 +62,413 @@
       border-bottom: 1px solid #333;
       z-index: 10;
     }
+
     .top-bar .title {
       position: absolute;
-      left: 20px;
+      left: 30px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--text-color);
     }
+
     .top-bar .search-container {
       display: flex;
       align-items: center;
-      max-width: 600px;
+      max-width: 700px;
       width: 100%;
     }
+
     .top-bar select {
-      padding: 8px;
-      border: none;
-      border-radius: 5px 0 0 5px;
+      padding: 10px 15px;
+      border: var(--input-border);
+      border-radius: 4px 0 0 4px;
       outline: none;
-      background-color: #2a2a2a;
-      color: #fff;
+      background-color: var(--input-bg);
+      color: var(--muted-text);
+      font-size: 1rem;
       cursor: pointer;
-      font-size: 14px;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
     }
+
+    .top-bar select:hover, .top-bar select:focus {
+      background-color: var(--input-focus-bg);
+      color: var(--text-color);
+    }
+
     .top-bar input[type="text"] {
       flex-grow: 1;
-      padding: 8px;
-      border: none;
+      padding: 10px 15px;
+      margin: 0;
+      border: var(--input-border);
       outline: none;
-      background-color: #2a2a2a;
-      color: #fff;
-      font-size: 14px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
     }
+
+    .top-bar input[type="text"]::placeholder {
+      color: var(--muted-text);
+    }
+
+    .top-bar input[type="text"]:focus {
+      background-color: var(--input-focus-bg);
+    }
+
     .top-bar button {
-      padding: 8px 12px;
+      padding: 10px 20px;
       border: none;
       outline: none;
-      background-color: #28a745;
-      color: #fff;
+      border-radius: 0 4px 4px 0;
       cursor: pointer;
-      border-radius: 0 5px 5px 0;
+      font-size: 1rem;
       display: flex;
       align-items: center;
-      font-size: 14px;
-      transition: background-color 0.3s;
+      justify-content: center;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      transition: background-color var(--transition-speed);
     }
+
     .top-bar button:hover {
-      background-color: #218838;
+      background-color: var(--button-hover-bg);
     }
+
+    .top-bar button:active {
+      background-color: var(--button-active-bg);
+    }
+
     .top-bar button i {
-      margin-right: 5px;
+      margin-right: 8px;
     }
+
     .main-container {
       display: flex;
       flex-grow: 1;
-      overflow: hidden;
+      background-color: var(--light-bg);
     }
+
     .sidebar {
       width: 250px;
-      background-color: #1f1f1f;
+      background-color: var(--secondary-color);
       padding: 20px;
       box-sizing: border-box;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      border-right: 1px solid #333;
     }
+
     .sidebar-content {
       display: flex;
       flex-direction: column;
     }
+
     .sidebar h2 {
-      margin-top: 0;
-      font-size: 20px;
       margin-bottom: 20px;
+      font-size: 1.4rem;
+      color: var(--text-color);
       display: flex;
       align-items: center;
     }
+
     .sidebar h2 i {
       margin-right: 10px;
-      font-size: 24px;
+      font-size: 1.4rem;
     }
+
     .sidebar button {
       width: 100%;
-      padding: 10px;
+      padding: 12px 15px;
       margin-bottom: 10px;
-      background-color: #2a2a2a;
-      color: #ffffff;
+      background-color: #1c1c1c; /* Slightly lighter dark gray */
+      color: var(--text-color);
       border: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
       text-align: left;
       display: flex;
       align-items: center;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
     }
+
     .sidebar button i {
       margin-right: 10px;
-      font-size: 18px;
+      font-size: 1.1rem;
     }
+
     .sidebar button:hover {
-      background-color: #3a3a3a;
+      background-color: #2c2c2c; /* Even lighter gray on hover */
     }
+
     .content {
       flex-grow: 1;
-      overflow-y: auto;
-      padding: 20px;
+      padding: 30px;
       box-sizing: border-box;
-      position: relative;
+      overflow-y: auto;
     }
 
     .hero {
       text-align: center;
-      margin-bottom: 60px;
-      position: relative;
+      margin-bottom: 50px;
     }
+
     .hero__title {
       font-size: 2.5rem;
-      font-weight: 700;
-      margin: 0 0 10px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: var(--text-color);
       position: relative;
     }
+
     .hero__title::after {
-      content: "";
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle at center, #6f42c1 0%, transparent 60%);
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0.2;
-      pointer-events: none;
-    }
-    .hero__subtitle {
-      font-size: 1.2rem;
-      color: #bbbbbb;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .category-section {
-      margin-bottom: 40px;
-    }
-    .category-section h2 {
-      font-size: 24px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-    }
-    .category-section h2 i {
-      margin-right: 10px;
-      font-size: 28px;
-    }
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      grid-gap: 20px;
-    }
-
-    .card {
-      background-color: rgba(30,30,30,0.9);
-      padding: 20px;
-      border-radius: 10px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      min-height: 250px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      top: 0; left:0; right:0; bottom:0;
-      background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
-      pointer-events: none;
-    }
-    .card::after {
       content: "";
       position: absolute;
       width: 100px;
       height: 100px;
-      background: radial-gradient(circle at center, rgba(111,66,193,0.2) 0%, transparent 80%);
-      top: -20px;
-      right: -20px;
-      opacity: 0.4;
+      background: radial-gradient(circle at center, rgba(13, 110, 253,0.2) 0%, transparent 70%);
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.3;
       pointer-events: none;
+      border-radius: 50%;
     }
-    .card h2 {
-      margin-top: 0;
-      font-size: 18px;
-      margin-bottom: 10px;
+
+    .hero__subtitle {
+      font-size: 1.1rem;
+      color: var(--muted-text);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .category-section {
+      margin-bottom: 50px;
+    }
+
+    .category-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      color: var(--text-color);
       display: flex;
       align-items: center;
     }
+
+    .category-section h2 i {
+      margin-right: 10px;
+      font-size: 1.6rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+    }
+
     .card h2 i {
       margin-right: 10px;
-      font-size: 20px;
+      font-size: 1.2rem;
     }
+
     .card-content {
-      color: #ffffff;
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    .check-button {
-      padding: 10px;
-      background-color: #17a2b8;
-      color: #fff;
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: #ffffff;
       border: none;
-      border-radius: 5px;
+      border-radius: var(--border-radius);
       cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s;
+      font-size: 1rem;
+      padding: 10px 15px;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background-color var(--transition-speed), transform var(--transition-speed);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+      background-color: var(--button-active-bg);
+      transform: translateY(0);
+    }
+
+    .btn-primary i {
+      margin-right: 8px;
+    }
+
+    .network-info, .ping-test, .network-speed-card, .network-info, .js-error-analyzer-card, .media-test, .storage-usage-content, .accessibility-content, .compatibility-content, .website-snapshot-card {
+      width: 100%;
+    }
+
+    .ping-test input[type="text"], .network-info input[type="text"], .js-error-analyzer-card input[type="text"], .accessibility-card input[type="text"], .compatibility-content input[type="text"], .website-snapshot-card input[type="text"] {
+      width: 100%;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      border: var(--input-border);
+      outline: none;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    .ping-test input[type="text"]::placeholder, .network-info input[type="text"]::placeholder, .js-error-analyzer-card input[type="text"]::placeholder, .accessibility-card input[type="text"]::placeholder, .compatibility-content input[type="text"]::placeholder, .website-snapshot-card input[type="text"]::placeholder {
+      color: var(--muted-text);
+    }
+
+    .ping-test input[type="text"]:focus, .network-info input[type="text"]:focus, .js-error-analyzer-card input[type="text"]:focus, .accessibility-card input[type="text"]:focus, .compatibility-content input[type="text"]:focus, .website-snapshot-card input[type="text"]:focus {
+      background-color: var(--input-focus-bg);
+    }
+
+    .result, #dns-result, #js-error-analyzer-result, #accessibility-results, #compatibility-results, #snapshot-message {
+      margin-top: 15px;
+      font-size: 0.95rem;
+    }
+
+    /* Progress Bars */
+    .progress-bar-container, #mic-level-container, #battery-progress-bar-container, #storage-progress-bar-container {
+      width: 100%;
+      background-color: #333;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      height: 20px;
       margin-top: 10px;
     }
-    .check-button:hover {
-      background-color: #138496;
+
+    .progress-bar, #mic-level, #battery-progress-bar, #storage-progress-bar {
+      width: 0%;
+      height: 100%;
+      background-color: var(--primary-color);
+      transition: width 0.3s, background-color 0.3s;
     }
 
-    .check-input {
+    #webcam-video {
       width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 14px;
-      background-color: #2a2a2a;
-      color: #fff;
+      max-height: 150px;
+      background-color: #000;
+      border-radius: var(--border-radius);
+      display: none;
+      object-fit: cover;
+      margin-top: 10px;
     }
 
+    #mic-level {
+      background-color: var(--accent-color);
+    }
+
+    #battery-progress-bar {
+      background-color: var(--accent-color);
+    }
+
+    #storage-progress-bar {
+      background-color: var(--primary-color);
+    }
+
+    #screen-rectangle {
+      background-color: var(--accent-color);
+      width: 100px;
+      height: 100px;
+      margin: 0 auto;
+      border-radius: var(--border-radius);
+    }
+
+    /* Table Styling */
     .info-table {
       width: 100%;
       border-collapse: collapse;
     }
+
     .info-table th, .info-table td {
       text-align: left;
-      padding: 8px;
-      border-bottom: 1px solid #333;
-      font-size: 14px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #444;
+      font-size: 0.95rem;
     }
+
     .info-table th {
       width: 40%;
-      color: #ffc107;
+      color: var(--accent-color);
     }
+
     .info-table td {
       width: 60%;
     }
 
-    .progress-bar-container {
-      width: 100%;
-      background-color: #2a2a2a;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-    .progress-bar {
-      width: 0%;
-      height: 20px;
-      background-color: #28a745;
-      transition: width 0.3s;
+    /* List Styling */
+    ul {
+      list-style: none;
+      padding-left: 0;
     }
 
-    .media-test {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .media-test button {
-      padding: 8px 12px;
-      background-color: #17a2b8;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 10px;
-      width: 100%;
-      font-size: 14px;
-      transition: background-color 0.3s;
-    }
-    .media-test button:hover {
-      background-color: #138496;
-    }
-    #webcam-video {
-      width: 100%;
-      max-height: 100px;
-      background-color: #000;
-      border-radius: 5px;
-      display: none;
-      object-fit: cover;
-    }
-    #mic-level-container {
-      width: 100%;
-      background-color: #2a2a2a;
-      border-radius: 5px;
-      overflow: hidden;
-      height: 20px;
-      margin-top: 10px;
-    }
-    #mic-level {
-      width: 0%;
-      height: 100%;
-      background-color: #ffc107;
-      transition: width 0.3s;
-    }
-
-    .network-info {
-      margin-top: 10px;
-    }
-    .network-info input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 14px;
-      background-color: #2a2a2a;
-      color: #fff;
-    }
-    .network-info button {
-      padding: 8px 12px;
-      background-color: #6f42c1;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-right: 10px;
-      font-size: 14px;
-      transition: background-color 0.3s;
-      width: 100%;
+    ul li {
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-    .network-info button:hover {
-      background-color: #5a32a3;
-    }
-    .network-info .result {
-      margin-top: 10px;
-      font-size: 14px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
     }
 
-    #js-error-analyzer-card input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 14px;
-      background-color: #2a2a2a;
-      color: #fff;
-    }
-    #js-error-analyzer-card button {
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      transition: background-color 0.3s;
-    }
-    #js-error-analyzer-card button:hover {
-      background-color: #0069d9;
-    }
-    #js-error-analyzer-result {
-      margin-top: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-      background-color: #2a2a2a;
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-    #js-error-analyzer-iframe {
-      width: 100%;
-      height: 0;
-      border: none;
-      display: none;
+    ul li i {
+      margin-right: 8px;
+      font-size: 1.1rem;
     }
 
-    .network-speed-card {
-      display: flex;
-      flex-direction: column;
-      min-height: 250px;
-    }
-    .network-speed-chart-container {
-      flex-grow: 1;
-      position: relative;
-      height: 200px;
-    }
-    #networkSpeedChart {
-      width: 100%;
-      height: 100%;
-    }
-
-    .ping-test input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 14px;
-      background-color: #2a2a2a;
-      color: #fff;
-    }
-    .ping-test button {
-      padding: 8px 12px;
-      background-color: #28a745;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .ping-test button:hover {
-      background-color: #218838;
-    }
-
-    /* New Styles for Website Snapshot Card */
-    .website-snapshot-card img {
-      width: 100%;
-      height: auto;
-      border-radius: 5px;
-      margin-top: 10px;
-      display: none;
-    }
-    .website-snapshot-card .snapshot-message {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #ffc107;
-    }
-
+    /* Footer Styling */
     .footer {
-      background-color: #1f1f1f;
-      color: #aaaaaa;
+      background-color: var(--secondary-color);
+      color: var(--muted-text);
       text-align: center;
-      padding: 10px;
-      font-size: 14px;
+      padding: 15px 30px;
+      font-size: 0.9rem;
       position: fixed;
       bottom: 0;
       left: 0;
@@ -504,69 +476,95 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
+      gap: 30px;
       flex-wrap: wrap;
-      z-index: 20;
+      border-top: 1px solid #333;
+      z-index: 10;
     }
+
     .footer a {
-      color: #ffc107;
+      color: var(--accent-color);
       text-decoration: none;
-      font-size: 14px;
+      transition: color var(--transition-speed);
     }
+
     .footer a:hover {
-      text-decoration: underline;
+      color: var(--primary-color);
     }
+
     .footer .visitor-count {
       display: flex;
       align-items: center;
     }
-    .footer .visitor-count span.label {
+
+    .footer .visitor-count .label {
       font-weight: bold;
       margin-right: 5px;
+      color: var(--accent-color);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .top-bar .title {
+        font-size: 1.5rem;
+        left: 20px;
+      }
+
+      .top-bar .search-container {
+        max-width: 600px;
+      }
     }
 
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
       }
+
       .sidebar {
         width: 100%;
-        padding: 10px;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 1px solid #333;
       }
+
       .sidebar h2 {
-        font-size: 18px;
-        margin-bottom: 10px;
+        font-size: 1.3rem;
       }
+
       .sidebar button {
-        font-size: 14px;
-        margin-bottom: 5px;
-        padding: 8px;
+        font-size: 0.95rem;
+        padding: 10px 12px;
       }
+
       .content {
-        padding: 10px;
+        padding: 20px;
       }
+
       .dashboard-grid {
         grid-template-columns: 1fr;
       }
-      .card {
-        margin-bottom: 20px;
-        min-height: 250px;
+
+      .hero__title {
+        font-size: 2rem;
       }
+
+      .hero__subtitle {
+        font-size: 1rem;
+      }
+
       .footer {
-        position: relative;
-        left: 0;
-        right: 0;
-      }
-      .top-bar .search-container {
-        max-width: 100%;
-      }
-      .category-section h2 {
-        font-size: 20px;
+        flex-direction: column;
+        gap: 15px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Top Bar -->
   <div class="top-bar">
     <div class="title">TekTuls</div>
     <div class="search-container">
@@ -576,11 +574,13 @@
         <option value="yahoo">Yahoo</option>
       </select>
       <input type="text" id="search-query" placeholder="Search the web...">
-      <button id="search-button"><i class="fas fa-search"></i> Search</button>
+      <button id="search-button" class="btn-primary"><i class="fas fa-search"></i> Search</button>
     </div>
   </div>
-  
+
+  <!-- Main Container -->
   <div class="main-container">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-content">
         <h2><i class="fas fa-tools"></i> Troubleshooting Tools</h2>
@@ -598,7 +598,10 @@
         <button id="perform-ping-test-btn"><i class="fas fa-signal"></i> Perform Ping Test</button>
       </div>
     </div>
+
+    <!-- Content Area -->
     <div class="content">
+      <!-- Hero Section -->
       <div class="hero">
         <h1 class="hero__title"><i class="fas fa-chart-bar"></i> Comprehensive Troubleshooting Dashboard</h1>
         <p class="hero__subtitle">A full suite of interactive troubleshooting tools at your fingertips.</p>
@@ -608,51 +611,64 @@
       <div class="category-section">
         <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
         <div class="dashboard-grid">
+          <!-- Ping Test Card -->
           <div class="card" id="ping-card">
             <h2><i class="fas fa-signal"></i> Ping Test</h2>
-            <div class="card-content" id="ping-content">
+            <div class="card-content">
               <div class="ping-test">
                 <input type="text" id="ping-address" placeholder="Enter server address (e.g., example.com)">
-                <button id="start-ping-test-btn"><i class="fas fa-play"></i> Start Ping Test</button>
+                <button id="start-ping-test-btn" class="btn-primary"><i class="fas fa-play"></i> Start Ping Test</button>
               </div>
-              <canvas id="pingChart" style="margin-top: 10px;"></canvas>
+              <canvas id="pingChart" style="margin-top: 20px; height: 150px;"></canvas>
             </div>
           </div>
+
+          <!-- Internet Connectivity Card -->
           <div class="card" id="internet-card">
             <h2><i class="fas fa-globe"></i> Internet Connectivity</h2>
-            <div class="card-content" id="internet-content" style="text-align: center;">
-              <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #28a745;"></i>
-              <p id="internet-status-text">Online</p>
+            <div class="card-content" style="text-align: center;">
+              <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #198754;"></i>
+              <p id="internet-status-text" style="margin-top: 10px; font-size: 1.1rem;">Online</p>
             </div>
           </div>
+
+          <!-- Network Speed Card -->
           <div class="card network-speed-card">
             <h2><i class="fas fa-chart-line"></i> Network Speed</h2>
-            <div class="network-speed-chart-container">
-              <canvas id="networkSpeedChart"></canvas>
+            <div class="card-content">
+              <div class="network-speed-chart-container">
+                <canvas id="networkSpeedChart"></canvas>
+              </div>
+              <p id="current-speed" style="text-align: center; margin-top: 15px; font-size: 1rem; color: #198754;">
+                Current Speed: <strong>-- Mbps</strong>
+              </p>
             </div>
-            <p id="current-speed" style="text-align: center; margin-top: 10px; font-size: 16px;">
-              Current Speed: <strong>-- Mbps</strong>
-            </p>
           </div>
+
+          <!-- Network Information Card -->
           <div class="card" id="network-info-card">
             <h2><i class="fas fa-network-wired"></i> Network Information</h2>
             <div class="card-content">
               <div class="network-info">
                 <strong>Public IP Address:</strong>
-                <p id="public-ip">Fetching...</p>
-                <button id="refresh-ip-btn">Refresh IP</button>
+                <p id="public-ip" style="margin-top: 5px; color: #198754;">Fetching...</p>
+                <button id="refresh-ip-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-sync-alt"></i> Refresh IP</button>
               </div>
-              <div class="network-info">
+              <div class="network-info" style="margin-top: 20px;">
                 <strong>DNS Lookup:</strong>
-                <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)">
-                <button id="dns-lookup-btn">Lookup DNS</button>
+                <input type="text" id="dns-domain" placeholder="Enter domain name (e.g., example.com)" style="margin-top: 10px;">
+                <button id="dns-lookup-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-search"></i> Lookup DNS</button>
                 <div class="result" id="dns-result"></div>
               </div>
             </div>
           </div>
+
+          <!-- WebRTC IP Addresses Card -->
           <div class="card" id="webrtc-card">
             <h2><i class="fas fa-network-wired"></i> WebRTC IP Addresses</h2>
-            <div class="card-content" id="webrtc-content">Retrieving...</div>
+            <div class="card-content" id="webrtc-content" style="color: #0dcaf0;">
+              Retrieving...
+            </div>
           </div>
         </div>
       </div>
@@ -661,9 +677,10 @@
       <div class="category-section">
         <h2><i class="fas fa-desktop"></i> System Information</h2>
         <div class="dashboard-grid">
+          <!-- System Info Card -->
           <div class="card" id="system-info-card">
             <h2><i class="fas fa-desktop"></i> System Information</h2>
-            <div class="card-content" id="system-info-content">
+            <div class="card-content">
               <table class="info-table">
                 <tbody>
                   <tr><th>Operating System:</th><td id="os-info">Loading...</td></tr>
@@ -679,34 +696,42 @@
                   <tr><th>Touch Support:</th><td id="touch-support-info">Loading...</td></tr>
                 </tbody>
               </table>
-              <p style="font-size: 12px; margin-top: 10px;">
+              <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
                 <em>Note: Disk space usage reflects browser storage quota usage, not entire system disk usage.</em>
               </p>
             </div>
           </div>
+
+          <!-- Memory Usage Chart -->
           <div class="card">
             <h2><i class="fas fa-memory"></i> Memory Usage</h2>
-            <canvas id="memoryChart" style="height: 200px;"></canvas>
+            <canvas id="memoryChart" style="margin-top: 20px; height: 150px;"></canvas>
           </div>
+
+          <!-- Battery Status Card -->
           <div class="card" id="battery-card">
             <h2><i class="fas fa-battery-half"></i> Battery Status</h2>
-            <div class="card-content" id="battery-content">
+            <div class="card-content">
               <div class="progress-bar-container">
                 <div id="battery-progress-bar" class="progress-bar"></div>
               </div>
-              <p id="battery-status-text">Loading...</p>
+              <p id="battery-status-text" style="margin-top: 10px; font-size: 1rem; color: #0dcaf0;">Loading...</p>
             </div>
           </div>
+
+          <!-- Screen Resolution Card -->
           <div class="card" id="screen-card">
             <h2><i class="fas fa-tv"></i> Screen Resolution</h2>
-            <div class="card-content" id="screen-content">
-              <div id="screen-rectangle" style="background-color: #17a2b8; width: 200px; height: 200px; margin: 0 auto;"></div>
-              <p id="screen-dimensions-text" style="text-align: center; margin-top: 10px;"></p>
+            <div class="card-content">
+              <div id="screen-rectangle" style="background-color: var(--accent-color);"></div>
+              <p id="screen-dimensions-text" style="text-align: center; margin-top: 10px; font-size: 1rem; color: #0dcaf0;"></p>
             </div>
           </div>
+
+          <!-- Time Zone & Locale Card -->
           <div class="card" id="timezone-card">
             <h2><i class="fas fa-clock"></i> Time Zone & Locale</h2>
-            <div class="card-content" id="timezone-content">
+            <div class="card-content">
               <table class="info-table">
                 <tbody>
                   <tr><th>Time Zone:</th><td id="timezone-info">Loading...</td></tr>
@@ -714,7 +739,7 @@
                 </tbody>
               </table>
               <!-- Map -->
-              <div id="map" style="height: 200px; margin-top: 10px;"></div>
+              <div id="map" style="height: 200px; margin-top: 15px; border-radius: var(--border-radius);"></div>
             </div>
           </div>
         </div>
@@ -724,23 +749,30 @@
       <div class="category-section">
         <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
         <div class="dashboard-grid">
+          <!-- Sensors Availability Card -->
           <div class="card" id="sensors-card">
             <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
-            <div class="card-content" id="sensors-content">
+            <div class="card-content" id="sensors-content" style="color: #0dcaf0;">
               <!-- Populated by JS -->
             </div>
           </div>
+
+          <!-- Media Devices Card -->
           <div class="card" id="media-card">
             <h2><i class="fas fa-video"></i> Media Devices</h2>
             <div class="card-content" id="media-content">
-              <strong>Media Devices:</strong>
-              <ul id="media-devices-list" style="margin-top: 10px; list-style: none; padding-left: 0;"></ul>
-              <div class="media-test">
-                <button id="toggle-webcam-btn"><i class="fas fa-camera"></i> Test Webcam</button>
+              <strong>Available Media Devices:</strong>
+              <ul id="media-devices-list" style="margin-top: 10px;">
+                <!-- Populated by JS -->
+              </ul>
+              <!-- Webcam Test -->
+              <div class="media-test" style="margin-top: 20px;">
+                <button id="toggle-webcam-btn" class="btn-primary"><i class="fas fa-camera"></i> Test Webcam</button>
                 <video id="webcam-video" autoplay playsinline></video>
               </div>
-              <div class="media-test">
-                <button id="toggle-microphone-btn"><i class="fas fa-microphone"></i> Test Microphone</button>
+              <!-- Microphone Test -->
+              <div class="media-test" style="margin-top: 20px;">
+                <button id="toggle-microphone-btn" class="btn-primary"><i class="fas fa-microphone"></i> Test Microphone</button>
                 <div id="mic-level-container">
                   <div id="mic-level"></div>
                 </div>
@@ -754,30 +786,37 @@
       <div class="category-section">
         <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
         <div class="dashboard-grid">
+          <!-- Ad Blocker Detection Card -->
           <div class="card" id="adblocker-card">
             <h2><i class="fas fa-ban"></i> Ad Blocker Detection</h2>
-            <div class="card-content" id="adblocker-content" style="text-align: center;">
+            <div class="card-content" id="adblocker-content" style="text-align: center; color: #0dcaf0;">
               Detecting...
             </div>
           </div>
+
+          <!-- Service Worker Status Card -->
           <div class="card" id="serviceworker-card">
             <h2><i class="fas fa-robot"></i> Service Worker Status</h2>
-            <div class="card-content" id="serviceworker-content" style="text-align: center;">
+            <div class="card-content" id="serviceworker-content" style="text-align: center; color: #0dcaf0;">
               Checking...
             </div>
           </div>
+
+          <!-- JavaScript Errors Card -->
           <div class="card" id="js-errors-card">
             <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
-            <div class="card-content" id="js-errors-content">
+            <div class="card-content" id="js-errors-content" style="color: #dc3545;">
               No errors detected.
             </div>
           </div>
+
+          <!-- JavaScript Error Analyzer Card -->
           <div class="card" id="js-error-analyzer-card">
             <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
             <div class="card-content">
-              <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)">
-              <button id="start-js-error-analysis-btn"><i class="fas fa-search"></i> Analyze JavaScript Errors</button>
-              <div id="js-error-analyzer-result" style="margin-top: 10px;"></div>
+              <input type="text" id="analyzer-url" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)" style="margin-top: 10px;">
+              <button id="start-js-error-analysis-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-search"></i> Analyze JavaScript Errors</button>
+              <div id="js-error-analyzer-result" style="margin-top: 15px;"></div>
               <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
             </div>
           </div>
@@ -788,14 +827,19 @@
       <div class="category-section">
         <h2><i class="fas fa-database"></i> Storage Management</h2>
         <div class="dashboard-grid">
+          <!-- Storage Usage Card -->
           <div class="card">
             <h2><i class="fas fa-database"></i> Storage Usage</h2>
             <div class="card-content" id="storage-usage-content">
-              <div id="storage-progress-bar-container" class="progress-bar-container">
+              <div class="progress-bar-container">
                 <div id="storage-progress-bar" class="progress-bar"></div>
               </div>
-              <p id="storage-usage-text">Calculating storage usage...</p>
-              <p style="font-size: 14px;">This shows the storage used by this web application within your browser, not the entire system's disk usage.</p>
+              <p id="storage-usage-text" style="margin-top: 10px; font-size: 1rem; color: #0dcaf0;">
+                Calculating storage usage...
+              </p>
+              <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
+                This shows the storage used by this web application within your browser, not the entire system's disk usage.
+              </p>
             </div>
           </div>
         </div>
@@ -805,13 +849,16 @@
       <div class="category-section">
         <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
         <div class="dashboard-grid">
+          <!-- FPS Monitor Card -->
           <div class="card">
             <h2><i class="fas fa-tachometer-alt"></i> FPS Monitor</h2>
-            <canvas id="performanceChart" style="height: 200px;"></canvas>
+            <canvas id="performanceChart" style="margin-top: 20px; height: 150px;"></canvas>
           </div>
+
+          <!-- WebGL Support Card -->
           <div class="card" id="webgl-card">
             <h2><i class="fas fa-cube"></i> WebGL Support</h2>
-            <div class="card-content" id="webgl-content" style="text-align: center;">
+            <div class="card-content" id="webgl-content" style="text-align: center; color: #0dcaf0;">
               Checking...
             </div>
           </div>
@@ -822,22 +869,29 @@
       <div class="category-section">
         <h2><i class="fas fa-universal-access"></i> Accessibility & Compatibility</h2>
         <div class="dashboard-grid">
+          <!-- Accessibility Checker Card -->
           <div class="card" id="accessibility-card">
             <h2><i class="fas fa-universal-access"></i> Accessibility Checker</h2>
             <div class="card-content" id="accessibility-content">
-              <p>Enter a website URL to check for basic accessibility issues (missing alt attributes, unlabeled form fields). Note that cross-origin restrictions may apply.</p>
-              <input type="text" id="accessibility-url" class="check-input" placeholder="Enter website URL (e.g., http://example.com)">
-              <button id="check-website-accessibility" class="check-button"><i class="fas fa-check"></i> Check Website Accessibility</button>
-              <div id="accessibility-results" style="margin-top:10px;"></div>
-              <iframe id="accessibility-iframe" src="" style="width:0; height:0; border:none; display:none;"></iframe>
+              <p style="font-size: 0.95rem; color: var(--muted-text);">
+                Enter a website URL to check for basic accessibility issues (missing alt attributes, unlabeled form fields). Note that cross-origin restrictions may apply.
+              </p>
+              <input type="text" id="accessibility-url" placeholder="Enter website URL (e.g., http://example.com)" style="margin-top: 10px;">
+              <button id="check-website-accessibility" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-check"></i> Check Website Accessibility</button>
+              <div id="accessibility-results" style="margin-top: 15px;"></div>
+              <iframe id="accessibility-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
             </div>
           </div>
+
+          <!-- Browser Compatibility Checker Card -->
           <div class="card" id="compatibility-card">
             <h2><i class="fas fa-browser"></i> Browser Compatibility Checker</h2>
             <div class="card-content" id="compatibility-content">
-              <p>Check if your browser supports key modern web features.</p>
-              <button id="run-compatibility-check" class="check-button"><i class="fas fa-check"></i> Run Compatibility Check</button>
-              <div id="compatibility-results" style="margin-top:10px;"></div>
+              <p style="font-size: 0.95rem; color: var(--muted-text);">
+                Check if your browser supports key modern web features.
+              </p>
+              <button id="run-compatibility-check" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-check"></i> Run Compatibility Check</button>
+              <div id="compatibility-results" style="margin-top: 15px;"></div>
             </div>
           </div>
         </div>
@@ -847,21 +901,22 @@
       <div class="category-section">
         <h2><i class="fas fa-globe"></i> Website Tools</h2>
         <div class="dashboard-grid">
+          <!-- Website Snapshot Card -->
           <div class="card website-snapshot-card">
             <h2><i class="fas fa-camera"></i> Website Snapshot</h2>
             <div class="card-content">
-              <input type="text" id="snapshot-url" class="check-input" placeholder="Enter website URL (e.g., https://example.com)">
-              <button id="snapshot-button" class="check-button"><i class="fas fa-camera"></i> Capture Snapshot</button>
-              <img id="website-snapshot-image" src="" alt="Website Snapshot">
-              <div id="snapshot-message" class="snapshot-message"></div>
+              <input type="text" id="snapshot-url" placeholder="Enter website URL (e.g., https://example.com)" style="margin-top: 10px;">
+              <button id="snapshot-button" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-camera"></i> Capture Snapshot</button>
+              <img id="website-snapshot-image" src="" alt="Website Snapshot" style="margin-top: 20px; border: 2px solid #b0b0b0; border-radius: var(--border-radius); display: none;">
+              <div id="snapshot-message" style="margin-top: 15px; font-size: 0.95rem; color: var(--muted-text);"></div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
-  
+
+  <!-- Footer -->
   <div class="footer">
     <span>© 2024 Michael Palmero</span>
     <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
@@ -870,6 +925,7 @@
     </div>
   </div>
 
+  <!-- JavaScript -->
   <script>
     let errorLogs = [];
 
@@ -1031,11 +1087,11 @@
       const internetStatusText = document.getElementById('internet-status-text');
       fetch('https://www.google.com/', { mode: 'no-cors' })
         .then(() => {
-          internetStatusIcon.style.color = '#28a745';
+          internetStatusIcon.style.color = '#198754'; /* Green */
           internetStatusText.innerHTML = 'Online';
         })
         .catch(() => {
-          internetStatusIcon.style.color = '#dc3545';
+          internetStatusIcon.style.color = '#dc3545'; /* Red */
           internetStatusText.innerHTML = 'Offline';
         });
     }
@@ -1078,9 +1134,9 @@
         datasets: [{
           label: 'FPS',
           data: fpsData,
-          backgroundColor: 'rgba(255, 193, 7, 0.2)',
-          borderColor: '#ffc107',
-          borderWidth: 1,
+          backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+          borderColor: 'var(--primary-color)',
+          borderWidth: 2,
           fill: true,
           pointRadius: 0,
           tension: 0.4
@@ -1090,7 +1146,7 @@
         animation: false,
         scales: {
           x: { display: false },
-          y: { beginAtZero: true }
+          y: { beginAtZero: true, title: { display: false } }
         },
         plugins: {
           legend: { display: false }
@@ -1133,9 +1189,9 @@
         datasets: [{
           label: 'Speed (Mbps)',
           data: networkSpeedData,
-          backgroundColor: 'rgba(40, 167, 69, 0.2)',
-          borderColor: '#28a745',
-          borderWidth: 1,
+          backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+          borderColor: 'var(--primary-color)',
+          borderWidth: 2,
           fill: true,
           pointRadius: 3,
           tension: 0.4
@@ -1147,7 +1203,7 @@
         maintainAspectRatio: false,
         scales: {
           x: { display: false },
-          y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' } }
+          y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' }, grid: { color: '#333' } }
         },
         plugins: {
           legend: { display: false },
@@ -1174,9 +1230,11 @@
         networkSpeedChart.update();
         const currentSpeedElement = document.getElementById('current-speed');
         currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
+        currentSpeedElement.style.color = '#198754'; /* Green */
       } else {
         const currentSpeedElement = document.getElementById('current-speed');
         currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
+        currentSpeedElement.style.color = '#dc3545'; /* Red */
       }
     }
     updateNetworkSpeedChart();
@@ -1191,8 +1249,9 @@
           const batteryLevel = (battery.level * 100).toFixed(0);
           const chargingStatus = battery.charging ? "Charging" : "Not Charging";
           batteryProgressBar.style.width = `${batteryLevel}%`;
-          batteryProgressBar.style.backgroundColor = battery.charging ? '#ffc107' : '#28a745';
+          batteryProgressBar.style.backgroundColor = battery.charging ? '#0dcaf0' : '#198754';
           batteryStatusText.innerHTML = `${batteryLevel}% - ${chargingStatus}`;
+          batteryStatusText.style.color = battery.charging ? '#0dcaf0' : '#198754';
         });
       } else {
         batteryContent.innerHTML = "Battery status not supported by your browser.";
@@ -1205,8 +1264,8 @@
       const width = window.screen.width;
       const height = window.screen.height;
       const maxDimension = Math.max(width, height);
-      const scaledWidth = (width / maxDimension) * 200;
-      const scaledHeight = (height / maxDimension) * 200;
+      const scaledWidth = (width / maxDimension) * 100;
+      const scaledHeight = (height / maxDimension) * 100;
       screenRectangle.style.width = `${scaledWidth}px`;
       screenRectangle.style.height = `${scaledHeight}px`;
       screenDimensionsText.innerHTML = `<strong>${width}px</strong> x <strong>${height}px</strong>`;
@@ -1240,13 +1299,13 @@
           },
           () => {
             if (mapDiv) {
-              mapDiv.innerHTML = "Location access denied.";
+              mapDiv.innerHTML = "<p style='color: #dc3545;'>Location access denied.</p>";
             }
           }
         );
       } else {
         if (mapDiv) {
-          mapDiv.innerHTML = "Geolocation not supported.";
+          mapDiv.innerHTML = "<p style='color: #dc3545;'>Geolocation not supported.</p>";
         }
       }
     }
@@ -1281,9 +1340,9 @@
         datasets: [{
           label: 'Memory Usage (MB)',
           data: memoryUsageData,
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: '#36a2eb',
-          borderWidth: 1,
+          backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+          borderColor: 'var(--primary-color)',
+          borderWidth: 2,
           fill: true,
           pointRadius: 0,
           tension: 0.4
@@ -1293,7 +1352,7 @@
         animation: false,
         scales: {
           x: { display: false },
-          y: { beginAtZero: true }
+          y: { beginAtZero: true, title: { display: false } }
         },
         plugins: {
           legend: { display: false }
@@ -1305,17 +1364,17 @@
     function updateSensorsAvailability() {
       const sensorsContent = document.getElementById('sensors-content');
       const sensors = [];
-      if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Accelerometer</li>');
-      if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Gyroscope</li>');
+      if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #198754;"></i> Accelerometer</li>');
+      if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #198754;"></i> Gyroscope</li>');
       if ('Magnetometer' in window) {
-        sensors.push('<li><i class="fas fa-check-circle" style="color: #28a745;"></i> Magnetometer</li>');
+        sensors.push('<li><i class="fas fa-check-circle" style="color: #198754;"></i> Magnetometer</li>');
       } else {
         sensors.push('<li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>');
       }
       if (sensors.length > 0) {
-        sensorsContent.innerHTML = `<ul style="list-style: none; padding-left: 0;">${sensors.join('')}</ul>`;
+        sensorsContent.innerHTML = `<ul>${sensors.join('')}</ul>`;
       } else {
-        sensorsContent.innerHTML = "No motion sensors available.";
+        sensorsContent.innerHTML = "<p>No motion sensors available.</p>";
       }
     }
 
@@ -1325,18 +1384,18 @@
         navigator.mediaDevices.enumerateDevices().then(devices => {
           const deviceList = devices.map(device => {
             let icon = '';
-            if (device.kind === 'audioinput') icon = '<i class="fas fa-microphone" style="color: #17a2b8;"></i>';
-            if (device.kind === 'audiooutput') icon = '<i class="fas fa-volume-up" style="color: #17a2b8;"></i>';
-            if (device.kind === 'videoinput') icon = '<i class="fas fa-video" style="color: #17a2b8;"></i>';
+            if (device.kind === 'audioinput') icon = '<i class="fas fa-microphone" style="color: var(--accent-color);"></i>';
+            if (device.kind === 'audiooutput') icon = '<i class="fas fa-volume-up" style="color: var(--accent-color);"></i>';
+            if (device.kind === 'videoinput') icon = '<i class="fas fa-video" style="color: var(--accent-color);"></i>';
             return `<li>${icon} ${device.label || 'Not Named'}</li>`;
           }).join('');
-          mediaDevicesList.innerHTML = `<ul style="list-style: none; padding-left: 0;">${deviceList}</ul>`;
+          mediaDevicesList.innerHTML = `<ul>${deviceList}</ul>`;
         }).catch(err => {
           console.error('Error accessing media devices:', err);
-          mediaDevicesList.innerHTML = "Could not access media devices.";
+          mediaDevicesList.innerHTML = "<p style='color: #dc3545;'>Could not access media devices.</p>";
         });
       } else {
-        mediaDevicesList.innerHTML = "Media Devices API not supported.";
+        mediaDevicesList.innerHTML = "<p style='color: #dc3545;'>Media Devices API not supported.</p>";
       }
     }
 
@@ -1352,11 +1411,11 @@
           const progressBar = document.getElementById('storage-progress-bar');
           const usageText = document.getElementById('storage-usage-text');
           progressBar.style.width = `${usedPercentage}%`;
-          progressBar.style.backgroundColor = usedPercentage > 80 ? '#dc3545' : '#28a745';
+          progressBar.style.backgroundColor = usedPercentage > 80 ? '#dc3545' : 'var(--primary-color)';
           usageText.innerHTML = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
         });
       } else {
-        storageContent.innerHTML = "Storage API not supported by your browser.";
+        storageContent.innerHTML = "<p style='color: #dc3545;'>Storage API not supported by your browser.</p>";
       }
     }
 
@@ -1365,9 +1424,9 @@
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       if (gl && gl instanceof WebGLRenderingContext) {
-        webglContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>WebGL is supported.';
+        webglContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #198754;"></i><br><p>WebGL is supported.</p>';
       } else {
-        webglContent.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 48px;"></i><br>WebGL is not supported.';
+        webglContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #dc3545;"></i><br><p>WebGL is not supported.</p>';
       }
     }
 
@@ -1381,9 +1440,9 @@
       document.body.appendChild(ad);
       window.setTimeout(() => {
         if (ad.offsetHeight === 0) {
-          adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ffc107; font-size: 48px;"></i><br>Ad blocker detected.';
+          adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ffc107;"></i><br><p>Ad blocker detected.</p>';
         } else {
-          adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>No ad blocker detected.';
+          adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #198754;"></i><br><p>No ad blocker detected.</p>';
         }
         ad.remove();
       }, 100);
@@ -1393,12 +1452,12 @@
       const serviceworkerContent = document.getElementById('serviceworker-content');
       if ('serviceWorker' in navigator) {
         if (navigator.serviceWorker.controller) {
-          serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745; font-size: 48px;"></i><br>Service Worker is active.';
+          serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #198754;"></i><br><p>Service Worker is active.</p>';
         } else {
-          serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="color: #17a2b8; font-size: 48px;"></i><br>Service Worker is supported but not registered.';
+          serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="font-size: 48px; color: #0dcaf0;"></i><br><p>Service Worker is supported but not registered.</p>';
         }
       } else {
-        serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 48px;"></i><br>Service Workers are not supported.';
+        serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #dc3545;"></i><br><p>Service Workers are not supported.</p>';
       }
     }
 
@@ -1406,7 +1465,7 @@
       const webrtcContent = document.getElementById('webrtc-content');
       const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
       if (!RTCPeerConnection) {
-        webrtcContent.innerHTML = "WebRTC not supported.";
+        webrtcContent.innerHTML = "<p style='color: #dc3545;'>WebRTC not supported.</p>";
         return;
       }
       const pc = new RTCPeerConnection({ iceServers: [] });
@@ -1428,8 +1487,9 @@
         } else {
           if (ips.size > 0) {
             webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
+            webrtcContent.style.color = '#0dcaf0';
           } else {
-            webrtcContent.innerHTML = "No IP addresses detected.";
+            webrtcContent.innerHTML = "<p style='color: #dc3545;'>No IP addresses detected.</p>";
           }
           pc.close();
         }
@@ -1462,9 +1522,9 @@
           datasets: [{
             label: 'Ping (ms)',
             data: [],
-            backgroundColor: 'rgba(220, 53, 69, 0.2)',
-            borderColor: '#dc3545',
-            borderWidth: 1,
+            backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+            borderColor: 'var(--primary-color)',
+            borderWidth: 2,
             fill: true,
             pointRadius: 3,
             tension: 0.1
@@ -1473,11 +1533,18 @@
         options: {
           animation: false,
           scales: {
-            x: { display: true, title: { display: true, text: 'Ping Number' } },
-            y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' }, suggestedMax: 1000 }
+            x: { display: true, title: { display: true, text: 'Ping Number' }, grid: { color: '#333' } },
+            y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' }, suggestedMax: 1000, grid: { color: '#333' } }
           },
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `Latency: ${context.parsed.y} ms`;
+                }
+              }
+            }
           }
         }
       });
@@ -1572,17 +1639,17 @@
               displayJsError(event.data.error);
             }
           });
-          resultDiv.innerHTML = 'No JavaScript errors detected.';
+          resultDiv.innerHTML = '<p style="color: #198754;">No JavaScript errors detected.</p>';
         } catch (e) {
-          resultDiv.innerHTML = 'Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.';
+          resultDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.</p>';
           console.error('Cross-origin error:', e);
         }
       };
       function displayJsError(error) {
         if (resultDiv.innerHTML === 'Analyzing...') {
-          resultDiv.innerHTML = `<strong>Errors Detected:</strong><br>`;
+          resultDiv.innerHTML = `<strong style="color: #dc3545;">Errors Detected:</strong><br>`;
         }
-        resultDiv.innerHTML += `${error.message} at ${error.source}:${error.lineno}:${error.colno}<br>`;
+        resultDiv.innerHTML += `<span style="color: #dc3545;">${error.message}</span> at <span style="color: var(--muted-text);">${error.source}:${error.lineno}:${error.colno}</span><br>`;
       }
     }
 
@@ -1667,6 +1734,7 @@
     function updatePublicIP() {
       const publicIPElement = document.getElementById('public-ip');
       publicIPElement.innerHTML = 'Fetching...';
+      publicIPElement.style.color = '#198754'; /* Green */
       fetch('https://api.ipify.org?format=json')
         .then(response => {
           if (!response.ok) {
@@ -1676,9 +1744,11 @@
         })
         .then(data => {
           publicIPElement.innerHTML = data.ip;
+          publicIPElement.style.color = '#198754'; /* Green */
         })
         .catch(err => {
           publicIPElement.innerHTML = 'Unable to fetch IP.';
+          publicIPElement.style.color = '#dc3545'; /* Red */
           console.error('Public IP fetch error:', err);
         });
     }
@@ -1692,6 +1762,7 @@
         return;
       }
       resultDiv.innerHTML = 'Looking up...';
+      resultDiv.style.color = '#0dcaf0'; /* Teal */
       fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
         method: 'GET',
         headers: { 'Accept': 'application/dns-json' }
@@ -1707,15 +1778,19 @@
           const ips = data.Answer.filter(record => record.type === 1).map(record => record.data);
           if (ips.length > 0) {
             resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
+            resultDiv.style.color = '#198754'; /* Green */
           } else {
             resultDiv.innerHTML = 'No A records found.';
+            resultDiv.style.color = '#dc3545'; /* Red */
           }
         } else {
           resultDiv.innerHTML = 'DNS lookup failed or no records found.';
+          resultDiv.style.color = '#dc3545'; /* Red */
         }
       })
       .catch(err => {
         resultDiv.innerHTML = 'Error performing DNS lookup.';
+        resultDiv.style.color = '#dc3545'; /* Red */
         console.error('DNS lookup error:', err);
       });
     }
@@ -1742,8 +1817,8 @@
       });
 
       let report = `<strong>Accessibility Report:</strong><br>`;
-      report += `Images missing alt attributes: ${missingAlts}<br>`;
-      report += `Form fields missing labels or aria-label: ${missingLabels}<br>`;
+      report += `Images missing alt attributes: <span style="color: ${missingAlts > 0 ? '#dc3545' : '#198754'};">${missingAlts}</span><br>`;
+      report += `Form fields missing labels or aria-label: <span style="color: ${missingLabels > 0 ? '#dc3545' : '#198754'};">${missingLabels}</span><br>`;
       return report;
     }
 
@@ -1766,6 +1841,7 @@
       }
 
       resultsDiv.innerHTML = 'Checking...';
+      resultsDiv.style.color = '#0dcaf0'; /* Teal */
       iframe.src = '';
       iframe.style.display = 'none';
 
@@ -1777,16 +1853,22 @@
           }
           const report = runAccessibilityCheckOnDocument(iframeDoc);
           resultsDiv.innerHTML = report;
+          // Determine overall color based on presence of errors
+          if (report.includes('#dc3545')) {
+            resultsDiv.style.color = '#dc3545'; /* Red */
+          } else {
+            resultsDiv.style.color = '#198754'; /* Green */
+          }
         } catch (e) {
           console.error('Cross-origin or access error:', e);
-          resultsDiv.innerHTML = 'Unable to analyze accessibility due to cross-origin restrictions or inaccessible content.';
+          resultsDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze accessibility due to cross-origin restrictions or inaccessible content.</p>';
         }
       };
 
       iframe.src = url;
       setTimeout(() => {
         if (resultsDiv.innerHTML === 'Checking...') {
-          resultsDiv.innerHTML = 'Unable to analyze accessibility due to cross-origin restrictions or time-out accessing content.';
+          resultsDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze accessibility due to cross-origin restrictions or time-out accessing content.</p>';
         }
       }, 5000);
     }
@@ -1794,6 +1876,7 @@
     function runCompatibilityCheck() {
       const resultsDiv = document.getElementById('compatibility-results');
       resultsDiv.innerHTML = 'Checking...';
+      resultsDiv.style.color = '#0dcaf0'; /* Teal */
 
       const features = {
         'Service Workers': 'serviceWorker' in navigator,
@@ -1805,7 +1888,7 @@
 
       let report = `<strong>Browser Compatibility Report:</strong><br>`;
       for (const [feature, supported] of Object.entries(features)) {
-        report += `${feature}: ${supported ? '<span style="color: #28a745;">Supported</span>' : '<span style="color: #dc3545;">Not Supported</span>'}<br>`;
+        report += `${feature}: ${supported ? '<span style="color: #198754;">Supported</span>' : '<span style="color: #dc3545;">Not Supported</span>'}<br>`;
       }
       resultsDiv.innerHTML = report;
     }
@@ -1836,6 +1919,7 @@
       const apiURL = `http://api.screenshotlayer.com/api/capture?access_key=${encodeURIComponent(apiKey)}&url=${encodeURIComponent(url)}&viewport=1440x900&width=250`;
 
       snapshotMessage.innerHTML = 'Capturing snapshot...';
+      snapshotMessage.style.color = '#0dcaf0'; /* Teal */
       snapshotImage.style.display = 'none';
       snapshotImage.src = '';
 
@@ -1851,12 +1935,14 @@
             snapshotImage.src = data.screenshot;
             snapshotImage.style.display = 'block';
             snapshotMessage.innerHTML = 'Snapshot captured successfully.';
+            snapshotMessage.style.color = '#198754'; /* Green */
           } else {
             throw new Error('Snapshot not available.');
           }
         })
         .catch(err => {
           snapshotMessage.innerHTML = 'Error capturing snapshot. Please ensure the URL is correct and the API key is valid.';
+          snapshotMessage.style.color = '#dc3545'; /* Red */
           console.error('Snapshot capture error:', err);
         });
     }
@@ -1910,7 +1996,7 @@
       document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
       document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
-      
+
       // Add event listener for Website Snapshot
       document.getElementById('snapshot-button').addEventListener('click', captureWebsiteSnapshot);
     });
