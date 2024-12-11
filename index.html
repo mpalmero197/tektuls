@@ -695,6 +695,8 @@
                   <tr><th>Locale:</th><td id="locale-info">Loading...</td></tr>
                 </tbody>
               </table>
+              <!-- Added the map here -->
+              <div id="map" style="height: 200px; margin-top: 10px;"></div>
             </div>
           </div>
         </div>
@@ -1184,20 +1186,22 @@
         navigator.geolocation.getCurrentPosition(
           position => {
             const { latitude, longitude } = position.coords;
-            if (!mapInitialized && mapDiv) {
-              mapInstance = L.map('map').setView([latitude, longitude], 13);
-              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-              }).addTo(mapInstance);
-              L.marker([latitude, longitude]).addTo(mapInstance)
-                .bindPopup('You are here.')
-                .openPopup();
-              mapInitialized = true;
-            } else if (mapInstance) {
-              mapInstance.setView([latitude, longitude], 13);
-              L.marker([latitude, longitude]).addTo(mapInstance)
-                .bindPopup('You are here.')
-                .openPopup();
+            if (mapDiv) {
+              if (!mapInitialized) {
+                mapInstance = L.map('map').setView([latitude, longitude], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(mapInstance);
+                L.marker([latitude, longitude]).addTo(mapInstance)
+                  .bindPopup('You are here.')
+                  .openPopup();
+                mapInitialized = true;
+              } else {
+                mapInstance.setView([latitude, longitude], 13);
+                L.marker([latitude, longitude]).addTo(mapInstance)
+                  .bindPopup('You are here.')
+                  .openPopup();
+              }
             }
           },
           () => {
@@ -1746,7 +1750,6 @@
       };
 
       iframe.src = url;
-      // Timeout in case onload doesn't fire due to cross-origin
       setTimeout(() => {
         if (resultsDiv.innerHTML === 'Checking...') {
           resultsDiv.innerHTML = 'Unable to analyze accessibility due to cross-origin restrictions or time-out accessing content.';
