@@ -477,15 +477,15 @@
       background-color: #218838;
     }
 
-    /* New Styles for Website Preview Card */
-    .website-preview-card iframe {
+    /* New Styles for Website Snapshot Card */
+    .website-snapshot-card img {
       width: 100%;
-      height: 300px;
-      border: none;
+      height: auto;
       border-radius: 5px;
       margin-top: 10px;
+      display: none;
     }
-    .website-preview-card .preview-message {
+    .website-snapshot-card .snapshot-message {
       margin-top: 10px;
       font-size: 14px;
       color: #ffc107;
@@ -829,7 +829,7 @@
               <input type="text" id="accessibility-url" class="check-input" placeholder="Enter website URL (e.g., http://example.com)">
               <button id="check-website-accessibility" class="check-button"><i class="fas fa-check"></i> Check Website Accessibility</button>
               <div id="accessibility-results" style="margin-top:10px;"></div>
-              <iframe id="accessibility-iframe" style="width:0; height:0; border:none; display:none;"></iframe>
+              <iframe id="accessibility-iframe" src="" style="width:0; height:0; border:none; display:none;"></iframe>
             </div>
           </div>
           <div class="card" id="compatibility-card">
@@ -847,13 +847,13 @@
       <div class="category-section">
         <h2><i class="fas fa-globe"></i> Website Tools</h2>
         <div class="dashboard-grid">
-          <div class="card website-preview-card">
-            <h2><i class="fas fa-eye"></i> Website Preview</h2>
+          <div class="card website-snapshot-card">
+            <h2><i class="fas fa-camera"></i> Website Snapshot</h2>
             <div class="card-content">
-              <input type="text" id="preview-url" class="check-input" placeholder="Enter website URL (e.g., https://example.com)">
-              <button id="preview-button" class="check-button"><i class="fas fa-eye"></i> Preview Website</button>
-              <iframe id="website-preview-iframe" style="width:100%; height:0; border:none; display:none;"></iframe>
-              <div id="preview-message" class="preview-message"></div>
+              <input type="text" id="snapshot-url" class="check-input" placeholder="Enter website URL (e.g., https://example.com)">
+              <button id="snapshot-button" class="check-button"><i class="fas fa-camera"></i> Capture Snapshot</button>
+              <img id="website-snapshot-image" src="" alt="Website Snapshot">
+              <div id="snapshot-message" class="snapshot-message"></div>
             </div>
           </div>
         </div>
@@ -1810,13 +1810,13 @@
       resultsDiv.innerHTML = report;
     }
 
-    // Website Preview Functionality
-    function previewWebsite() {
-      const previewUrlInput = document.getElementById('preview-url');
-      const previewButton = document.getElementById('preview-button');
-      const iframe = document.getElementById('website-preview-iframe');
-      const previewMessage = document.getElementById('preview-message');
-      const url = previewUrlInput.value.trim();
+    // Website Snapshot Functionality
+    function captureWebsiteSnapshot() {
+      const snapshotUrlInput = document.getElementById('snapshot-url');
+      const snapshotButton = document.getElementById('snapshot-button');
+      const snapshotImage = document.getElementById('website-snapshot-image');
+      const snapshotMessage = document.getElementById('snapshot-message');
+      const url = snapshotUrlInput.value.trim();
 
       if (!url) {
         alert('Please enter a website URL.');
@@ -1830,28 +1830,35 @@
         return;
       }
 
-      previewMessage.innerHTML = 'Loading preview...';
-      iframe.src = '';
-      iframe.style.display = 'none';
+      // Use the provided API key
+      const apiKey = '8848c51f2c1271e071020ffb35490245';
+      // Construct the API URL as per the provided format
+      const apiURL = `http://api.screenshotlayer.com/api/capture?access_key=${encodeURIComponent(apiKey)}&url=${encodeURIComponent(url)}&viewport=1440x900&width=250`;
 
-      iframe.onload = function() {
-        // Check if iframe content is accessible
-        try {
-          const iframeWindow = iframe.contentWindow;
-          void iframeWindow.location.href; // Trigger a security exception if cross-origin
-          previewMessage.innerHTML = 'Preview loaded successfully.';
-        } catch (e) {
-          console.error('Cross-origin error:', e);
-          previewMessage.innerHTML = 'Unable to load preview due to cross-origin restrictions.';
-        }
-      };
+      snapshotMessage.innerHTML = 'Capturing snapshot...';
+      snapshotImage.style.display = 'none';
+      snapshotImage.src = '';
 
-      iframe.onerror = function() {
-        previewMessage.innerHTML = 'Error loading the website preview.';
-      };
-
-      iframe.src = url;
-      iframe.style.display = 'block';
+      fetch(apiURL)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Network response was not ok (${response.status})`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.screenshot) {
+            snapshotImage.src = data.screenshot;
+            snapshotImage.style.display = 'block';
+            snapshotMessage.innerHTML = 'Snapshot captured successfully.';
+          } else {
+            throw new Error('Snapshot not available.');
+          }
+        })
+        .catch(err => {
+          snapshotMessage.innerHTML = 'Error capturing snapshot. Please ensure the URL is correct and the API key is valid.';
+          console.error('Snapshot capture error:', err);
+        });
     }
 
     function initializeDashboard() {
@@ -1904,8 +1911,8 @@
       document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
       
-      // Add event listener for Website Preview
-      document.getElementById('preview-button').addEventListener('click', previewWebsite);
+      // Add event listener for Website Snapshot
+      document.getElementById('snapshot-button').addEventListener('click', captureWebsiteSnapshot);
     });
   </script>
 </body>
