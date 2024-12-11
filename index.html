@@ -393,7 +393,7 @@
 
     #webcam-video {
       width: 100%;
-      max-height: 150px;
+      max-height: 500px;
       background-color: #000;
       border-radius: var(--border-radius);
       display: none;
@@ -673,33 +673,33 @@
       </div>
 
       <!-- System Information -->
-      <div class="category-section">
-        <h2><i class="fas fa-desktop"></i> System Information</h2>
-        <div class="dashboard-grid">
-          <!-- System Info Card -->
-          <div class="card" id="system-info-card">
-            <h2><i class="fas fa-desktop"></i> System Information</h2>
-            <div class="card-content">
-              <table class="info-table">
-                <tbody>
-                  <tr><th>Operating System:</th><td id="os-info">Loading...</td></tr>
-                  <tr><th>Device Type:</th><td id="device-type-info">Loading...</td></tr>
-                  <tr><th>RAM:</th><td id="ram-info">Loading...</td></tr>
-                  <tr><th>Processor:</th><td id="processor-info">Loading...</td></tr>
-                  <tr><th>Disk Space:</th><td id="disk-space-info">Loading...</td></tr>
-                  <tr><th>Browser:</th><td id="browser-info">Loading...</td></tr>
-                  <tr><th>Platform:</th><td id="platform-info">Loading...</td></tr>
-                  <tr><th>Language:</th><td id="language-info">Loading...</td></tr>
-                  <tr><th>Online:</th><td id="online-status-info">Loading...</td></tr>
-                  <tr><th>Cookies Enabled:</th><td id="cookies-enabled-info">Loading...</td></tr>
-                  <tr><th>Touch Support:</th><td id="touch-support-info">Loading...</td></tr>
-                </tbody>
-              </table>
-              <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
-                <em>Note: Disk space usage reflects browser storage quota usage, not entire system disk usage.</em>
-              </p>
-            </div>
-          </div>
+	<div class="category-section">
+	  <h2><i class="fas fa-desktop"></i> System Information</h2>
+	  <div class="dashboard-grid">
+	    <!-- System Info Card -->
+	    <div class="card" id="system-info-card">
+	      <h2><i class="fas fa-desktop"></i> System Information</h2>
+	      <div class="card-content" id="system-info-content">
+	        <table class="info-table">
+	          <tbody>
+	            <tr><th>Operating System:</th><td id="os-info">Loading...</td></tr>
+	            <tr><th>Device Type:</th><td id="device-type-info">Loading...</td></tr>
+	            <tr><th>RAM:</th><td id="ram-info">Loading...</td></tr>
+	            <tr><th>Processor:</th><td id="processor-info">Loading...</td></tr>
+	            <tr><th>Disk Space:</th><td id="disk-space-info">Loading...</td></tr>	
+	            <tr><th>Browser:</th><td id="browser-info">Loading...</td></tr>
+	            <tr><th>Platform:</th><td id="platform-info">Loading...</td></tr>
+	            <tr><th>Language:</th><td id="language-info">Loading...</td></tr>
+	            <tr><th>Online:</th><td id="online-status-info">Loading...</td></tr>
+	            <tr><th>Cookies Enabled:</th><td id="cookies-enabled-info">Loading...</td></tr>
+	            <tr><th>Touch Support:</th><td id="touch-support-info">Loading...</td></tr>
+	          </tbody>
+	        </table>
+	        <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
+	          <em>Note: Disk space usage reflects browser storage quota usage, not entire system disk usage.</em>
+	        </p>
+	      </div>
+	    </div>
 
           <!-- Memory Usage Chart -->
           <div class="card">
