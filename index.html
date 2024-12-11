@@ -10,6 +10,8 @@
   <!-- Include Leaflet.js for maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Include QRCode.js for QR Code Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Include Roboto Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
   <style>
@@ -56,7 +58,6 @@
     }
 
     /* Scrollbar Styling */
-    /* Webkit Browsers */
     ::-webkit-scrollbar {
       width: var(--scrollbar-width);
     }
@@ -75,8 +76,6 @@
     }
 
     /* Firefox */
-    /* For Firefox, scrollbar-color and scrollbar-width are limited */
-    /* Scrollbar color: thumb and track */
     body, .sidebar, .content {
       scrollbar-width: thin;
       scrollbar-color: var(--scrollbar-thumb-bg) transparent;
@@ -453,7 +452,6 @@
       margin-right: 8px;
     }
 
-    /* Unified Input Field Styling */
     .input-field {
       width: 100%;
       padding: 10px 15px;
@@ -475,12 +473,11 @@
       background-color: var(--input-focus-bg);
     }
 
-    .result, #dns-result, #js-error-analyzer-result, #accessibility-results, #compatibility-results, #snapshot-message {
+    .result, #dns-result, #js-error-analyzer-result, #accessibility-results, #compatibility-results, #snapshot-message, #url-result, #contrast-result, #text-analysis-result {
       margin-top: 15px;
       font-size: 0.95rem;
     }
 
-    /* Progress Bars */
     .progress-bar-container, #mic-level-container, #battery-progress-bar-container, #storage-progress-bar-container {
       width: 100%;
       background-color: #333;
@@ -528,7 +525,6 @@
       border-radius: var(--border-radius);
     }
 
-    /* Table Styling */
     .info-table {
       width: 100%;
       border-collapse: collapse;
@@ -550,7 +546,6 @@
       width: 60%;
     }
 
-    /* List Styling */
     ul {
       list-style: none;
       padding-left: 0;
@@ -568,7 +563,6 @@
       font-size: 1.1rem;
     }
 
-    /* Footer Styling */
     .footer {
       background-color: var(--secondary-color);
       color: var(--muted-text);
@@ -609,7 +603,6 @@
       color: var(--accent-color);
     }
 
-    /* Responsive Adjustments */
     @media (max-width: 1024px) {
       .sidebar {
         width: var(--sidebar-width);
@@ -621,14 +614,13 @@
     }
 
     @media (max-width: 768px) {
-      /* Sidebar Adjustments for Mobile */
       .sidebar {
-        width: 80%; /* Sidebar takes 80% width on mobile */
+        width: 80%;
         padding: 15px;
         border-right: none;
         border-bottom: 1px solid #333;
-        height: calc(100vh - 64px - 60px); /* Adjust based on top-bar and footer heights */
-        transform: translateX(-100%); /* Hidden by default */
+        height: calc(100vh - 64px - 60px);
+        transform: translateX(-100%);
       }
 
       .sidebar.active {
@@ -636,19 +628,13 @@
       }
 
       .main-container.shifted {
-        margin-left: 80%; /* Push main content by 80% when sidebar is active */
-      }
-
-      /* Adjust overlay to cover remaining 20% */
-      .overlay {
-        display: none;
+        margin-left: 80%;
       }
 
       .overlay.active {
         display: block;
       }
 
-      /* Cards Layout: Single Column */
       .dashboard-grid {
         grid-template-columns: 1fr;
       }
@@ -666,7 +652,6 @@
         gap: 15px;
       }
 
-      /* Adjust Top Bar for Mobile */
       .top-bar {
         flex-direction: column;
         align-items: flex-start;
@@ -752,10 +737,8 @@
           <div class="card" id="ping-card">
             <h2><i class="fas fa-signal"></i> Ping Test</h2>
             <div class="card-content">
-              <div class="ping-test">
-                <input type="text" id="ping-address" class="input-field" placeholder="Enter server address (e.g., example.com)">
-                <button id="start-ping-test-btn" class="btn-primary"><i class="fas fa-play"></i> Start Ping Test</button>
-              </div>
+              <input type="text" id="ping-address" class="input-field" placeholder="Enter server address (e.g., example.com)">
+              <button id="start-ping-test-btn" class="btn-primary"><i class="fas fa-play"></i> Start Ping Test</button>
               <canvas id="pingChart" style="margin-top: 20px; height: 150px;"></canvas>
             </div>
           </div>
@@ -977,6 +960,26 @@
               </p>
             </div>
           </div>
+
+          <!-- Local Storage Viewer Card -->
+          <div class="card">
+            <h2><i class="fas fa-eye"></i> Local Storage Viewer</h2>
+            <div class="card-content">
+              <button id="refresh-storage-btn" class="btn-primary" style="margin-bottom: 15px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+              <table class="info-table">
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="local-storage-table-body">
+                  <!-- Entries will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1046,6 +1049,175 @@
               <div id="snapshot-message" style="margin-top: 15px; font-size: 0.95rem; color: var(--muted-text);"></div>
             </div>
           </div>
+
+          <!-- QR Code Generator Card -->
+          <div class="card" id="qr-code-card">
+            <h2><i class="fas fa-qrcode"></i> QR Code Generator</h2>
+            <div class="card-content">
+              <input type="text" id="qr-text-input" class="input-field" placeholder="Enter text or URL...">
+              <button id="generate-qr-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-qrcode"></i> Generate QR Code</button>
+              <div id="qr-code" style="margin-top: 15px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Utilities -->
+      <div class="category-section">
+        <h2><i class="fas fa-tools"></i> Utilities</h2>
+        <div class="dashboard-grid">
+          <!-- Password Generator Card -->
+          <div class="card" id="password-generator-card">
+            <h2><i class="fas fa-key"></i> Password Generator</h2>
+            <div class="card-content">
+              <label for="password-length">Length:</label>
+              <input type="number" id="password-length" class="input-field" min="4" max="64" value="12">
+
+              <div style="margin-top: 10px;">
+                <input type="checkbox" id="include-uppercase" checked>
+                <label for="include-uppercase">Include Uppercase Letters</label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="include-numbers" checked>
+                <label for="include-numbers">Include Numbers</label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="include-special" checked>
+                <label for="include-special">Include Special Characters</label>
+              </div>
+
+              <button id="generate-password-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-random"></i> Generate Password</button>
+
+              <div id="generated-password" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
+            </div>
+          </div>
+
+          <!-- Unit Converter Card -->
+          <div class="card" id="unit-converter-card">
+            <h2><i class="fas fa-exchange-alt"></i> Unit Converter</h2>
+            <div class="card-content">
+              <label for="conversion-category">Category:</label>
+              <select id="conversion-category" class="input-field">
+                <option value="length">Length</option>
+                <option value="weight">Weight</option>
+                <option value="temperature">Temperature</option>
+                <option value="volume">Volume</option>
+              </select>
+
+              <label for="from-unit">From:</label>
+              <select id="from-unit" class="input-field"></select>
+
+              <label for="to-unit">To:</label>
+              <select id="to-unit" class="input-field"></select>
+
+              <label for="input-value">Value:</label>
+              <input type="number" id="input-value" class="input-field" placeholder="Enter value">
+
+              <button id="convert-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-sync-alt"></i> Convert</button>
+
+              <div id="conversion-result" style="margin-top: 15px;"></div>
+            </div>
+          </div>
+
+          <!-- Text Analyzer Card -->
+          <div class="card" id="text-analyzer-card">
+            <h2><i class="fas fa-align-left"></i> Text Analyzer</h2>
+            <div class="card-content">
+              <textarea id="text-input" class="input-field" rows="6" placeholder="Enter or paste your text here..."></textarea>
+              <button id="analyze-text-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-chart-bar"></i> Analyze Text</button>
+              <div id="text-analysis-result" style="margin-top: 15px;">
+                <!-- Results will be displayed here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- URL Encoder/Decoder Card -->
+          <div class="card" id="url-encoder-decoder-card">
+            <h2><i class="fas fa-link"></i> URL Encoder/Decoder</h2>
+            <div class="card-content">
+              <textarea id="url-input" class="input-field" rows="3" placeholder="Enter your URL here..."></textarea>
+
+              <div style="margin-top: 10px;">
+                <button id="encode-url-btn" class="btn-primary"><i class="fas fa-code"></i> Encode</button>
+                <button id="decode-url-btn" class="btn-primary" style="margin-left: 10px;"><i class="fas fa-code-branch"></i> Decode</button>
+              </div>
+
+              <div id="url-result" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
+            </div>
+          </div>
+
+          <!-- Color Picker & Contrast Checker Card -->
+          <div class="card" id="color-picker-card">
+            <h2><i class="fas fa-palette"></i> Color Picker & Contrast Checker</h2>
+            <div class="card-content">
+              <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div>
+                  <label for="color1">Color 1:</label>
+                  <input type="color" id="color1" value="#ffffff" class="input-field" style="width: 100px; height: 50px; padding: 0; border: none;">
+                </div>
+                <div>
+                  <label for="color2">Color 2:</label>
+                  <input type="color" id="color2" value="#000000" class="input-field" style="width: 100px; height: 50px; padding: 0; border: none;">
+                </div>
+              </div>
+
+              <button id="check-contrast-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-eye"></i> Check Contrast</button>
+
+              <div id="contrast-result" style="margin-top: 15px; font-size: 1rem;"></div>
+
+              <div style="margin-top: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 50px; height: 50px; background-color: #ffffff; border: 1px solid #ccc;"></div>
+                  <div style="width: 50px; height: 50px; background-color: #000000; border: 1px solid #ccc;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calculator Card -->
+          <div class="card" id="calculator-card">
+            <h2><i class="fas fa-calculator"></i> Calculator</h2>
+            <div class="card-content">
+              <input type="text" id="calculator-display" class="input-field" placeholder="0" readonly style="text-align: right; font-size: 1.2rem;">
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+                <button class="btn-primary calc-btn" data-value="7">7</button>
+                <button class="btn-primary calc-btn" data-value="8">8</button>
+                <button class="btn-primary calc-btn" data-value="9">9</button>
+                <button class="btn-primary calc-btn" data-value="/">/</button>
+
+                <button class="btn-primary calc-btn" data-value="4">4</button>
+                <button class="btn-primary calc-btn" data-value="5">5</button>
+                <button class="btn-primary calc-btn" data-value="6">6</button>
+                <button class="btn-primary calc-btn" data-value="*">*</button>
+
+                <button class="btn-primary calc-btn" data-value="1">1</button>
+                <button class="btn-primary calc-btn" data-value="2">2</button>
+                <button class="btn-primary calc-btn" data-value="3">3</button>
+                <button class="btn-primary calc-btn" data-value="-">-</button>
+
+                <button class="btn-primary calc-btn" data-value="0">0</button>
+                <button class="btn-primary calc-btn" data-value=".">.</button>
+                <button class="btn-primary calc-btn" id="clear-btn">C</button>
+                <button class="btn-primary calc-btn" data-value="+">+</button>
+
+                <button class="btn-primary calc-btn" style="grid-column: span 4; background-color: var(--success-color);" id="equals-btn">=</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- To-Do List Card -->
+          <div class="card" id="todo-list-card">
+            <h2><i class="fas fa-tasks"></i> To-Do List</h2>
+            <div class="card-content">
+              <input type="text" id="todo-input" class="input-field" placeholder="Add a new task...">
+              <button id="add-todo-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-plus"></i> Add Task</button>
+              <ul id="todo-list" style="margin-top: 15px;">
+                <!-- Tasks will be added here -->
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1102,6 +1274,7 @@
       alert('Local storage cleared.');
       localStorage.setItem('visitorCount', 0);
       document.getElementById('visitor-count').innerText = 0;
+      populateLocalStorageTable();
     }
 
     function clearSessionStorage() {
@@ -1274,7 +1447,7 @@
         datasets: [{
           label: 'FPS',
           data: fpsData,
-          backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+          backgroundColor: 'rgba(13, 110, 253, 0.2)',
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1329,7 +1502,7 @@
         datasets: [{
           label: 'Speed (Mbps)',
           data: networkSpeedData,
-          backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+          backgroundColor: 'rgba(13, 110, 253, 0.2)',
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1381,7 +1554,6 @@
     setInterval(updateNetworkSpeedChart, 60000);
 
     function updateBatteryStatus() {
-      const batteryContent = document.getElementById('battery-content');
       const batteryProgressBar = document.getElementById('battery-progress-bar');
       const batteryStatusText = document.getElementById('battery-status-text');
       if (navigator.getBattery) {
@@ -1394,7 +1566,7 @@
           batteryStatusText.style.color = battery.charging ? '#0dcaf0' : '#198754';
         });
       } else {
-        batteryContent.innerHTML = "Battery status not supported by your browser.";
+        batteryStatusText.innerHTML = "Battery status not supported by your browser.";
       }
     }
 
@@ -1480,7 +1652,7 @@
         datasets: [{
           label: 'Memory Usage (MB)',
           data: memoryUsageData,
-          backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+          backgroundColor: 'rgba(13, 110, 253, 0.2)',
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1662,7 +1834,7 @@
           datasets: [{
             label: 'Ping (ms)',
             data: [],
-            backgroundColor: 'rgba(13, 110, 253, 0.2)', /* Deep Blue */
+            backgroundColor: 'rgba(13, 110, 253, 0.2)',
             borderColor: 'var(--primary-color)',
             borderWidth: 2,
             fill: true,
@@ -1874,7 +2046,7 @@
     function updatePublicIP() {
       const publicIPElement = document.getElementById('public-ip');
       publicIPElement.innerHTML = 'Fetching...';
-      publicIPElement.style.color = '#198754'; /* Green */
+      publicIPElement.style.color = '#198754';
       fetch('https://api.ipify.org?format=json')
         .then(response => {
           if (!response.ok) {
@@ -1884,11 +2056,11 @@
         })
         .then(data => {
           publicIPElement.innerHTML = data.ip;
-          publicIPElement.style.color = '#198754'; /* Green */
+          publicIPElement.style.color = '#198754';
         })
         .catch(err => {
           publicIPElement.innerHTML = 'Unable to fetch IP.';
-          publicIPElement.style.color = '#dc3545'; /* Red */
+          publicIPElement.style.color = '#dc3545';
           console.error('Public IP fetch error:', err);
         });
     }
@@ -1902,7 +2074,7 @@
         return;
       }
       resultDiv.innerHTML = 'Looking up...';
-      resultDiv.style.color = '#0dcaf0'; /* Teal */
+      resultDiv.style.color = '#0dcaf0';
       fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
         method: 'GET',
         headers: { 'Accept': 'application/dns-json' }
@@ -1918,19 +2090,19 @@
           const ips = data.Answer.filter(record => record.type === 1).map(record => record.data);
           if (ips.length > 0) {
             resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
-            resultDiv.style.color = '#198754'; /* Green */
+            resultDiv.style.color = '#198754';
           } else {
             resultDiv.innerHTML = 'No A records found.';
-            resultDiv.style.color = '#dc3545'; /* Red */
+            resultDiv.style.color = '#dc3545';
           }
         } else {
           resultDiv.innerHTML = 'DNS lookup failed or no records found.';
-          resultDiv.style.color = '#dc3545'; /* Red */
+          resultDiv.style.color = '#dc3545';
         }
       })
       .catch(err => {
         resultDiv.innerHTML = 'Error performing DNS lookup.';
-        resultDiv.style.color = '#dc3545'; /* Red */
+        resultDiv.style.color = '#dc3545';
         console.error('DNS lookup error:', err);
       });
     }
@@ -1981,7 +2153,7 @@
       }
 
       resultsDiv.innerHTML = 'Checking...';
-      resultsDiv.style.color = '#0dcaf0'; /* Teal */
+      resultsDiv.style.color = '#0dcaf0';
       iframe.src = '';
       iframe.style.display = 'none';
 
@@ -1993,11 +2165,10 @@
           }
           const report = runAccessibilityCheckOnDocument(iframeDoc);
           resultsDiv.innerHTML = report;
-          // Determine overall color based on presence of errors
           if (report.includes('#dc3545')) {
-            resultsDiv.style.color = '#dc3545'; /* Red */
+            resultsDiv.style.color = '#dc3545';
           } else {
-            resultsDiv.style.color = '#198754'; /* Green */
+            resultsDiv.style.color = '#198754';
           }
         } catch (e) {
           console.error('Cross-origin or access error:', e);
@@ -2016,7 +2187,7 @@
     function runCompatibilityCheck() {
       const resultsDiv = document.getElementById('compatibility-results');
       resultsDiv.innerHTML = 'Checking...';
-      resultsDiv.style.color = '#0dcaf0'; /* Teal */
+      resultsDiv.style.color = '#0dcaf0';
 
       const features = {
         'Service Workers': 'serviceWorker' in navigator,
@@ -2033,7 +2204,453 @@
       resultsDiv.innerHTML = report;
     }
 
-    // Website Snapshot Functionality
+    function generatePassword(length, includeUpper, includeNumbers, includeSpecial) {
+      const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+      const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      const special = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+      
+      let characters = lowercase;
+      if (includeUpper) characters += uppercase;
+      if (includeNumbers) characters += numbers;
+      if (includeSpecial) characters += special;
+      
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return password;
+    }
+    
+    document.getElementById('generate-password-btn').addEventListener('click', () => {
+      const length = parseInt(document.getElementById('password-length').value);
+      const includeUpper = document.getElementById('include-uppercase').checked;
+      const includeNumbers = document.getElementById('include-numbers').checked;
+      const includeSpecial = document.getElementById('include-special').checked;
+      
+      if (length < 4) {
+        alert('Password length should be at least 4 characters.');
+        return;
+      }
+      
+      const password = generatePassword(length, includeUpper, includeNumbers, includeSpecial);
+      document.getElementById('generated-password').innerText = password;
+    });
+
+    const units = {
+      length: ['Meters', 'Kilometers', 'Miles', 'Yards', 'Feet', 'Inches'],
+      weight: ['Kilograms', 'Grams', 'Pounds', 'Ounces'],
+      temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
+      volume: ['Liters', 'Milliliters', 'Gallons', 'Cups']
+    };
+
+    const conversionRates = {
+      length: {
+        Meters: 1,
+        Kilometers: 0.001,
+        Miles: 0.000621371,
+        Yards: 1.09361,
+        Feet: 3.28084,
+        Inches: 39.3701
+      },
+      weight: {
+        Kilograms: 1,
+        Grams: 1000,
+        Pounds: 2.20462,
+        Ounces: 35.274
+      },
+      temperature: {
+        Celsius: 'Celsius',
+        Fahrenheit: 'Fahrenheit',
+        Kelvin: 'Kelvin'
+      },
+      volume: {
+        Liters: 1,
+        Milliliters: 1000,
+        Gallons: 0.264172,
+        Cups: 4.22675
+      }
+    };
+
+    function populateUnits() {
+      const category = document.getElementById('conversion-category').value;
+      const fromUnit = document.getElementById('from-unit');
+      const toUnit = document.getElementById('to-unit');
+      
+      fromUnit.innerHTML = '';
+      toUnit.innerHTML = '';
+      
+      units[category].forEach(unit => {
+        const option1 = document.createElement('option');
+        option1.value = unit;
+        option1.text = unit;
+        fromUnit.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = unit;
+        option2.text = unit;
+        toUnit.appendChild(option2);
+      });
+    }
+
+    document.getElementById('conversion-category').addEventListener('change', populateUnits);
+    window.addEventListener('load', populateUnits);
+
+    function convertUnits() {
+      const category = document.getElementById('conversion-category').value;
+      const fromUnit = document.getElementById('from-unit').value;
+      const toUnit = document.getElementById('to-unit').value;
+      const value = parseFloat(document.getElementById('input-value').value);
+      
+      if (isNaN(value)) {
+        alert('Please enter a valid number.');
+        return;
+      }
+      
+      let result;
+      
+      if (category === 'temperature') {
+        if (fromUnit === 'Celsius') {
+          if (toUnit === 'Fahrenheit') {
+            result = (value * 9/5) + 32;
+          } else if (toUnit === 'Kelvin') {
+            result = value + 273.15;
+          } else {
+            result = value;
+          }
+        } else if (fromUnit === 'Fahrenheit') {
+          if (toUnit === 'Celsius') {
+            result = (value - 32) * 5/9;
+          } else if (toUnit === 'Kelvin') {
+            result = ((value - 32) * 5/9) + 273.15;
+          } else {
+            result = value;
+          }
+        } else if (fromUnit === 'Kelvin') {
+          if (toUnit === 'Celsius') {
+            result = value - 273.15;
+          } else if (toUnit === 'Fahrenheit') {
+            result = ((value - 273.15) * 9/5) + 32;
+          } else {
+            result = value;
+          }
+        }
+      } else {
+        const fromRate = conversionRates[category][fromUnit];
+        const toRate = conversionRates[category][toUnit];
+        result = (value * toRate) / fromRate;
+      }
+      
+      document.getElementById('conversion-result').innerText = `${value} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`;
+    }
+
+    document.getElementById('convert-btn').addEventListener('click', convertUnits);
+
+    function analyzeText(text) {
+      const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+      const wordCount = words.length;
+      const charCount = text.length;
+      const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+      const sentenceCount = sentences.length;
+      const readingTime = (wordCount / 200).toFixed(2);
+      
+      const frequency = {};
+      words.forEach(word => {
+        const normalized = word.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (normalized) {
+          frequency[normalized] = (frequency[normalized] || 0) + 1;
+        }
+      });
+      
+      const sortedWords = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
+      const topKeywords = sortedWords.slice(0, 5).map(entry => `${entry[0]} (${entry[1]})`).join(', ');
+      
+      return `
+        <strong>Word Count:</strong> ${wordCount}<br>
+        <strong>Character Count:</strong> ${charCount}<br>
+        <strong>Sentence Count:</strong> ${sentenceCount}<br>
+        <strong>Estimated Reading Time:</strong> ${readingTime} minutes<br>
+        <strong>Top Keywords:</strong> ${topKeywords || 'N/A'}
+      `;
+    }
+
+    document.getElementById('analyze-text-btn').addEventListener('click', () => {
+      const text = document.getElementById('text-input').value;
+      if (!text.trim()) {
+        alert('Please enter some text to analyze.');
+        return;
+      }
+      const analysis = analyzeText(text);
+      document.getElementById('text-analysis-result').innerHTML = analysis;
+    });
+
+    function encodeURL(url) {
+      try {
+        return encodeURIComponent(url);
+      } catch {
+        return 'Invalid URL';
+      }
+    }
+
+    function decodeURL(url) {
+      try {
+        return decodeURIComponent(url);
+      } catch {
+        return 'Invalid URL';
+      }
+    }
+
+    document.getElementById('encode-url-btn').addEventListener('click', () => {
+      const url = document.getElementById('url-input').value;
+      if (!url.trim()) {
+        alert('Please enter a URL to encode.');
+        return;
+      }
+      const encoded = encodeURL(url);
+      document.getElementById('url-result').innerText = encoded;
+    });
+
+    document.getElementById('decode-url-btn').addEventListener('click', () => {
+      const url = document.getElementById('url-input').value;
+      if (!url.trim()) {
+        alert('Please enter a URL to decode.');
+        return;
+      }
+      const decoded = decodeURL(url);
+      document.getElementById('url-result').innerText = decoded;
+    });
+
+    function getLuminance(hex) {
+      const rgb = hex.match(/\w\w/g).map(x => parseInt(x, 16) / 255);
+      const a = rgb.map(v => {
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    }
+
+    function calculateContrast(hex1, hex2) {
+      const lum1 = getLuminance(hex1);
+      const lum2 = getLuminance(hex2);
+      const brightest = Math.max(lum1, lum2);
+      const darkest = Math.min(lum1, lum2);
+      const contrast = (brightest + 0.05) / (darkest + 0.05);
+      return contrast.toFixed(2);
+    }
+
+    document.getElementById('check-contrast-btn').addEventListener('click', () => {
+      const color1 = document.getElementById('color1').value;
+      const color2 = document.getElementById('color2').value;
+      const contrastRatio = calculateContrast(color1, color2);
+      
+      let compliance = '';
+      if (contrastRatio >= 7) {
+        compliance = 'AAA';
+      } else if (contrastRatio >= 4.5) {
+        compliance = 'AA';
+      } else {
+        compliance = 'Fail';
+      }
+      
+      let colorScheme = 'Good contrast';
+      let color = '#198754'; 
+      if (compliance === 'AA') {
+        colorScheme = 'Acceptable contrast';
+        color = '#ffc107';
+      } else if (compliance === 'Fail') {
+        colorScheme = 'Poor contrast';
+        color = '#dc3545';
+      }
+      
+      document.getElementById('contrast-result').innerHTML = `
+        <strong>Contrast Ratio:</strong> ${contrastRatio}:1<br>
+        <strong>WCAG Compliance:</strong> ${compliance} (${colorScheme})
+      `;
+      document.getElementById('contrast-result').style.color = color;
+    });
+
+    let currentInput = '';
+    let operator = '';
+    let previousInput = '';
+
+    const display = document.getElementById('calculator-display');
+
+    document.querySelectorAll('.calc-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const value = button.getAttribute('data-value');
+        
+        if (!value) return;
+        
+        if (!isNaN(value) || value === '.') {
+          currentInput += value;
+          display.value = currentInput;
+        } else if (['+', '-', '*', '/'].includes(value)) {
+          if (currentInput === '') return;
+          operator = value;
+          previousInput = currentInput;
+          currentInput = '';
+        }
+      });
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      currentInput = '';
+      operator = '';
+      previousInput = '';
+      display.value = '';
+    });
+
+    document.getElementById('equals-btn').addEventListener('click', () => {
+      if (operator === '' || currentInput === '' || previousInput === '') return;
+      
+      const num1 = parseFloat(previousInput);
+      const num2 = parseFloat(currentInput);
+      let result;
+      
+      switch(operator) {
+        case '+':
+          result = num1 + num2;
+          break;
+        case '-':
+          result = num1 - num2;
+          break;
+        case '*':
+          result = num1 * num2;
+          break;
+        case '/':
+          if (num2 === 0) {
+            alert('Cannot divide by zero.');
+            return;
+          }
+          result = num1 / num2;
+          break;
+        default:
+          return;
+      }
+      
+      display.value = result;
+      currentInput = result.toString();
+      operator = '';
+      previousInput = '';
+    });
+
+    document.getElementById('generate-qr-btn').addEventListener('click', () => {
+      const qrText = document.getElementById('qr-text-input').value.trim();
+      const qrCodeDiv = document.getElementById('qr-code');
+      
+      if (!qrText) {
+        alert('Please enter text or a URL to generate QR Code.');
+        return;
+      }
+      
+      qrCodeDiv.innerHTML = '';
+      new QRCode(qrCodeDiv, {
+        text: qrText,
+        width: 128,
+        height: 128,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+    });
+
+    document.getElementById('add-todo-btn').addEventListener('click', () => {
+      const taskInput = document.getElementById('todo-input');
+      const taskText = taskInput.value.trim();
+      
+      if (!taskText) {
+        alert('Please enter a task.');
+        return;
+      }
+      
+      const todoList = document.getElementById('todo-list');
+      
+      const li = document.createElement('li');
+      li.style.display = 'flex';
+      li.style.alignItems = 'center';
+      li.style.justifyContent = 'space-between';
+      li.style.padding = '8px 0';
+      li.style.borderBottom = '1px solid #444';
+      
+      const taskSpan = document.createElement('span');
+      taskSpan.innerText = taskText;
+      taskSpan.style.flexGrow = '1';
+      taskSpan.style.marginLeft = '10px';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.style.marginRight = '10px';
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          taskSpan.style.textDecoration = 'line-through';
+          taskSpan.style.color = '#6c757d';
+        } else {
+          taskSpan.style.textDecoration = 'none';
+          taskSpan.style.color = '#ffffff';
+        }
+      });
+      
+      const deleteBtn = document.createElement('button');
+      deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+      deleteBtn.style.background = 'none';
+      deleteBtn.style.border = 'none';
+      deleteBtn.style.color = '#dc3545';
+      deleteBtn.style.cursor = 'pointer';
+      deleteBtn.addEventListener('click', () => {
+        todoList.removeChild(li);
+      });
+      
+      li.appendChild(checkbox);
+      li.appendChild(taskSpan);
+      li.appendChild(deleteBtn);
+      
+      todoList.appendChild(li);
+      
+      taskInput.value = '';
+    });
+
+    function populateLocalStorageTable() {
+      const tableBody = document.getElementById('local-storage-table-body');
+      tableBody.innerHTML = '';
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        
+        const tr = document.createElement('tr');
+        
+        const tdKey = document.createElement('td');
+        tdKey.innerText = key;
+        
+        const tdValue = document.createElement('td');
+        tdValue.innerText = value;
+        
+        const tdAction = document.createElement('td');
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.style.background = 'none';
+        deleteBtn.style.border = 'none';
+        deleteBtn.style.color = '#dc3545';
+        deleteBtn.style.cursor = 'pointer';
+        deleteBtn.addEventListener('click', () => {
+          if (confirm(`Are you sure you want to delete the key "${key}"?`)) {
+            localStorage.removeItem(key);
+            populateLocalStorageTable();
+          }
+        });
+        tdAction.appendChild(deleteBtn);
+        
+        tr.appendChild(tdKey);
+        tr.appendChild(tdValue);
+        tr.appendChild(tdAction);
+        
+        tableBody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('refresh-storage-btn').addEventListener('click', populateLocalStorageTable);
+
+    window.addEventListener('load', populateLocalStorageTable);
+
     function captureWebsiteSnapshot() {
       const snapshotUrlInput = document.getElementById('snapshot-url');
       const snapshotButton = document.getElementById('snapshot-button');
@@ -2053,13 +2670,11 @@
         return;
       }
 
-      // Use the provided API key
       const apiKey = '8848c51f2c1271e071020ffb35490245';
-      // Construct the API URL as per the provided format
       const apiURL = `http://api.screenshotlayer.com/api/capture?access_key=${encodeURIComponent(apiKey)}&url=${encodeURIComponent(url)}&viewport=1440x900&width=250`;
 
       snapshotMessage.innerHTML = 'Capturing snapshot...';
-      snapshotMessage.style.color = '#0dcaf0'; /* Teal */
+      snapshotMessage.style.color = '#0dcaf0';
       snapshotImage.style.display = 'none';
       snapshotImage.src = '';
 
@@ -2075,14 +2690,14 @@
             snapshotImage.src = data.screenshot;
             snapshotImage.style.display = 'block';
             snapshotMessage.innerHTML = 'Snapshot captured successfully.';
-            snapshotMessage.style.color = '#198754'; /* Green */
+            snapshotMessage.style.color = '#198754';
           } else {
             throw new Error('Snapshot not available.');
           }
         })
         .catch(err => {
           snapshotMessage.innerHTML = 'Error capturing snapshot. Please ensure the URL is correct and the API key is valid.';
-          snapshotMessage.style.color = '#dc3545'; /* Red */
+          snapshotMessage.style.color = '#dc3545';
           console.error('Snapshot capture error:', err);
         });
     }
@@ -2136,11 +2751,8 @@
       document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
       document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
-
-      // Add event listener for Website Snapshot
       document.getElementById('snapshot-button').addEventListener('click', captureWebsiteSnapshot);
 
-      // Hamburger Menu Toggle Functionality
       const sidebar = document.getElementById('sidebar');
       const hamburgerBtn = document.getElementById('hamburger-btn');
       const overlay = document.getElementById('overlay');
