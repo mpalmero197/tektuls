@@ -50,7 +50,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden; /* Prevent body from scrolling */
     }
 
     .top-bar {
@@ -152,7 +152,7 @@
       display: flex;
       flex-grow: 1;
       background-color: var(--light-bg);
-      overflow: hidden;
+      overflow: hidden; /* Prevent main container from scrolling */
     }
 
     /* Sidebar Styling */
@@ -167,6 +167,7 @@
       border-right: 1px solid #333;
       transition: width var(--transition-speed);
       position: relative;
+      height: calc(100vh - 64px - 60px); /* Adjust based on top-bar and footer heights */
     }
 
     .sidebar.collapsed {
@@ -176,6 +177,7 @@
     .sidebar-content {
       display: flex;
       flex-direction: column;
+      flex-grow: 1;
     }
 
     .sidebar h2 {
@@ -238,9 +240,6 @@
 
     /* Toggle Button */
     .sidebar-toggle {
-      position: absolute;
-      top: 20px;
-      right: -15px;
       background-color: var(--primary-color);
       border: none;
       border-radius: 50%;
@@ -252,6 +251,7 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.5);
       transition: transform var(--transition-speed);
+      margin-bottom: 20px; /* Space below the toggle button */
     }
 
     .sidebar.collapsed .sidebar-toggle {
@@ -270,6 +270,7 @@
       box-sizing: border-box;
       overflow-y: auto;
       position: relative;
+      height: calc(100vh - 64px - 60px); /* Adjust based on top-bar and footer heights */
     }
 
     .hero {
@@ -591,6 +592,7 @@
         padding: 15px;
         border-right: none;
         border-bottom: 1px solid #333;
+        height: auto; /* Allow height to adjust */
       }
 
       .sidebar.collapsed {
@@ -613,6 +615,7 @@
 
       .content {
         padding: 20px;
+        height: calc(100vh - 64px - 60px); /* Adjust based on top-bar and footer heights */
       }
 
       .dashboard-grid {
@@ -653,11 +656,11 @@
   <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-      <!-- Toggle Button -->
-      <button class="sidebar-toggle" id="sidebar-toggle">
-        <i class="fas fa-angle-double-left"></i>
-      </button>
       <div class="sidebar-content">
+        <!-- Toggle Button -->
+        <button class="sidebar-toggle" id="sidebar-toggle">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
         <h2><i class="fas fa-tools"></i> Troubleshooting Tools</h2>
         <button id="copy-system-info-btn"><i class="fas fa-copy"></i> <span>Copy System Info</span></button>
         <button id="clear-local-storage-btn"><i class="fas fa-database"></i> <span>Clear Local Storage</span></button>
