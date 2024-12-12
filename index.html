@@ -703,6 +703,7 @@
         <option value="google">Google</option>
 	<option value="bing">Bing</option>
         <option value="duckduckgo">DuckDuckGo</option>
+        <option value="brave">Brave</option>
         <option value="yahoo">Yahoo</option>
       </select>
       <input type="text" id="search-query" class="input-field" placeholder="Search the web...">
@@ -1991,6 +1992,9 @@
           break;
         case 'duckduckgo':
           searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+          break;
+        case 'brave':
+          searchURL = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
           break;
         case 'yahoo':
           searchURL = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
