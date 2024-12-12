@@ -701,6 +701,7 @@
     <div class="search-container">
       <select id="search-engine">
         <option value="google">Google</option>
+	<option value="bing">Bing</option>
         <option value="duckduckgo">DuckDuckGo</option>
         <option value="yahoo">Yahoo</option>
       </select>
@@ -1984,6 +1985,9 @@
       switch(searchEngine) {
         case 'google':
           searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+          break;
+	case 'bing':
+          searchURL = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
           break;
         case 'duckduckgo':
           searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
