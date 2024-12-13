@@ -730,6 +730,8 @@
         <button id="retest-location-btn"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
         <button id="retest-media-devices-btn"><i class="fas fa-video"></i> Retest Media Devices</button>
         <button id="retest-webrtc-btn"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
+        <button id="clear-errors-btn"><i class="fas fa-exclamation-triangle"></i> Clear Errors</button>
+        <button id="perform-ping-test-btn"><i class="fas fa-signal"></i> Perform Ping Test</button>
       </div>
     </div>
 
@@ -970,6 +972,49 @@
         </div>
       </div>
 
+      <!-- Storage Management -->
+      <div class="category-section" id="storage-section">
+        <h2><i class="fas fa-database"></i> Storage Management</h2>
+        <div class="dashboard-grid">
+          <!-- Storage Usage Card -->
+          <div class="card" id="storage-usage-card">
+            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+            <h2><i class="fas fa-database"></i> Storage Usage</h2>
+            <div class="card-content" id="storage-usage-content">
+              <div class="progress-bar-container">
+                <div id="storage-progress-bar" class="progress-bar"></div>
+              </div>
+              <p id="storage-usage-text" style="margin-top: 10px; font-size: 1rem; color: #0dcaf0;">
+                Calculating storage usage...
+              </p>
+              <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
+                This shows the storage used by this web application within your browser, not the entire system's disk usage.
+              </p>
+            </div>
+          </div>
+
+          <!-- Local Storage Viewer Card -->
+          <div class="card" id="local-storage-viewer-card">
+            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+            <h2><i class="fas fa-eye"></i> Local Storage Viewer</h2>
+            <div class="card-content">
+              <button id="refresh-storage-btn" class="btn-primary" style="margin-bottom: 15px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+              <table class="info-table">
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="local-storage-table-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Performance Monitoring -->
       <div class="category-section" id="performance-section">
         <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
@@ -1030,6 +1075,18 @@
       <div class="category-section" id="website-tools-section">
         <h2><i class="fas fa-globe"></i> Website Tools</h2>
         <div class="dashboard-grid">
+          <!-- Website Snapshot Card -->
+          <div class="card website-snapshot-card" id="website-snapshot-card">
+            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+            <h2><i class="fas fa-camera"></i> Website Snapshot</h2>
+            <div class="card-content">
+              <input type="text" id="snapshot-url" class="input-field" placeholder="Enter website URL (e.g., https://example.com)">
+              <button id="snapshot-button" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-camera"></i> Capture Snapshot</button>
+              <img id="website-snapshot-image" src="" alt="Website Snapshot" style="margin-top: 20px; border: 2px solid #b0b0b0; border-radius: var(--border-radius); display: none;">
+              <div id="snapshot-message" style="margin-top: 15px; font-size: 0.95rem; color: var(--muted-text);"></div>
+            </div>
+          </div>
+
           <!-- QR Code Generator Card -->
           <div class="card" id="qr-code-card">
             <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
@@ -1303,7 +1360,7 @@
       alert('Local storage cleared.');
       localStorage.setItem('visitorCount', 0);
       document.getElementById('visitor-count').innerText = 0;
-      // Removed: populateLocalStorageTable();
+      populateLocalStorageTable();
     }
 
     function clearSessionStorage() {
@@ -1545,7 +1602,7 @@
         maintainAspectRatio: false,
         scales: {
           x: { display: false },
-          y: { beginAtZero: true, title: { display: true, text: 'Mbps' }, grid: { color: '#333' } }
+          y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' }, grid: { color: '#333' } }
         },
         plugins: {
           legend: { display: false },
@@ -1971,20 +2028,24 @@
       iframe.style.display = 'none';
       iframe.onload = function() {
         try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-          if (!iframeDoc) {
-            throw new Error('No iframe document');
-          }
-          const report = runAccessibilityCheckOnDocument(iframeDoc);
-          resultDiv.innerHTML = report;
-          if (report.includes('#dc3545')) {
-            resultDiv.style.color = '#dc3545';
-          } else {
-            resultDiv.style.color = '#198754';
-          }
+          const iframeWindow = iframe.contentWindow;
+          void iframeWindow.location.href;
+          iframeWindow.onerror = function(message, source, lineno, colno, error) {
+            iframeWindow.postMessage({
+              type: 'js-error',
+              error: { message: message, source: source, lineno: lineno, colno: colno }
+            }, '*');
+          };
+          window.addEventListener('message', function messageHandler(event) {
+            if (event.source !== iframeWindow) return;
+            if (event.data.type === 'js-error') {
+              displayJsError(event.data.error);
+            }
+          });
+          resultDiv.innerHTML = '<p style="color: #198754;">No JavaScript errors detected.</p>';
         } catch (e) {
-          resultDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze JavaScript errors due to cross-origin restrictions or inaccessible content.</p>';
-          console.error('Cross-origin or access error:', e);
+          resultDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.</p>';
+          console.error('Cross-origin error:', e);
         }
       };
       function displayJsError(error) {
@@ -2239,12 +2300,12 @@
       const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       const numbers = '0123456789';
       const special = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
-
+      
       let characters = lowercase;
       if (includeUpper) characters += uppercase;
       if (includeNumbers) characters += numbers;
       if (includeSpecial) characters += special;
-
+      
       let password = '';
       for (let i = 0; i < length; i++) {
         password += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -2638,6 +2699,47 @@
       taskInput.value = '';
     });
 
+    function populateLocalStorageTable() {
+      const tableBody = document.getElementById('local-storage-table-body');
+      tableBody.innerHTML = '';
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        
+        const tr = document.createElement('tr');
+        
+        const tdKey = document.createElement('td');
+        tdKey.innerText = key;
+        
+        const tdValue = document.createElement('td');
+        tdValue.innerText = value;
+        
+        const tdAction = document.createElement('td');
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.style.background = 'none';
+        deleteBtn.style.border = 'none';
+        deleteBtn.style.color = '#dc3545';
+        deleteBtn.style.cursor = 'pointer';
+        deleteBtn.addEventListener('click', () => {
+          if (confirm(`Are you sure you want to delete the key "${key}"?`)) {
+            localStorage.removeItem(key);
+            populateLocalStorageTable();
+          }
+        });
+        tdAction.appendChild(deleteBtn);
+        
+        tr.appendChild(tdKey);
+        tr.appendChild(tdValue);
+        tr.appendChild(tdAction);
+        
+        tableBody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('refresh-storage-btn').addEventListener('click', populateLocalStorageTable);
+
     function captureWebsiteSnapshot() {
       const snapshotUrlInput = document.getElementById('snapshot-url');
       const snapshotButton = document.getElementById('snapshot-button');
@@ -2727,6 +2829,8 @@
       document.getElementById('retest-location-btn').addEventListener('click', updateLocation);
       document.getElementById('retest-media-devices-btn').addEventListener('click', updateMediaDevices);
       document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
+      document.getElementById('clear-errors-btn').addEventListener('click', clearErrors);
+      document.getElementById('perform-ping-test-btn').addEventListener('click', performPingTest);
       document.getElementById('search-button').addEventListener('click', performWebSearch);
       document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
       document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
@@ -2736,6 +2840,7 @@
       document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
       document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
+      document.getElementById('snapshot-button').addEventListener('click', captureWebsiteSnapshot);
 
       const sidebar = document.getElementById('sidebar');
       const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -2754,7 +2859,7 @@
         mainContent.classList.remove('shifted');
       });
 
-      // Removed: populateLocalStorageTable();
+      populateLocalStorageTable();
     });
   </script>
 </body>
