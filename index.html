@@ -466,7 +466,7 @@
       background-color: var(--input-focus-bg);
     }
 
-    .result, #dns-result, #js-error-analyzer-result, #accessibility-results, #compatibility-results, #snapshot-message, #url-result, #contrast-result, #text-analysis-result {
+    .result, #dns-result, #js-error-analyzer-result, #compatibility-results, #url-result, #contrast-result, #text-analysis-result {
       margin-top: 15px;
       font-size: 0.95rem;
     }
@@ -721,8 +721,6 @@
       <div class="sidebar-content">
         <h2><i class="fas fa-box-open"></i> Tool Box</h2>
         <button id="copy-system-info-btn"><i class="fas fa-copy"></i> Copy System Info</button>
-        <button id="clear-local-storage-btn"><i class="fas fa-database"></i> Clear Local Storage</button>
-        <button id="clear-session-storage-btn"><i class="fas fa-window-close"></i> Clear Session Storage</button>
         <button id="clear-cookies-btn"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
         <button id="reset-app-data-btn"><i class="fas fa-sync-alt"></i> Reset App Data</button>
         <button id="reload-page-btn"><i class="fas fa-redo"></i> Reload Page</button>
@@ -730,8 +728,6 @@
         <button id="retest-location-btn"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
         <button id="retest-media-devices-btn"><i class="fas fa-video"></i> Retest Media Devices</button>
         <button id="retest-webrtc-btn"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
-        <button id="clear-errors-btn"><i class="fas fa-exclamation-triangle"></i> Clear Errors</button>
-        <button id="perform-ping-test-btn"><i class="fas fa-signal"></i> Perform Ping Test</button>
       </div>
     </div>
 
@@ -972,49 +968,6 @@
         </div>
       </div>
 
-      <!-- Storage Management -->
-      <div class="category-section" id="storage-section">
-        <h2><i class="fas fa-database"></i> Storage Management</h2>
-        <div class="dashboard-grid">
-          <!-- Storage Usage Card -->
-          <div class="card" id="storage-usage-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-database"></i> Storage Usage</h2>
-            <div class="card-content" id="storage-usage-content">
-              <div class="progress-bar-container">
-                <div id="storage-progress-bar" class="progress-bar"></div>
-              </div>
-              <p id="storage-usage-text" style="margin-top: 10px; font-size: 1rem; color: #0dcaf0;">
-                Calculating storage usage...
-              </p>
-              <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
-                This shows the storage used by this web application within your browser, not the entire system's disk usage.
-              </p>
-            </div>
-          </div>
-
-          <!-- Local Storage Viewer Card -->
-          <div class="card" id="local-storage-viewer-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-eye"></i> Local Storage Viewer</h2>
-            <div class="card-content">
-              <button id="refresh-storage-btn" class="btn-primary" style="margin-bottom: 15px;"><i class="fas fa-sync-alt"></i> Refresh</button>
-              <table class="info-table">
-                <thead>
-                  <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="local-storage-table-body">
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Performance Monitoring -->
       <div class="category-section" id="performance-section">
         <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
@@ -1037,25 +990,10 @@
         </div>
       </div>
 
-      <!-- Accessibility & Compatibility -->
-      <div class="category-section" id="accessibility-compatibility-section">
-        <h2><i class="fas fa-universal-access"></i> Accessibility & Compatibility</h2>
+      <!-- Compatibility -->
+      <div class="category-section" id="compatibility-section">
+        <h2><i class="fas fa-universal-access"></i>Compatibility</h2>
         <div class="dashboard-grid">
-          <!-- Accessibility Checker Card -->
-          <div class="card" id="accessibility-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-universal-access"></i> Accessibility Checker</h2>
-            <div class="card-content" id="accessibility-content">
-              <p style="font-size: 0.95rem; color: var(--muted-text);">
-                Enter a website URL to check for basic accessibility issues.
-              </p>
-              <input type="text" id="accessibility-url" class="input-field" placeholder="Enter website URL (e.g., http://example.com)">
-              <button id="check-website-accessibility" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-check"></i> Check Website Accessibility</button>
-              <div id="accessibility-results" style="margin-top: 15px;"></div>
-              <iframe id="accessibility-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
-            </div>
-          </div>
-
           <!-- Browser Compatibility Checker Card -->
           <div class="card" id="compatibility-card">
             <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
@@ -1075,18 +1013,6 @@
       <div class="category-section" id="website-tools-section">
         <h2><i class="fas fa-globe"></i> Website Tools</h2>
         <div class="dashboard-grid">
-          <!-- Website Snapshot Card -->
-          <div class="card website-snapshot-card" id="website-snapshot-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-camera"></i> Website Snapshot</h2>
-            <div class="card-content">
-              <input type="text" id="snapshot-url" class="input-field" placeholder="Enter website URL (e.g., https://example.com)">
-              <button id="snapshot-button" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-camera"></i> Capture Snapshot</button>
-              <img id="website-snapshot-image" src="" alt="Website Snapshot" style="margin-top: 20px; border: 2px solid #b0b0b0; border-radius: var(--border-radius); display: none;">
-              <div id="snapshot-message" style="margin-top: 15px; font-size: 0.95rem; color: var(--muted-text);"></div>
-            </div>
-          </div>
-
           <!-- QR Code Generator Card -->
           <div class="card" id="qr-code-card">
             <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
@@ -1353,19 +1279,6 @@
       }, () => {
         alert('Failed to copy system information.');
       });
-    }
-
-    function clearLocalStorage() {
-      localStorage.clear();
-      alert('Local storage cleared.');
-      localStorage.setItem('visitorCount', 0);
-      document.getElementById('visitor-count').innerText = 0;
-      populateLocalStorageTable();
-    }
-
-    function clearSessionStorage() {
-      sessionStorage.clear();
-      alert('Session storage cleared.');
     }
 
     function clearCookies() {
@@ -2198,83 +2111,6 @@
       });
     }
 
-    function runAccessibilityCheckOnDocument(doc) {
-      let missingAlts = 0;
-      let missingLabels = 0;
-
-      const images = doc.querySelectorAll('img');
-      images.forEach(img => {
-        if (!img.hasAttribute('alt') || img.getAttribute('alt').trim() === '') {
-          missingAlts++;
-        }
-      });
-
-      const inputs = doc.querySelectorAll('input, select, textarea');
-      inputs.forEach(input => {
-        const id = input.id;
-        const hasLabel = id && doc.querySelector(`label[for="${id}"]`);
-        const ariaLabel = input.getAttribute('aria-label');
-        if (!hasLabel && !ariaLabel) {
-          missingLabels++;
-        }
-      });
-
-      let report = `<strong>Accessibility Report:</strong><br>`;
-      report += `Images missing alt attributes: <span style="color: ${missingAlts > 0 ? '#dc3545' : '#198754'};">${missingAlts}</span><br>`;
-      report += `Form fields missing labels or aria-label: <span style="color: ${missingLabels > 0 ? '#dc3545' : '#198754'};">${missingLabels}</span><br>`;
-      return report;
-    }
-
-    function checkWebsiteAccessibility() {
-      const resultsDiv = document.getElementById('accessibility-results');
-      const iframe = document.getElementById('accessibility-iframe');
-      const urlInput = document.getElementById('accessibility-url');
-      const url = urlInput.value.trim();
-
-      if (!url) {
-        alert('Please enter a website URL.');
-        return;
-      }
-
-      try {
-        new URL(url);
-      } catch {
-        alert('Please enter a valid URL.');
-        return;
-      }
-
-      resultsDiv.innerHTML = 'Checking...';
-      resultsDiv.style.color = '#0dcaf0';
-      iframe.src = '';
-      iframe.style.display = 'none';
-
-      iframe.onload = function() {
-        try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-          if (!iframeDoc) {
-            throw new Error('No iframe document');
-          }
-          const report = runAccessibilityCheckOnDocument(iframeDoc);
-          resultsDiv.innerHTML = report;
-          if (report.includes('#dc3545')) {
-            resultsDiv.style.color = '#dc3545';
-          } else {
-            resultsDiv.style.color = '#198754';
-          }
-        } catch (e) {
-          console.error('Cross-origin or access error:', e);
-          resultsDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze accessibility due to cross-origin restrictions or inaccessible content.</p>';
-        }
-      };
-
-      iframe.src = url;
-      setTimeout(() => {
-        if (resultsDiv.innerHTML === 'Checking...') {
-          resultsDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze accessibility due to cross-origin restrictions or time-out accessing content.</p>';
-        }
-      }, 5000);
-    }
-
     function runCompatibilityCheck() {
       const resultsDiv = document.getElementById('compatibility-results');
       resultsDiv.innerHTML = 'Checking...';
@@ -2699,98 +2535,6 @@
       taskInput.value = '';
     });
 
-    function populateLocalStorageTable() {
-      const tableBody = document.getElementById('local-storage-table-body');
-      tableBody.innerHTML = '';
-      
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key);
-        
-        const tr = document.createElement('tr');
-        
-        const tdKey = document.createElement('td');
-        tdKey.innerText = key;
-        
-        const tdValue = document.createElement('td');
-        tdValue.innerText = value;
-        
-        const tdAction = document.createElement('td');
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-        deleteBtn.style.background = 'none';
-        deleteBtn.style.border = 'none';
-        deleteBtn.style.color = '#dc3545';
-        deleteBtn.style.cursor = 'pointer';
-        deleteBtn.addEventListener('click', () => {
-          if (confirm(`Are you sure you want to delete the key "${key}"?`)) {
-            localStorage.removeItem(key);
-            populateLocalStorageTable();
-          }
-        });
-        tdAction.appendChild(deleteBtn);
-        
-        tr.appendChild(tdKey);
-        tr.appendChild(tdValue);
-        tr.appendChild(tdAction);
-        
-        tableBody.appendChild(tr);
-      }
-    }
-
-    document.getElementById('refresh-storage-btn').addEventListener('click', populateLocalStorageTable);
-
-    function captureWebsiteSnapshot() {
-      const snapshotUrlInput = document.getElementById('snapshot-url');
-      const snapshotButton = document.getElementById('snapshot-button');
-      const snapshotImage = document.getElementById('website-snapshot-image');
-      const snapshotMessage = document.getElementById('snapshot-message');
-      const url = snapshotUrlInput.value.trim();
-
-      if (!url) {
-        alert('Please enter a website URL.');
-        return;
-      }
-
-      try {
-        new URL(url);
-      } catch {
-        alert('Please enter a valid URL.');
-        return;
-      }
-
-      const apiKey = '8848c51f2c1271e071020ffb35490245'; // Replace with your own API key
-      const apiURL = `http://api.screenshotlayer.com/api/capture?access_key=${encodeURIComponent(apiKey)}&url=${encodeURIComponent(url)}&viewport=1440x900&width=250`;
-
-      snapshotMessage.innerHTML = 'Capturing snapshot...';
-      snapshotMessage.style.color = '#0dcaf0';
-      snapshotImage.style.display = 'none';
-      snapshotImage.src = '';
-
-      fetch(apiURL)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Network response was not ok (${response.status})`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.screenshot) {
-            snapshotImage.src = data.screenshot;
-            snapshotImage.style.display = 'block';
-            snapshotMessage.innerHTML = 'Snapshot captured successfully.';
-            snapshotMessage.style.color = '#198754';
-          } else {
-            throw new Error('Snapshot not available.');
-          }
-        })
-        .catch(err => {
-          snapshotMessage.innerHTML = 'Error capturing snapshot. Please ensure the URL is correct and the API key is valid.';
-          snapshotMessage.style.color = '#dc3545';
-          console.error('Snapshot capture error:', err);
-        });
-    }
-
     function initializeDashboard() {
       updateSystemInfo();
       updateInternetConnectivity();
@@ -2808,7 +2552,6 @@
       updateJsErrors();
       updatePublicIP();
       updateVisitorCount();
-      updateStorageUsage();
 
       setInterval(updateInternetConnectivity, 5000);
       setInterval(updateBatteryStatus, 60000);
@@ -2820,8 +2563,6 @@
       initializeDashboard();
 
       document.getElementById('copy-system-info-btn').addEventListener('click', copySystemInfo);
-      document.getElementById('clear-local-storage-btn').addEventListener('click', clearLocalStorage);
-      document.getElementById('clear-session-storage-btn').addEventListener('click', clearSessionStorage);
       document.getElementById('clear-cookies-btn').addEventListener('click', clearCookies);
       document.getElementById('reset-app-data-btn').addEventListener('click', resetAppData);
       document.getElementById('reload-page-btn').addEventListener('click', reloadPage);
@@ -2829,8 +2570,6 @@
       document.getElementById('retest-location-btn').addEventListener('click', updateLocation);
       document.getElementById('retest-media-devices-btn').addEventListener('click', updateMediaDevices);
       document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
-      document.getElementById('clear-errors-btn').addEventListener('click', clearErrors);
-      document.getElementById('perform-ping-test-btn').addEventListener('click', performPingTest);
       document.getElementById('search-button').addEventListener('click', performWebSearch);
       document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
       document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
@@ -2838,9 +2577,7 @@
       document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
       document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
       document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
-      document.getElementById('check-website-accessibility').addEventListener('click', checkWebsiteAccessibility);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
-      document.getElementById('snapshot-button').addEventListener('click', captureWebsiteSnapshot);
 
       const sidebar = document.getElementById('sidebar');
       const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -2859,7 +2596,6 @@
         mainContent.classList.remove('shifted');
       });
 
-      populateLocalStorageTable();
     });
   </script>
 </body>
