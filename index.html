@@ -16,427 +16,280 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
 
   <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
     :root {
-      --primary-color: #2776ea; /* Blue */
-      --secondary-color: #1e1e1e; /* Very Dark Gray */
-      --accent-color: #2744aa; /* Brighter Blue */
-      --success-color: #27ae60; /* Green */
-      --danger-color: #c0392b; /* Red */
-      --warning-color: #f39c12; /* Yellow */
-      --info-color: #2980b9; /* Blue */
-      --light-bg: #2a2a2a; /* Slightly Lighter Gray */
-      --card-bg: #1e1e1e; /* Card Background */
-      --text-color: #e0e0e0; /* Light Gray */
-      --muted-text: #b0b0b0; /* Medium Gray */
-      --border-radius: 12px; /* Increased for Neumorphism */
+      --bg-color: #1e1e1e;
+      --panel-color: #242424;
+      --primary-color: #2776ea; 
+      --accent-color: #27ae60;
+      --secondary-color: #1e1e1e;
+      --danger-color: #c0392b; 
+      --warning-color: #f39c12; 
+      --info-color: #2980b9;
+      --light-bg: #2a2a2a;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --muted-text: #b0b0b0;
+      --border-radius: 16px;
       --transition-speed: 0.3s;
       --font-family: 'Roboto', sans-serif;
       --input-bg: #2a2a2a;
-      --input-border: none;
       --input-focus-bg: #3a3a3a;
-      --button-hover-bg: #0950cd; /* Darker Blue */
-      --button-active-bg: #04156d; /* Even Darker Blue */
+      --button-hover-bg: #0950cd;
+      --button-active-bg: #04156d;
       --sidebar-width: 250px;
-      --scrollbar-width: 8px;
-      --scrollbar-thumb-bg: #555; /* Medium Gray */
-      --scrollbar-thumb-hover-bg: #777; /* Lighter Gray on hover */
+      --shadow-inset: inset 5px 5px 10px #141414, inset -5px -5px 10px #2a2a2a;
+      --shadow-out: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    html, body {
+      height: 100%;
     }
 
     body {
       font-family: var(--font-family);
-      background-color: var(--secondary-color);
+      background-color: var(--bg-color);
       color: var(--text-color);
       display: flex;
-      flex-direction: column;
       min-height: 100vh;
-      overflow: hidden; /* Prevent body from scrolling */
+      overflow: auto; 
     }
 
     ::-webkit-scrollbar {
-      width: var(--scrollbar-width);
+      width: 8px;
     }
 
     ::-webkit-scrollbar-track {
-      background: transparent; /* No background */
+      background: transparent;
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: var(--scrollbar-thumb-bg);
-      border-radius: var(--border-radius);
+      background-color: #555;
+      border-radius: 8px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background-color: var(--scrollbar-thumb-hover-bg);
+      background-color: #777;
     }
 
-    body, .sidebar, .content {
-      scrollbar-width: thin;
-      scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+    .sidebar {
+      width: 80px;
+      background: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      box-shadow: 2px 0 10px #000;
+      flex-shrink: 0;
+    }
+
+    .sidebar .logo {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 40px;
+    }
+
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar nav a {
+      color: var(--muted-text);
+      text-decoration: none;
+      font-size: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: color var(--transition-speed);
+      position: relative;
+    }
+
+    .sidebar nav a:hover {
+      color: var(--primary-color);
+    }
+
+    .sidebar nav a span {
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
+
+    .main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .top-bar {
-      width: 100%;
-      background-color: var(--secondary-color);
-      padding: 15px 30px;
+      height: 60px;
+      flex-shrink: 0;
+      background: var(--bg-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 0 20px;
+      box-shadow: 0 2px 10px #000;
       position: relative;
-      border-bottom: 1px solid #333;
       z-index: 1000;
     }
 
-    .top-bar .left-section {
-      display: flex;
-      align-items: center;
-    }
-
-    .hamburger {
-      background: none;
-      border: none;
-      color: var(--text-color);
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color var(--transition-speed), box-shadow var(--transition-speed);
-      margin-right: 15px;
-      border-radius: var(--border-radius);
-      box-shadow: inset 5px 5px 10px #141414, inset -5px -5px 10px #2a2a2a;
-    }
-
-    .hamburger:hover {
-      color: var(--accent-color);
-      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
-    }
-
     .top-bar .title {
-      font-size: 1.8rem;
-      font-weight: 500;
+      font-size: 1.5rem;
       color: var(--text-color);
       display: flex;
       align-items: center;
-      text-shadow: 2px 2px 4px #000;
-    }
-
-    .top-bar .title i {
-      margin-right: 10px;
+      gap: 10px;
     }
 
     .top-bar .search-container {
       display: flex;
       align-items: center;
-      max-width: 700px;
-      width: 100%;
-      margin-left: 20px;
-      background: var(--light-bg);
+      background: var(--panel-color);
       border-radius: var(--border-radius);
-      box-shadow: inset 5px 5px 10px #141414, inset -5px -5px 10px #2a2a2a;
       padding: 5px 10px;
+      box-shadow: var(--shadow-inset);
+      max-width: 100%;
+    }
+
+    .top-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: var(--text-color);
+      margin: 0 10px;
+      max-width: 100%;
+      display: block;
+      white-space: normal;
+    }
+
+    .top-bar input::placeholder {
+      color: var(--muted-text);
     }
 
     .top-bar select {
-      padding: 10px 15px;
-      border: var(--input-border);
-      border-radius: 4px 0 0 4px;
+      background: transparent;
+      border: none;
       outline: none;
-      background-color: var(--input-bg);
-      color: var(--muted-text);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
-      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
-    }
-
-    .top-bar select:hover, .top-bar select:focus {
-      background-color: var(--input-focus-bg);
       color: var(--text-color);
-    }
-
-    .top-bar input[type="text"] {
-      flex-grow: 1;
-      padding: 10px 15px;
-      margin: 0;
-      border: var(--input-border);
-      outline: none;
-      background-color: var(--input-bg);
-      color: var(--text-color);
-      font-size: 1rem;
-      border-radius: 0;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
-      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
-    }
-
-    .top-bar input[type="text"]::placeholder {
-      color: var(--muted-text);
-    }
-
-    .top-bar input[type="text"]:focus {
-      background-color: var(--input-focus-bg);
+      font-size: 0.9rem;
+      margin-right: 10px;
+      max-width:100%;
     }
 
     .top-bar button {
-      padding: 10px 20px;
+      background: var(--primary-color);
       border: none;
-      outline: none;
-      border-radius: 0 4px 4px 0;
-      cursor: pointer;
-      font-size: 1rem;
+      border-radius: var(--border-radius);
+      padding: 5px 15px;
+      color: #fff;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
-      justify-content: center;
-      background-color: var(--primary-color);
-      color: #ffffff;
-      transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
-      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: var(--shadow-out);
+      transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
     }
 
     .top-bar button:hover {
-      background-color: var(--button-hover-bg);
+      background: var(--button-hover-bg);
       transform: translateY(-2px);
       box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
     }
 
-    .top-bar button:active {
-      background-color: var(--button-active-bg);
-      transform: translateY(0);
-      box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
-    }
-
-    .top-bar button i {
-      margin-right: 8px;
-    }
-
-    .main-container {
-      display: flex;
-      flex-grow: 1;
-      background-color: var(--light-bg);
-      overflow: hidden;
-      position: relative;
-      transition: margin-left var(--transition-speed);
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background-color: var(--secondary-color);
-      padding: 20px;
-      box-sizing: border-box;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid #333;
-      transition: transform var(--transition-speed), margin-left var(--transition-speed), width var(--transition-speed);
-      position: fixed;
-      top: 64px;
-      left: 0;
-      height: calc(100vh - 64px - 60px);
-      z-index: 999;
-      transform: translateX(-100%);
-      box-shadow: inset 5px 0 15px #141414, inset -5px 0 15px #2a2a2a;
-    }
-
-    .sidebar.active {
-      transform: translateX(0);
-    }
-
-    .main-container.shifted {
-      margin-left: var(--sidebar-width);
-    }
-
-    .sidebar-content {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .sidebar h2 {
-      margin-bottom: 20px;
-      font-size: 1.4rem;
-      color: var(--text-color);
-      display: flex;
-      align-items: center;
-      transition: opacity var(--transition-speed), visibility var(--transition-speed);
-      text-shadow: 2px 2px 4px #000;
-    }
-
-    .sidebar h2 i {
-      margin-right: 10px;
-      font-size: 1.4rem;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 10px;
-      background-color: var(--card-bg);
-      color: var(--text-color);
-      border: none;
-      border-radius: var(--border-radius);
-      font-size: 0.95rem;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      transition: background-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
-    }
-
-    .sidebar button:hover {
-      background-color: var(--input-focus-bg);
-      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
-    }
-
-    .sidebar button i {
-      margin-right: 10px;
-      font-size: 1.1rem;
-      min-width: 20px;
-      text-align: center;
-    }
-
     .content {
       flex-grow: 1;
-      padding: 30px;
-      box-sizing: border-box;
       overflow-y: auto;
-      position: relative;
-      height: calc(100vh - 64px - 60px);
-      margin-left: 0;
-      transition: margin-left var(--transition-speed);
-      background: var(--light-bg);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
     }
 
-    .overlay {
-      position: fixed;
-      top: 64px;
-      left: 0;
-      width: 100%;
-      height: calc(100vh - 64px - 60px);
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      z-index: 998;
+    .panel {
+      background: var(--panel-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow-out);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .overlay.active {
-      display: block;
-    }
-
-    .hero {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .hero__title {
-      font-size: 2.5rem;
-      font-weight: 500;
-      margin-bottom: 15px;
-      color: var(--text-color);
-      position: relative;
-      text-shadow: 2px 2px 4px #000;
-    }
-
-    .hero__title::after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle at center, rgba(158, 86, 185, 0.2) 0%, transparent 70%);
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0.3;
-      pointer-events: none;
-      border-radius: 50%;
-    }
-
-    .hero__subtitle {
-      font-size: 1.1rem;
-      color: var(--muted-text);
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .category-section {
-      margin-bottom: 50px;
-    }
-
-    .category-section h2 {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
+    .panel h2 {
+      font-size: 1.5rem;
       color: var(--text-color);
       display: flex;
       align-items: center;
-      text-shadow: 2px 2px 4px #000;
+      gap: 10px;
     }
 
-    .category-section h2 i {
-      margin-right: 10px;
-      font-size: 1.6rem;
-    }
-
-    .dashboard-grid {
+    .panel-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
+      gap: 20px;
     }
 
-    .card {
-      background-color: var(--card-bg);
-      padding: 20px;
+    .panel-section.single-column {
+      grid-template-columns: 1fr;
+    }
+
+    .panel-sub {
+      background: var(--bg-color);
       border-radius: var(--border-radius);
-      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
+      padding: 15px;
+      box-shadow: var(--shadow-inset);
       display: flex;
       flex-direction: column;
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      gap: 15px;
       position: relative;
+      word-break: break-word;
+      white-space: normal;
+      max-width: 100%;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 7px 7px 20px #141414, -7px -7px 20px #2a2a2a;
+    .panel-sub img,
+    .panel-sub canvas,
+    .panel-sub video,
+    .panel-sub iframe,
+    .panel-sub input,
+    .panel-sub textarea,
+    .panel-sub select {
+      max-width: 100%;
     }
 
-    .card::before {
-      content: "";
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 20px;
-      height: 20px;
-      background-color: var(--primary-color);
-      border-radius: 50%;
-      opacity: 0.2;
-      pointer-events: none;
-    }
-
-    .card h2 {
-      margin-bottom: 20px;
-      font-size: 1.3rem;
-      color: var(--text-color);
-      display: flex;
-      align-items: center;
-      text-shadow: 1px 1px 2px #000;
-    }
-
-    .card h2 i {
-      margin-right: 10px;
+    .panel-sub h3 {
       font-size: 1.2rem;
+      margin-bottom: 5px;
+      color: var(--text-color);
     }
 
-    .card-content {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    .input-field {
+      width: 100%;
+      max-width: 100%;
+      padding: 10px 15px;
+      border: none;
+      outline: none;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
+      display: block;
+      white-space: normal;
+    }
+
+    .input-field::placeholder {
+      color: var(--muted-text);
+    }
+
+    .input-field:focus {
+      background-color: var(--input-focus-bg);
     }
 
     .btn-primary {
@@ -447,11 +300,13 @@
       cursor: pointer;
       font-size: 1rem;
       padding: 10px 15px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 5px;
       transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
-      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
+      box-shadow: var(--shadow-out);
+      max-width:100%;
     }
 
     .btn-primary:hover {
@@ -467,35 +322,15 @@
     }
 
     .btn-primary i {
-      margin-right: 8px;
-    }
-
-    .input-field {
-      width: 100%;
-      padding: 10px 15px;
-      margin-bottom: 15px;
-      border: var(--input-border);
-      outline: none;
-      background-color: var(--input-bg);
-      color: var(--text-color);
-      font-size: 1rem;
-      border-radius: var(--border-radius);
-      transition: background-color var(--transition-speed), color var(--transition-speed);
-      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
-    }
-
-    .input-field::placeholder {
-      color: var(--muted-text);
-    }
-
-    .input-field:focus {
-      background-color: var(--input-focus-bg);
+      margin-right: 5px;
     }
 
     .result, #dns-result, #js-error-analyzer-result, #compatibility-results, #url-result, #contrast-result, #text-analysis-result {
-      margin-top: 15px;
+      margin-top: 10px;
       font-size: 0.95rem;
       color: var(--text-color);
+      word-break: break-word;
+      white-space: normal;
     }
 
     .progress-bar-container, #mic-level-container, #battery-progress-bar-container, #storage-progress-bar-container {
@@ -516,16 +351,6 @@
       border-radius: var(--border-radius);
     }
 
-    #webcam-video {
-      width: 100%;
-      max-height: 500px;
-      background-color: #000;
-      border-radius: var(--border-radius);
-      display: none;
-      object-fit: cover;
-      margin-top: 10px;
-    }
-
     #mic-level {
       background-color: var(--accent-color);
     }
@@ -536,6 +361,16 @@
 
     #storage-progress-bar {
       background-color: var(--primary-color);
+    }
+
+    #webcam-video {
+      width: 100%;
+      max-height: 300px;
+      background-color: #000;
+      border-radius: var(--border-radius);
+      display: none;
+      object-fit: cover;
+      margin-top: 10px;
     }
 
     #screen-rectangle {
@@ -549,6 +384,7 @@
     .info-table {
       width: 100%;
       border-collapse: collapse;
+      word-break: break-word;
     }
 
     .info-table th, .info-table td {
@@ -556,6 +392,8 @@
       padding: 8px 10px;
       border-bottom: 1px solid #444;
       font-size: 0.95rem;
+      word-break: break-word;
+      white-space: normal;
     }
 
     .info-table th {
@@ -578,6 +416,8 @@
       margin-bottom: 8px;
       font-size: 0.95rem;
       color: var(--text-color);
+      word-break: break-word;
+      white-space: normal;
     }
 
     ul li i {
@@ -587,12 +427,12 @@
     }
 
     .footer {
-      background-color: var(--secondary-color);
+      background-color: var(--bg-color);
       color: var(--muted-text);
       text-align: center;
       padding: 15px 30px;
       font-size: 0.9rem;
-      position: fixed;
+      position: relative;
       bottom: 0;
       left: 0;
       right: 0;
@@ -626,84 +466,11 @@
       color: var(--accent-color);
     }
 
-    @media (max-width: 1024px) {
-      .sidebar {
-        width: var(--sidebar-width);
-      }
-
-      .content {
-        padding: 20px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 80%;
-        padding: 15px;
-        border-right: none;
-        border-bottom: 1px solid #333;
-        height: calc(100vh - 64px - 60px);
-        transform: translateX(-100%);
-      }
-
-      .sidebar.active {
-        transform: translateX(0);
-      }
-
-      .main-container.shifted {
-        margin-left: 80%;
-      }
-
-      .overlay.active {
-        display: block;
-      }
-
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero__title {
-        font-size: 2rem;
-      }
-
-      .hero__subtitle {
-        font-size: 1rem;
-      }
-
-      .footer {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .top-bar .search-container {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 15px;
-      }
-
-      .top-bar button {
-        width: 100%;
-        border-radius: 4px;
-        margin-top: 10px;
-      }
-
-      .sidebar button {
-        font-size: 1rem;
-        padding: 10px 15px;
-      }
-    }
-
-    /* Favorite icon styling */
     .favorite-toggle {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: var(--card-bg);
+      background: var(--bg-color);
       border: none;
       color: var(--warning-color);
       cursor: pointer;
@@ -715,28 +482,76 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
+      box-shadow: var(--shadow-out);
     }
+
     .favorite-toggle:hover {
       transform: scale(1.1);
       box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
     }
+
     .favorite-toggle.favorited {
       color: var(--accent-color);
       box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
     }
+
+    .network-speed-chart-container {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    @media (max-width: 768px) {
+      .panel-section {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 10px 0;
+      }
+
+      .sidebar .logo {
+        display: none;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .top-bar .search-container {
+        width: 100%;
+        margin-top: 15px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Top Bar -->
+<div class="sidebar">
+  <div class="logo"><i class="fas fa-tools"></i></div>
+  <nav>
+    <a href="#" title="Network Tools"><i class="fas fa-network-wired"></i><span>Net</span></a>
+    <a href="#" title="System Info"><i class="fas fa-desktop"></i><span>Sys</span></a>
+    <a href="#" title="Sensors"><i class="fas fa-cogs"></i><span>Dev</span></a>
+    <a href="#" title="Security"><i class="fas fa-shield-alt"></i><span>Sec</span></a>
+    <a href="#" title="Performance"><i class="fas fa-tachometer-alt"></i><span>Perf</span></a>
+    <a href="#" title="Compatibility"><i class="fas fa-universal-access"></i><span>Compat</span></a>
+    <a href="#" title="Website Tools"><i class="fas fa-globe"></i><span>Web</span></a>
+    <a href="#" title="Utilities"><i class="fas fa-tools"></i><span>Util</span></a>
+  </nav>
+</div>
+
+<div class="main">
   <div class="top-bar">
-    <div class="left-section">
-      <!-- Hamburger Menu Button -->
-      <button class="hamburger" id="hamburger-btn" aria-label="Toggle Sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="title"><i class="fas fa-tools"></i> TekTuls</div>
-    </div>
+    <div class="title"><i class="fas fa-tools"></i> TekTuls</div>
     <div class="search-container">
       <select id="search-engine">
         <option value="google">Google</option>
@@ -750,486 +565,388 @@
     </div>
   </div>
 
-  <!-- Overlay -->
-  <div class="overlay" id="overlay"></div>
+  <div class="overlay" id="overlay" style="display:none;"></div>
 
-  <!-- Main Container -->
-  <div class="main-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-content">
-        <h2><i class="fas fa-box-open"></i> Tool Box</h2>
-        <button id="copy-system-info-btn"><i class="fas fa-copy"></i> Copy System Info</button>
-        <button id="clear-cookies-btn"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
-        <button id="reset-app-data-btn"><i class="fas fa-sync-alt"></i> Reset App Data</button>
-        <button id="reload-page-btn"><i class="fas fa-redo"></i> Reload Page</button>
-        <button id="retest-connectivity-btn"><i class="fas fa-globe"></i> Retest Connectivity</button>
-        <button id="retest-location-btn"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
-        <button id="retest-media-devices-btn"><i class="fas fa-video"></i> Retest Media Devices</button>
-        <button id="retest-webrtc-btn"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
+  <div class="content" id="main-content">
+    <div class="panel" id="favorites-section" style="display:none;">
+      <h2><i class="fas fa-star"></i> Favorites</h2>
+      <div class="panel-section" id="favorites-grid"></div>
+    </div>
+
+    <div class="panel" id="network-tools-section">
+      <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="ping-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-signal"></i> Ping Test</h3>
+          <input type="text" id="ping-address" class="input-field" placeholder="Enter server address (e.g., example.com)">
+          <button id="start-ping-test-btn" class="btn-primary"><i class="fas fa-play"></i> Start Ping Test</button>
+          <canvas id="pingChart" style="margin-top: 20px; height: 150px;"></canvas>
+        </div>
+
+        <div class="panel-sub" id="internet-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-globe"></i> Internet Connectivity</h3>
+          <div style="text-align: center;">
+            <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #27ae60;"></i>
+            <p id="internet-status-text" style="margin-top: 10px; font-size: 1.1rem;">Online</p>
+          </div>
+        </div>
+
+        <div class="panel-sub network-speed-card" id="network-speed-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-chart-line"></i> Network Speed</h3>
+          <div class="network-speed-chart-container">
+            <canvas id="networkSpeedChart"></canvas>
+          </div>
+          <p id="current-speed" style="text-align: center; margin-top: 15px; font-size: 1rem; color: #27ae60;">
+            Current Speed: <strong>-- Mbps</strong>
+          </p>
+        </div>
+
+        <div class="panel-sub" id="network-info-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-network-wired"></i> Network Information</h3>
+          <strong>Public IP Address:</strong>
+          <p id="public-ip" style="margin-top: 5px; color: #27ae60;">Fetching...</p>
+          <button id="refresh-ip-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-sync-alt"></i> Refresh IP</button>
+          <div class="network-info" style="margin-top: 20px;">
+            <strong>DNS Lookup:</strong>
+            <input type="text" id="dns-domain" class="input-field" placeholder="Enter domain name (e.g., example.com)">
+            <button id="dns-lookup-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-search"></i> Lookup DNS</button>
+            <div class="result" id="dns-result"></div>
+          </div>
+        </div>
+
+        <div class="panel-sub" id="webrtc-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-network-wired"></i> WebRTC IP Addresses</h3>
+          <div id="webrtc-content" style="color: #0dcaf0;">Retrieving...</div>
+        </div>
       </div>
     </div>
 
-    <!-- Content Area -->
-    <div class="content" id="main-content">
-      <!-- Hero Section -->
-      <div class="hero">
-        <h1 class="hero__title"><i class="fas fa-chart-bar"></i> Comprehensive Troubleshooting Dashboard</h1>
-        <p class="hero__subtitle">A full suite of interactive troubleshooting tools at your fingertips.</p>
+    <div class="panel" id="system-info-section">
+      <h2><i class="fas fa-desktop"></i> System Information</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="system-info-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-desktop"></i> System Information</h3>
+          <div id="system-info-content">
+            <table class="info-table">
+              <tbody>
+                <tr><th>Operating System:</th><td id="os-info">Loading...</td></tr>
+                <tr><th>Device Type:</th><td id="device-type-info">Loading...</td></tr>
+                <tr><th>RAM:</th><td id="ram-info">Loading...</td></tr>
+                <tr><th>Processor:</th><td id="processor-info">Loading...</td></tr>
+                <tr><th>Disk Space:</th><td id="disk-space-info">Loading...</td></tr>
+                <tr><th>Browser:</th><td id="browser-info">Loading...</td></tr>
+                <tr><th>Platform:</th><td id="platform-info">Loading...</td></tr>
+                <tr><th>Language:</th><td id="language-info">Loading...</td></tr>
+                <tr><th>Online:</th><td id="online-status-info">Loading...</td></tr>
+                <tr><th>Cookies Enabled:</th><td id="cookies-enabled-info">Loading...</td></tr>
+                <tr><th>Touch Support:</th><td id="touch-support-info">Loading...</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
+              <em>Note: Disk space usage reflects browser storage quota usage, not entire system disk usage.</em>
+            </p>
+          </div>
+        </div>
+
+        <div class="panel-sub" id="memory-usage-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-memory"></i> Memory Usage</h3>
+          <canvas id="memoryChart" style="margin-top: 20px; height: 150px;"></canvas>
+        </div>
+
+        <div class="panel-sub" id="battery-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-battery-half"></i> Battery Status</h3>
+          <div class="progress-bar-container">
+            <div id="battery-progress-bar" class="progress-bar"></div>
+          </div>
+          <p id="battery-status-text" style="margin-top: 10px; font-size: 1rem; color: #0dcaf0;">Loading...</p>
+        </div>
+
+        <div class="panel-sub" id="screen-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-tv"></i> Screen Resolution</h3>
+          <div id="screen-rectangle"></div>
+          <p id="screen-dimensions-text" style="text-align: center; margin-top: 10px; font-size: 1rem; color: #0dcaf0;"></p>
+        </div>
+
+        <div class="panel-sub" id="timezone-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-clock"></i> Time Zone & Locale</h3>
+          <table class="info-table">
+            <tbody>
+              <tr><th>Time Zone:</th><td id="timezone-info">Loading...</td></tr>
+              <tr><th>Locale:</th><td id="locale-info">Loading...</td></tr>
+            </tbody>
+          </table>
+          <div id="map" style="height: 200px; margin-top: 15px; border-radius: var(--border-radius);"></div>
+        </div>
       </div>
+    </div>
 
-      <!-- Favorites Section -->
-      <div class="category-section" id="favorites-section" style="display:none;">
-        <h2><i class="fas fa-star"></i> Favorites</h2>
-        <div class="dashboard-grid" id="favorites-grid"></div>
-      </div>
+    <div class="panel" id="device-sensors-section">
+      <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="sensors-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-cogs"></i> Sensors Availability</h3>
+          <div id="sensors-content" style="color: #0dcaf0;"></div>
+        </div>
 
-      <!-- Network Tools -->
-      <div class="category-section" id="network-tools-section">
-        <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
-        <div class="dashboard-grid">
-          <!-- Ping Test Card -->
-          <div class="card" id="ping-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-signal"></i> Ping Test</h2>
-            <div class="card-content">
-              <input type="text" id="ping-address" class="input-field" placeholder="Enter server address (e.g., example.com)">
-              <button id="start-ping-test-btn" class="btn-primary"><i class="fas fa-play"></i> Start Ping Test</button>
-              <canvas id="pingChart" style="margin-top: 20px; height: 150px;"></canvas>
-            </div>
+        <div class="panel-sub" id="media-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-video"></i> Media Devices</h3>
+          <strong>Available Media Devices:</strong>
+          <ul id="media-devices-list" style="margin-top: 10px;"></ul>
+          <div class="media-test" style="margin-top: 20px;">
+            <button id="toggle-webcam-btn" class="btn-primary"><i class="fas fa-camera"></i> Test Webcam</button>
+            <video id="webcam-video" autoplay playsinline></video>
           </div>
-
-          <!-- Internet Connectivity Card -->
-          <div class="card" id="internet-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-globe"></i> Internet Connectivity</h2>
-            <div class="card-content" style="text-align: center;">
-              <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #27ae60;"></i>
-              <p id="internet-status-text" style="margin-top: 10px; font-size: 1.1rem;">Online</p>
-            </div>
-          </div>
-
-          <!-- Network Speed Card -->
-          <div class="card network-speed-card" id="network-speed-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-chart-line"></i> Network Speed</h2>
-            <div class="card-content">
-              <div class="network-speed-chart-container">
-                <canvas id="networkSpeedChart"></canvas>
-              </div>
-              <p id="current-speed" style="text-align: center; margin-top: 15px; font-size: 1rem; color: #27ae60;">
-                Current Speed: <strong>-- Mbps</strong>
-              </p>
-            </div>
-          </div>
-
-          <!-- Network Information Card -->
-          <div class="card" id="network-info-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-network-wired"></i> Network Information</h2>
-            <div class="card-content">
-              <strong>Public IP Address:</strong>
-              <p id="public-ip" style="margin-top: 5px; color: #27ae60;">Fetching...</p>
-              <button id="refresh-ip-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-sync-alt"></i> Refresh IP</button>
-              <div class="network-info" style="margin-top: 20px;">
-                <strong>DNS Lookup:</strong>
-                <input type="text" id="dns-domain" class="input-field" placeholder="Enter domain name (e.g., example.com)">
-                <button id="dns-lookup-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-search"></i> Lookup DNS</button>
-                <div class="result" id="dns-result"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- WebRTC IP Addresses Card -->
-          <div class="card" id="webrtc-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-network-wired"></i> WebRTC IP Addresses</h2>
-            <div class="card-content" id="webrtc-content" style="color: #0dcaf0;">
-              Retrieving...
+          <div class="media-test" style="margin-top: 20px;">
+            <button id="toggle-microphone-btn" class="btn-primary"><i class="fas fa-microphone"></i> Test Microphone</button>
+            <div id="mic-level-container">
+              <div id="mic-level"></div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- System Information -->
-      <div class="category-section" id="system-info-section">
-        <h2><i class="fas fa-desktop"></i> System Information</h2>
-        <div class="dashboard-grid">
-          <!-- System Info Card -->
-          <div class="card" id="system-info-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-desktop"></i> System Information</h2>
-            <div class="card-content" id="system-info-content">
-              <table class="info-table">
-                <tbody>
-                  <tr><th>Operating System:</th><td id="os-info">Loading...</td></tr>
-                  <tr><th>Device Type:</th><td id="device-type-info">Loading...</td></tr>
-                  <tr><th>RAM:</th><td id="ram-info">Loading...</td></tr>
-                  <tr><th>Processor:</th><td id="processor-info">Loading...</td></tr>
-                  <tr><th>Disk Space:</th><td id="disk-space-info">Loading...</td></tr>
-                  <tr><th>Browser:</th><td id="browser-info">Loading...</td></tr>
-                  <tr><th>Platform:</th><td id="platform-info">Loading...</td></tr>
-                  <tr><th>Language:</th><td id="language-info">Loading...</td></tr>
-                  <tr><th>Online:</th><td id="online-status-info">Loading...</td></tr>
-                  <tr><th>Cookies Enabled:</th><td id="cookies-enabled-info">Loading...</td></tr>
-                  <tr><th>Touch Support:</th><td id="touch-support-info">Loading...</td></tr>
-                </tbody>
-              </table>
-              <p style="font-size: 0.85rem; margin-top: 10px; color: var(--muted-text);">
-                <em>Note: Disk space usage reflects browser storage quota usage, not entire system disk usage.</em>
-              </p>
-            </div>
+    <div class="panel" id="security-privacy-section">
+      <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="adblocker-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-ban"></i> Ad Blocker Detection</h3>
+          <div id="adblocker-content" style="text-align: center; color: #0dcaf0;">
+            Detecting...
           </div>
+        </div>
 
-          <!-- Memory Usage Chart -->
-          <div class="card" id="memory-usage-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-memory"></i> Memory Usage</h2>
-            <canvas id="memoryChart" style="margin-top: 20px; height: 150px;"></canvas>
+        <div class="panel-sub" id="serviceworker-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-robot"></i> Service Worker Status</h3>
+          <div id="serviceworker-content" style="text-align: center; color: #0dcaf0;">
+            Checking...
           </div>
+        </div>
 
-          <!-- Battery Status Card -->
-          <div class="card" id="battery-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-battery-half"></i> Battery Status</h2>
-            <div class="card-content">
-              <div class="progress-bar-container">
-                <div id="battery-progress-bar" class="progress-bar"></div>
-              </div>
-              <p id="battery-status-text" style="margin-top: 10px; font-size: 1rem; color: #0dcaf0;">Loading...</p>
-            </div>
+        <div class="panel-sub" id="js-errors-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h3>
+          <div id="js-errors-content" style="color: #c0392b;">
+            No errors detected.
           </div>
+        </div>
 
-          <!-- Screen Resolution Card -->
-          <div class="card" id="screen-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-tv"></i> Screen Resolution</h2>
-            <div class="card-content">
-              <div id="screen-rectangle" style="background-color: var(--accent-color);"></div>
-              <p id="screen-dimensions-text" style="text-align: center; margin-top: 10px; font-size: 1rem; color: #0dcaf0;"></p>
-            </div>
-          </div>
+        <div class="panel-sub" id="js-error-analyzer-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-code"></i> JavaScript Error Analyzer</h3>
+          <input type="text" id="analyzer-url" class="input-field" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)">
+          <button id="start-js-error-analysis-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-search"></i> Analyze JavaScript Errors</button>
+          <div id="js-error-analyzer-result" style="margin-top: 15px;"></div>
+          <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
+        </div>
+      </div>
+    </div>
 
-          <!-- Time Zone & Locale Card -->
-          <div class="card" id="timezone-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-clock"></i> Time Zone & Locale</h2>
-            <div class="card-content">
-              <table class="info-table">
-                <tbody>
-                  <tr><th>Time Zone:</th><td id="timezone-info">Loading...</td></tr>
-                  <tr><th>Locale:</th><td id="locale-info">Loading...</td></tr>
-                </tbody>
-              </table>
-              <div id="map" style="height: 200px; margin-top: 15px; border-radius: var(--border-radius);"></div>
-            </div>
+    <div class="panel" id="performance-section">
+      <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="fps-monitor-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-tachometer-alt"></i> FPS Monitor</h3>
+          <canvas id="performanceChart" style="margin-top: 20px; height: 150px;"></canvas>
+        </div>
+
+        <div class="panel-sub" id="webgl-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-cube"></i> WebGL Support</h3>
+          <div id="webgl-content" style="text-align: center; color: #0dcaf0;">
+            Checking...
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Device Sensors and Media -->
-      <div class="category-section" id="device-sensors-section">
-        <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
-        <div class="dashboard-grid">
-          <!-- Sensors Availability Card -->
-          <div class="card" id="sensors-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-cogs"></i> Sensors Availability</h2>
-            <div class="card-content" id="sensors-content" style="color: #0dcaf0;">
-            </div>
+    <div class="panel" id="compatibility-section">
+      <h2><i class="fas fa-universal-access"></i> Compatibility</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="compatibility-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-browser"></i> Browser Compatibility Checker</h3>
+          <p style="font-size: 0.95rem; color: var(--muted-text);">
+            Check if your browser supports key modern web features.
+          </p>
+          <button id="run-compatibility-check" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-check"></i> Run Compatibility Check</button>
+          <div id="compatibility-results" style="margin-top: 15px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="website-tools-section">
+      <h2><i class="fas fa-globe"></i> Website Tools</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="qr-code-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-qrcode"></i> QR Code Generator</h3>
+          <input type="text" id="qr-text-input" class="input-field" placeholder="Enter text or URL...">
+          <button id="generate-qr-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-qrcode"></i> Generate QR Code</button>
+          <div id="qr-code" style="margin-top: 15px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="utilities-section">
+      <h2><i class="fas fa-tools"></i> Utilities</h2>
+      <div class="panel-section">
+        <div class="panel-sub" id="password-generator-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-key"></i> Password Generator</h3>
+          <label for="password-length">Length:</label>
+          <input type="number" id="password-length" class="input-field" min="4" max="64" value="12">
+          <div>
+            <input type="checkbox" id="include-uppercase" checked>
+            <label for="include-uppercase">Include Uppercase Letters</label>
           </div>
 
-          <!-- Media Devices Card -->
-          <div class="card" id="media-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-video"></i> Media Devices</h2>
-            <div class="card-content" id="media-content">
-              <strong>Available Media Devices:</strong>
-              <ul id="media-devices-list" style="margin-top: 10px;">
-              </ul>
-              <div class="media-test" style="margin-top: 20px;">
-                <button id="toggle-webcam-btn" class="btn-primary"><i class="fas fa-camera"></i> Test Webcam</button>
-                <video id="webcam-video" autoplay playsinline></video>
-              </div>
-              <div class="media-test" style="margin-top: 20px;">
-                <button id="toggle-microphone-btn" class="btn-primary"><i class="fas fa-microphone"></i> Test Microphone</button>
-                <div id="mic-level-container">
-                  <div id="mic-level"></div>
-                </div>
-              </div>
+          <div>
+            <input type="checkbox" id="include-numbers" checked>
+            <label for="include-numbers">Include Numbers</label>
+          </div>
+
+          <div>
+            <input type="checkbox" id="include-special" checked>
+            <label for="include-special">Include Special Characters</label>
+          </div>
+
+          <button id="generate-password-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-random"></i> Generate Password</button>
+          <div id="generated-password" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
+        </div>
+
+        <div class="panel-sub" id="unit-converter-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-exchange-alt"></i> Unit Converter</h3>
+          <label for="conversion-category">Category:</label>
+          <select id="conversion-category" class="input-field">
+            <option value="length">Length</option>
+            <option value="weight">Weight</option>
+            <option value="temperature">Temperature</option>
+            <option value="volume">Volume</option>
+          </select>
+
+          <label for="from-unit">From:</label>
+          <select id="from-unit" class="input-field"></select>
+
+          <label for="to-unit">To:</label>
+          <select id="to-unit" class="input-field"></select>
+
+          <label for="input-value">Value:</label>
+          <input type="number" id="input-value" class="input-field" placeholder="Enter value">
+
+          <button id="convert-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-sync-alt"></i> Convert</button>
+          <div id="conversion-result" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="panel-sub" id="text-analyzer-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-align-left"></i> Text Analyzer</h3>
+          <textarea id="text-input" class="input-field" rows="6" placeholder="Enter or paste your text here..."></textarea>
+          <button id="analyze-text-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-chart-bar"></i> Analyze Text</button>
+          <div id="text-analysis-result" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="panel-sub" id="url-encoder-decoder-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-link"></i> URL Encoder/Decoder</h3>
+          <textarea id="url-input" class="input-field" rows="3" placeholder="Enter your URL here..."></textarea>
+          <div style="margin-top: 10px;">
+            <button id="encode-url-btn" class="btn-primary"><i class="fas fa-code"></i> Encode</button>
+            <button id="decode-url-btn" class="btn-primary" style="margin-left: 10px;"><i class="fas fa-code-branch"></i> Decode</button>
+          </div>
+          <div id="url-result" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
+        </div>
+
+        <div class="panel-sub" id="color-picker-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-palette"></i> Color Picker & Contrast Checker</h3>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+              <label for="color1">Color 1:</label>
+              <input type="color" id="color1" value="#ffffff" class="input-field" style="width: 100px; height: 50px; padding:0; border:none;">
+            </div>
+            <div>
+              <label for="color2">Color 2:</label>
+              <input type="color" id="color2" value="#000000" class="input-field" style="width: 100px; height: 50px; padding:0; border:none;">
+            </div>
+          </div>
+          <button id="check-contrast-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-eye"></i> Check Contrast</button>
+          <div id="contrast-result" style="margin-top: 15px; font-size: 1rem;"></div>
+          <div style="margin-top: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 50px; height: 50px; background-color: #ffffff; border: 1px solid #ccc;"></div>
+              <div style="width: 50px; height: 50px; background-color: #000000; border: 1px solid #ccc;"></div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Security and Privacy -->
-      <div class="category-section" id="security-privacy-section">
-        <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
-        <div class="dashboard-grid">
-          <!-- Ad Blocker Detection Card -->
-          <div class="card" id="adblocker-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-ban"></i> Ad Blocker Detection</h2>
-            <div class="card-content" id="adblocker-content" style="text-align: center; color: #0dcaf0;">
-              Detecting...
-            </div>
-          </div>
+        <div class="panel-sub" id="calculator-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-calculator"></i> Calculator</h3>
+          <input type="text" id="calculator-display" class="input-field" placeholder="0" readonly style="text-align: right; font-size: 1.2rem;">
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+            <button class="btn-primary calc-btn" data-value="7">7</button>
+            <button class="btn-primary calc-btn" data-value="8">8</button>
+            <button class="btn-primary calc-btn" data-value="9">9</button>
+            <button class="btn-primary calc-btn" data-value="/">/</button>
 
-          <!-- Service Worker Status Card -->
-          <div class="card" id="serviceworker-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-robot"></i> Service Worker Status</h2>
-            <div class="card-content" id="serviceworker-content" style="text-align: center; color: #0dcaf0;">
-              Checking...
-            </div>
-          </div>
+            <button class="btn-primary calc-btn" data-value="4">4</button>
+            <button class="btn-primary calc-btn" data-value="5">5</button>
+            <button class="btn-primary calc-btn" data-value="6">6</button>
+            <button class="btn-primary calc-btn" data-value="*">*</button>
 
-          <!-- JavaScript Errors Card -->
-          <div class="card" id="js-errors-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
-            <div class="card-content" id="js-errors-content" style="color: #c0392b;">
-              No errors detected.
-            </div>
-          </div>
+            <button class="btn-primary calc-btn" data-value="1">1</button>
+            <button class="btn-primary calc-btn" data-value="2">2</button>
+            <button class="btn-primary calc-btn" data-value="3">3</button>
+            <button class="btn-primary calc-btn" data-value="-">-</button>
 
-          <!-- JavaScript Error Analyzer Card -->
-          <div class="card" id="js-error-analyzer-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-code"></i> JavaScript Error Analyzer</h2>
-            <div class="card-content">
-              <input type="text" id="analyzer-url" class="input-field" placeholder="Enter website URL (e.g., http://localhost:8000/testPage.html)">
-              <button id="start-js-error-analysis-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-search"></i> Analyze JavaScript Errors</button>
-              <div id="js-error-analyzer-result" style="margin-top: 15px;"></div>
-              <iframe id="js-error-analyzer-iframe" src="" style="width: 100%; height: 0; border: none; display: none;"></iframe>
-            </div>
+            <button class="btn-primary calc-btn" data-value="0">0</button>
+            <button class="btn-primary calc-btn" data-value=".">.</button>
+            <button class="btn-primary calc-btn" id="clear-btn">C</button>
+            <button class="btn-primary calc-btn" data-value="+">+</button>
+
+            <button class="btn-primary calc-btn" style="grid-column: span 4; background-color: var(--accent-color);" id="equals-btn">=</button>
           </div>
         </div>
-      </div>
 
-      <!-- Performance Monitoring -->
-      <div class="category-section" id="performance-section">
-        <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
-        <div class="dashboard-grid">
-          <!-- FPS Monitor Card -->
-          <div class="card" id="fps-monitor-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-tachometer-alt"></i> FPS Monitor</h2>
-            <canvas id="performanceChart" style="margin-top: 20px; height: 150px;"></canvas>
-          </div>
-
-          <!-- WebGL Support Card -->
-          <div class="card" id="webgl-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-cube"></i> WebGL Support</h2>
-            <div class="card-content" id="webgl-content" style="text-align: center; color: #0dcaf0;">
-              Checking...
-            </div>
-          </div>
+        <div class="panel-sub" id="todo-list-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-tasks"></i> To-Do List</h3>
+          <input type="text" id="todo-input" class="input-field" placeholder="Add a new task...">
+          <button id="add-todo-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-plus"></i> Add Task</button>
+          <ul id="todo-list" style="margin-top: 15px;"></ul>
         </div>
       </div>
+    </div>
 
-      <!-- Compatibility -->
-      <div class="category-section" id="compatibility-section">
-        <h2><i class="fas fa-universal-access"></i>Compatibility</h2>
-        <div class="dashboard-grid">
-          <!-- Browser Compatibility Checker Card -->
-          <div class="card" id="compatibility-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-browser"></i> Browser Compatibility Checker</h2>
-            <div class="card-content" id="compatibility-content">
-              <p style="font-size: 0.95rem; color: var(--muted-text);">
-                Check if your browser supports key modern web features.
-              </p>
-              <button id="run-compatibility-check" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-check"></i> Run Compatibility Check</button>
-              <div id="compatibility-results" style="margin-top: 15px;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Website Tools -->
-      <div class="category-section" id="website-tools-section">
-        <h2><i class="fas fa-globe"></i> Website Tools</h2>
-        <div class="dashboard-grid">
-          <!-- QR Code Generator Card -->
-          <div class="card" id="qr-code-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-qrcode"></i> QR Code Generator</h2>
-            <div class="card-content">
-              <input type="text" id="qr-text-input" class="input-field" placeholder="Enter text or URL...">
-              <button id="generate-qr-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-qrcode"></i> Generate QR Code</button>
-              <div id="qr-code" style="margin-top: 15px;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Utilities -->
-      <div class="category-section" id="utilities-section">
-        <h2><i class="fas fa-tools"></i> Utilities</h2>
-        <div class="dashboard-grid">
-          <!-- Password Generator Card -->
-          <div class="card" id="password-generator-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-key"></i> Password Generator</h2>
-            <div class="card-content">
-              <label for="password-length">Length:</label>
-              <input type="number" id="password-length" class="input-field" min="4" max="64" value="12">
-
-              <div style="margin-top: 10px;">
-                <input type="checkbox" id="include-uppercase" checked>
-                <label for="include-uppercase">Include Uppercase Letters</label>
-              </div>
-
-              <div>
-                <input type="checkbox" id="include-numbers" checked>
-                <label for="include-numbers">Include Numbers</label>
-              </div>
-
-              <div>
-                <input type="checkbox" id="include-special" checked>
-                <label for="include-special">Include Special Characters</label>
-              </div>
-
-              <button id="generate-password-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-random"></i> Generate Password</button>
-
-              <div id="generated-password" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
-            </div>
-          </div>
-
-          <!-- Unit Converter Card -->
-          <div class="card" id="unit-converter-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-exchange-alt"></i> Unit Converter</h2>
-            <div class="card-content">
-              <label for="conversion-category">Category:</label>
-              <select id="conversion-category" class="input-field">
-                <option value="length">Length</option>
-                <option value="weight">Weight</option>
-                <option value="temperature">Temperature</option>
-                <option value="volume">Volume</option>
-              </select>
-
-              <label for="from-unit">From:</label>
-              <select id="from-unit" class="input-field"></select>
-
-              <label for="to-unit">To:</label>
-              <select id="to-unit" class="input-field"></select>
-
-              <label for="input-value">Value:</label>
-              <input type="number" id="input-value" class="input-field" placeholder="Enter value">
-
-              <button id="convert-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-sync-alt"></i> Convert</button>
-
-              <div id="conversion-result" style="margin-top: 15px;"></div>
-            </div>
-          </div>
-
-          <!-- Text Analyzer Card -->
-          <div class="card" id="text-analyzer-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-align-left"></i> Text Analyzer</h2>
-            <div class="card-content">
-              <textarea id="text-input" class="input-field" rows="6" placeholder="Enter or paste your text here..."></textarea>
-              <button id="analyze-text-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-chart-bar"></i> Analyze Text</button>
-              <div id="text-analysis-result" style="margin-top: 15px;"></div>
-            </div>
-          </div>
-
-          <!-- URL Encoder/Decoder Card -->
-          <div class="card" id="url-encoder-decoder-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-link"></i> URL Encoder/Decoder</h2>
-            <div class="card-content">
-              <textarea id="url-input" class="input-field" rows="3" placeholder="Enter your URL here..."></textarea>
-
-              <div style="margin-top: 10px;">
-                <button id="encode-url-btn" class="btn-primary"><i class="fas fa-code"></i> Encode</button>
-                <button id="decode-url-btn" class="btn-primary" style="margin-left: 10px;"><i class="fas fa-code-branch"></i> Decode</button>
-              </div>
-
-              <div id="url-result" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
-            </div>
-          </div>
-
-          <!-- Color Picker & Contrast Checker Card -->
-          <div class="card" id="color-picker-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-palette"></i> Color Picker & Contrast Checker</h2>
-            <div class="card-content">
-              <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                <div>
-                  <label for="color1">Color 1:</label>
-                  <input type="color" id="color1" value="#ffffff" class="input-field" style="width: 100px; height: 50px; padding: 0; border: none;">
-                </div>
-                <div>
-                  <label for="color2">Color 2:</label>
-                  <input type="color" id="color2" value="#000000" class="input-field" style="width: 100px; height: 50px; padding: 0; border: none;">
-                </div>
-              </div>
-
-              <button id="check-contrast-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-eye"></i> Check Contrast</button>
-
-              <div id="contrast-result" style="margin-top: 15px; font-size: 1rem;"></div>
-
-              <div style="margin-top: 20px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <div style="width: 50px; height: 50px; background-color: #ffffff; border: 1px solid #ccc;"></div>
-                  <div style="width: 50px; height: 50px; background-color: #000000; border: 1px solid #ccc;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Calculator Card -->
-          <div class="card" id="calculator-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-calculator"></i> Calculator</h2>
-            <div class="card-content">
-              <input type="text" id="calculator-display" class="input-field" placeholder="0" readonly style="text-align: right; font-size: 1.2rem; background-color: var(--input-bg); color: var(--text-color); box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;">
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
-                <button class="btn-primary calc-btn" data-value="7">7</button>
-                <button class="btn-primary calc-btn" data-value="8">8</button>
-                <button class="btn-primary calc-btn" data-value="9">9</button>
-                <button class="btn-primary calc-btn" data-value="/">/</button>
-
-                <button class="btn-primary calc-btn" data-value="4">4</button>
-                <button class="btn-primary calc-btn" data-value="5">5</button>
-                <button class="btn-primary calc-btn" data-value="6">6</button>
-                <button class="btn-primary calc-btn" data-value="*">*</button>
-
-                <button class="btn-primary calc-btn" data-value="1">1</button>
-                <button class="btn-primary calc-btn" data-value="2">2</button>
-                <button class="btn-primary calc-btn" data-value="3">3</button>
-                <button class="btn-primary calc-btn" data-value="-">-</button>
-
-                <button class="btn-primary calc-btn" data-value="0">0</button>
-                <button class="btn-primary calc-btn" data-value=".">.</button>
-                <button class="btn-primary calc-btn" id="clear-btn">C</button>
-                <button class="btn-primary calc-btn" data-value="+">+</button>
-
-                <button class="btn-primary calc-btn" style="grid-column: span 4; background-color: var(--success-color);" id="equals-btn">=</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- To-Do List Card -->
-          <div class="card" id="todo-list-card">
-            <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-            <h2><i class="fas fa-tasks"></i> To-Do List</h2>
-            <div class="card-content">
-              <input type="text" id="todo-input" class="input-field" placeholder="Add a new task...">
-              <button id="add-todo-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-plus"></i> Add Task</button>
-              <ul id="todo-list" style="margin-top: 15px;"></ul>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div style="display:none;">
+      <button id="copy-system-info-btn"><i class="fas fa-copy"></i> Copy System Info</button>
+      <button id="clear-cookies-btn"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
+      <button id="reset-app-data-btn"><i class="fas fa-sync-alt"></i> Reset App Data</button>
+      <button id="reload-page-btn"><i class="fas fa-redo"></i> Reload Page</button>
+      <button id="retest-connectivity-btn"><i class="fas fa-globe"></i> Retest Connectivity</button>
+      <button id="retest-location-btn"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
+      <button id="retest-media-devices-btn"><i class="fas fa-video"></i> Retest Media Devices</button>
+      <button id="retest-webrtc-btn"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     <span>© 2024 Michael Palmero</span>
     <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
@@ -1237,9 +954,10 @@
       <span class="label">Visitors:</span> <span id="visitor-count">0</span>
     </div>
   </div>
+</div>
 
-  <!-- JavaScript -->
-  <script>
+<!-- JavaScript -->
+<script>
     let errorLogs = [];
 
     window.onerror = function(message, source, lineno, colno, error) {
@@ -1249,7 +967,6 @@
       return false;
     };
 
-    // Store original parents of cards to restore when unfavorited
     const originalLocations = new Map(); 
     const favoritesGrid = document.getElementById('favorites-grid');
     const favoritesSection = document.getElementById('favorites-section');
@@ -1259,17 +976,14 @@
       const isFavorite = favBtn.classList.contains('favorited');
       
       if (isFavorite) {
-        // Unfavorite: Move back to original location
         favBtn.classList.remove('favorited');
         const originalParent = originalLocations.get(card.id);
         if (originalParent) {
           originalParent.appendChild(card);
         }
       } else {
-        // Favorite: Move to favorites section
         favBtn.classList.add('favorited');
         if (!originalLocations.has(card.id)) {
-          // Store original parent only once
           originalLocations.set(card.id, card.parentNode);
         }
         favoritesGrid.appendChild(card);
@@ -1279,14 +993,12 @@
     }
 
     function updateFavoritesVisibility() {
-      // If no favorites are present, hide the section
       const hasFavorites = favoritesGrid.children.length > 0;
       favoritesSection.style.display = hasFavorites ? 'block' : 'none';
     }
 
-    // Add event listeners for favorite toggling
     window.addEventListener('load', () => {
-      document.querySelectorAll('.card').forEach(card => {
+      document.querySelectorAll('.panel-sub').forEach(card => {
         const favBtn = card.querySelector('.favorite-toggle');
         if (favBtn) {
           favBtn.addEventListener('click', () => toggleFavorite(card));
@@ -1339,7 +1051,7 @@
         localStorage.setItem('visitorCount', count);
         document.getElementById('visitor-count').innerText = count;
       }
-      clearSessionStorage();
+      sessionStorage.clear();
       clearCookies();
       alert('Application data reset. Reloading page...');
       reloadPage();
@@ -1347,12 +1059,6 @@
 
     function reloadPage() {
       location.reload();
-    }
-
-    function clearErrors() {
-      errorLogs = [];
-      updateJsErrors();
-      alert('Error logs cleared.');
     }
 
     function updateJsErrors() {
@@ -1438,11 +1144,11 @@
       const internetStatusText = document.getElementById('internet-status-text');
       fetch('https://www.google.com/', { mode: 'no-cors' })
         .then(() => {
-          internetStatusIcon.style.color = '#27ae60'; /* Green */
+          internetStatusIcon.style.color = '#27ae60';
           internetStatusText.innerHTML = 'Online';
         })
         .catch(() => {
-          internetStatusIcon.style.color = '#c0392b'; /* Red */
+          internetStatusIcon.style.color = '#c0392b';
           internetStatusText.innerHTML = 'Offline';
         });
     }
@@ -1485,7 +1191,7 @@
         datasets: [{
           label: 'FPS',
           data: fpsData,
-          backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
+          backgroundColor: 'rgba(27, 86, 255, 0.2)',
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1540,7 +1246,7 @@
         datasets: [{
           label: 'Speed (Mbps)',
           data: networkSpeedData,
-          backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
+          backgroundColor: 'rgba(27, 86, 255, 0.2)',
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1613,8 +1319,8 @@
       const width = window.screen.width;
       const height = window.screen.height;
       const maxDimension = Math.max(width, height);
-      const scaledWidth = (width / maxDimension) * 300;
-      const scaledHeight = (height / maxDimension) * 300;
+      const scaledWidth = (width / maxDimension) * 280;
+      const scaledHeight = (height / maxDimension) * 280;
       screenRectangle.style.width = `${scaledWidth}px`;
       screenRectangle.style.height = `${scaledHeight}px`;
       screenDimensionsText.innerHTML = `<strong>${width}px</strong> x <strong>${height}px</strong>`;
@@ -1689,7 +1395,7 @@
         datasets: [{
           label: 'Memory Usage (MB)',
           data: memoryUsageData,
-          backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
+          backgroundColor: 'rgba(27, 86, 255, 0.2)',
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1825,12 +1531,6 @@
       };
     }
 
-    function performPingTest() {
-      const pingCard = document.getElementById('ping-card');
-      pingCard.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    let pingChartInstance = null;
     function startPingTest(event) {
       event.preventDefault();
       const addressInput = document.getElementById('ping-address');
@@ -1851,7 +1551,7 @@
           datasets: [{
             label: 'Ping (ms)',
             data: [],
-            backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
+            backgroundColor: 'rgba(27, 86, 255, 0.2)',
             borderColor: 'var(--primary-color)',
             borderWidth: 2,
             fill: true,
@@ -1905,6 +1605,8 @@
       }
       ping();
     }
+
+    let pingChartInstance = null;
 
     function performWebSearch(event) {
       event.preventDefault();
@@ -2553,13 +2255,6 @@
       taskInput.value = '';
     });
 
-    const unitsList = {
-      length: ['Meters', 'Kilometers', 'Miles', 'Yards', 'Feet', 'Inches'],
-      weight: ['Kilograms', 'Grams', 'Pounds', 'Ounces'],
-      temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
-      volume: ['Liters', 'Milliliters', 'Gallons', 'Cups']
-    };
-
     function initializeDashboard() {
       updateSystemInfo();
       updateInternetConnectivity();
@@ -2587,14 +2282,6 @@
     window.addEventListener('load', () => {
       initializeDashboard();
 
-      document.getElementById('copy-system-info-btn').addEventListener('click', copySystemInfo);
-      document.getElementById('clear-cookies-btn').addEventListener('click', clearCookies);
-      document.getElementById('reset-app-data-btn').addEventListener('click', resetAppData);
-      document.getElementById('reload-page-btn').addEventListener('click', reloadPage);
-      document.getElementById('retest-connectivity-btn').addEventListener('click', updateInternetConnectivity);
-      document.getElementById('retest-location-btn').addEventListener('click', updateLocation);
-      document.getElementById('retest-media-devices-btn').addEventListener('click', updateMediaDevices);
-      document.getElementById('retest-webrtc-btn').addEventListener('click', getWebRTCIpAddresses);
       document.getElementById('search-button').addEventListener('click', performWebSearch);
       document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
       document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
@@ -2604,24 +2291,24 @@
       document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
       document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
 
-      const sidebar = document.getElementById('sidebar');
-      const hamburgerBtn = document.getElementById('hamburger-btn');
-      const overlay = document.getElementById('overlay');
-      const mainContent = document.getElementById('main-content');
+      const copySystemInfoBtn = document.getElementById('copy-system-info-btn');
+      const clearCookiesBtn = document.getElementById('clear-cookies-btn');
+      const resetAppDataBtn = document.getElementById('reset-app-data-btn');
+      const reloadPageBtn = document.getElementById('reload-page-btn');
+      const retestConnectivityBtn = document.getElementById('retest-connectivity-btn');
+      const retestLocationBtn = document.getElementById('retest-location-btn');
+      const retestMediaDevicesBtn = document.getElementById('retest-media-devices-btn');
+      const retestWebrtcBtn = document.getElementById('retest-webrtc-btn');
 
-      hamburgerBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        mainContent.classList.toggle('shifted');
-      });
-
-      overlay.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        mainContent.classList.remove('shifted');
-      });
-
+      if (copySystemInfoBtn) copySystemInfoBtn.addEventListener('click', copySystemInfo);
+      if (clearCookiesBtn) clearCookiesBtn.addEventListener('click', clearCookies);
+      if (resetAppDataBtn) resetAppDataBtn.addEventListener('click', resetAppData);
+      if (reloadPageBtn) reloadPageBtn.addEventListener('click', reloadPage);
+      if (retestConnectivityBtn) retestConnectivityBtn.addEventListener('click', updateInternetConnectivity);
+      if (retestLocationBtn) retestLocationBtn.addEventListener('click', updateLocation);
+      if (retestMediaDevicesBtn) retestMediaDevicesBtn.addEventListener('click', updateMediaDevices);
+      if (retestWebrtcBtn) retestWebrtcBtn.addEventListener('click', getWebRTCIpAddresses);
     });
-  </script>
+</script>
 </body>
 </html>
