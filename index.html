@@ -17,25 +17,25 @@
 
   <style>
     :root {
-      --primary-color: #0d6efd; /* Deep Blue */
-      --secondary-color: #121212; /* Very Dark Gray */
-      --accent-color: #20c997; /* Cyan */
-      --success-color: #198754; /* Green */
-      --danger-color: #dc3545; /* Red */
-      --warning-color: #ffc107; /* Yellow */
-      --info-color: #0dcaf0; /* Light Blue */
-      --light-bg: #1e1e1e; /* Darker Gray */
-      --card-bg: #2a2a2a; /* Slightly Lighter Gray */
-      --text-color: #ffffff; /* Pure White */
+      --primary-color: #2776ea; /* Blue */
+      --secondary-color: #1e1e1e; /* Very Dark Gray */
+      --accent-color: #2744aa; /* Brighter Blue */
+      --success-color: #27ae60; /* Green */
+      --danger-color: #c0392b; /* Red */
+      --warning-color: #f39c12; /* Yellow */
+      --info-color: #2980b9; /* Blue */
+      --light-bg: #2a2a2a; /* Slightly Lighter Gray */
+      --card-bg: #1e1e1e; /* Card Background */
+      --text-color: #e0e0e0; /* Light Gray */
       --muted-text: #b0b0b0; /* Medium Gray */
-      --border-radius: 6px;
+      --border-radius: 12px; /* Increased for Neumorphism */
       --transition-speed: 0.3s;
       --font-family: 'Roboto', sans-serif;
-      --input-bg: #1e1e1e;
+      --input-bg: #2a2a2a;
       --input-border: none;
-      --input-focus-bg: #2a2a2a;
-      --button-hover-bg: #0b5ed7;
-      --button-active-bg: #0a58ca;
+      --input-focus-bg: #3a3a3a;
+      --button-hover-bg: #0950cd; /* Darker Blue */
+      --button-active-bg: #04156d; /* Even Darker Blue */
       --sidebar-width: 250px;
       --scrollbar-width: 8px;
       --scrollbar-thumb-bg: #555; /* Medium Gray */
@@ -106,12 +106,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: color var(--transition-speed);
+      transition: color var(--transition-speed), box-shadow var(--transition-speed);
       margin-right: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: inset 5px 5px 10px #141414, inset -5px -5px 10px #2a2a2a;
     }
 
     .hamburger:hover {
       color: var(--accent-color);
+      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
 
     .top-bar .title {
@@ -120,6 +123,7 @@
       color: var(--text-color);
       display: flex;
       align-items: center;
+      text-shadow: 2px 2px 4px #000;
     }
 
     .top-bar .title i {
@@ -132,6 +136,10 @@
       max-width: 700px;
       width: 100%;
       margin-left: 20px;
+      background: var(--light-bg);
+      border-radius: var(--border-radius);
+      box-shadow: inset 5px 5px 10px #141414, inset -5px -5px 10px #2a2a2a;
+      padding: 5px 10px;
     }
 
     .top-bar select {
@@ -144,6 +152,7 @@
       font-size: 1rem;
       cursor: pointer;
       transition: background-color var(--transition-speed), color var(--transition-speed);
+      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
     }
 
     .top-bar select:hover, .top-bar select:focus {
@@ -162,6 +171,7 @@
       font-size: 1rem;
       border-radius: 0;
       transition: background-color var(--transition-speed), color var(--transition-speed);
+      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
     }
 
     .top-bar input[type="text"]::placeholder {
@@ -184,16 +194,20 @@
       justify-content: center;
       background-color: var(--primary-color);
       color: #ffffff;
-      transition: background-color var(--transition-speed), transform var(--transition-speed);
+      transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
 
     .top-bar button:hover {
       background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
     }
 
     .top-bar button:active {
       background-color: var(--button-active-bg);
       transform: translateY(0);
+      box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
     }
 
     .top-bar button i {
@@ -225,6 +239,7 @@
       height: calc(100vh - 64px - 60px);
       z-index: 999;
       transform: translateX(-100%);
+      box-shadow: inset 5px 0 15px #141414, inset -5px 0 15px #2a2a2a;
     }
 
     .sidebar.active {
@@ -248,6 +263,7 @@
       display: flex;
       align-items: center;
       transition: opacity var(--transition-speed), visibility var(--transition-speed);
+      text-shadow: 2px 2px 4px #000;
     }
 
     .sidebar h2 i {
@@ -259,7 +275,7 @@
       width: 100%;
       padding: 12px 15px;
       margin-bottom: 10px;
-      background-color: #1c1c1c;
+      background-color: var(--card-bg);
       color: var(--text-color);
       border: none;
       border-radius: var(--border-radius);
@@ -268,14 +284,16 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
+      transition: background-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
 
     .sidebar button:hover {
-      background-color: #2c2c2c;
+      background-color: var(--input-focus-bg);
+      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
     }
 
     .sidebar button i {
@@ -294,6 +312,7 @@
       height: calc(100vh - 64px - 60px);
       margin-left: 0;
       transition: margin-left var(--transition-speed);
+      background: var(--light-bg);
     }
 
     .overlay {
@@ -322,6 +341,7 @@
       margin-bottom: 15px;
       color: var(--text-color);
       position: relative;
+      text-shadow: 2px 2px 4px #000;
     }
 
     .hero__title::after {
@@ -329,7 +349,7 @@
       position: absolute;
       width: 100px;
       height: 100px;
-      background: radial-gradient(circle at center, rgba(13, 110, 253,0.2) 0%, transparent 70%);
+      background: radial-gradient(circle at center, rgba(158, 86, 185, 0.2) 0%, transparent 70%);
       top: -30px;
       left: 50%;
       transform: translateX(-50%);
@@ -355,6 +375,7 @@
       color: var(--text-color);
       display: flex;
       align-items: center;
+      text-shadow: 2px 2px 4px #000;
     }
 
     .category-section h2 i {
@@ -372,7 +393,7 @@
       background-color: var(--card-bg);
       padding: 20px;
       border-radius: var(--border-radius);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
       display: flex;
       flex-direction: column;
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
@@ -380,8 +401,8 @@
     }
 
     .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transform: translateY(-5px);
+      box-shadow: 7px 7px 20px #141414, -7px -7px 20px #2a2a2a;
     }
 
     .card::before {
@@ -403,6 +424,7 @@
       color: var(--text-color);
       display: flex;
       align-items: center;
+      text-shadow: 1px 1px 2px #000;
     }
 
     .card h2 i {
@@ -428,17 +450,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color var(--transition-speed), transform var(--transition-speed);
+      transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
 
     .btn-primary:hover {
       background-color: var(--button-hover-bg);
       transform: translateY(-2px);
+      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
     }
 
     .btn-primary:active {
       background-color: var(--button-active-bg);
       transform: translateY(0);
+      box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
     }
 
     .btn-primary i {
@@ -456,6 +481,7 @@
       font-size: 1rem;
       border-radius: var(--border-radius);
       transition: background-color var(--transition-speed), color var(--transition-speed);
+      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
     }
 
     .input-field::placeholder {
@@ -469,6 +495,7 @@
     .result, #dns-result, #js-error-analyzer-result, #compatibility-results, #url-result, #contrast-result, #text-analysis-result {
       margin-top: 15px;
       font-size: 0.95rem;
+      color: var(--text-color);
     }
 
     .progress-bar-container, #mic-level-container, #battery-progress-bar-container, #storage-progress-bar-container {
@@ -478,6 +505,7 @@
       overflow: hidden;
       height: 20px;
       margin-top: 10px;
+      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
     }
 
     .progress-bar, #mic-level, #battery-progress-bar, #storage-progress-bar {
@@ -549,11 +577,13 @@
       align-items: center;
       margin-bottom: 8px;
       font-size: 0.95rem;
+      color: var(--text-color);
     }
 
     ul li i {
       margin-right: 8px;
       font-size: 1.1rem;
+      color: var(--accent-color);
     }
 
     .footer {
@@ -673,18 +703,27 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background: none;
+      background: var(--card-bg);
       border: none;
       color: var(--warning-color);
       cursor: pointer;
       font-size: 1.4rem;
-      transition: transform 0.2s;
+      transition: transform 0.2s, color var(--transition-speed), box-shadow var(--transition-speed);
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
     .favorite-toggle:hover {
       transform: scale(1.1);
+      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
     }
     .favorite-toggle.favorited {
       color: var(--accent-color);
+      box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
     }
   </style>
 </head>
@@ -765,7 +804,7 @@
             <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
             <h2><i class="fas fa-globe"></i> Internet Connectivity</h2>
             <div class="card-content" style="text-align: center;">
-              <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #198754;"></i>
+              <i id="internet-status-icon" class="fas fa-circle" style="font-size: 48px; color: #27ae60;"></i>
               <p id="internet-status-text" style="margin-top: 10px; font-size: 1.1rem;">Online</p>
             </div>
           </div>
@@ -778,7 +817,7 @@
               <div class="network-speed-chart-container">
                 <canvas id="networkSpeedChart"></canvas>
               </div>
-              <p id="current-speed" style="text-align: center; margin-top: 15px; font-size: 1rem; color: #198754;">
+              <p id="current-speed" style="text-align: center; margin-top: 15px; font-size: 1rem; color: #27ae60;">
                 Current Speed: <strong>-- Mbps</strong>
               </p>
             </div>
@@ -790,7 +829,7 @@
             <h2><i class="fas fa-network-wired"></i> Network Information</h2>
             <div class="card-content">
               <strong>Public IP Address:</strong>
-              <p id="public-ip" style="margin-top: 5px; color: #198754;">Fetching...</p>
+              <p id="public-ip" style="margin-top: 5px; color: #27ae60;">Fetching...</p>
               <button id="refresh-ip-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-sync-alt"></i> Refresh IP</button>
               <div class="network-info" style="margin-top: 20px;">
                 <strong>DNS Lookup:</strong>
@@ -949,7 +988,7 @@
           <div class="card" id="js-errors-card">
             <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
             <h2><i class="fas fa-exclamation-triangle"></i> JavaScript Errors</h2>
-            <div class="card-content" id="js-errors-content" style="color: #dc3545;">
+            <div class="card-content" id="js-errors-content" style="color: #c0392b;">
               No errors detected.
             </div>
           </div>
@@ -1148,7 +1187,7 @@
             <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
             <h2><i class="fas fa-calculator"></i> Calculator</h2>
             <div class="card-content">
-              <input type="text" id="calculator-display" class="input-field" placeholder="0" readonly style="text-align: right; font-size: 1.2rem;">
+              <input type="text" id="calculator-display" class="input-field" placeholder="0" readonly style="text-align: right; font-size: 1.2rem; background-color: var(--input-bg); color: var(--text-color); box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;">
               <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
                 <button class="btn-primary calc-btn" data-value="7">7</button>
                 <button class="btn-primary calc-btn" data-value="8">8</button>
@@ -1399,11 +1438,11 @@
       const internetStatusText = document.getElementById('internet-status-text');
       fetch('https://www.google.com/', { mode: 'no-cors' })
         .then(() => {
-          internetStatusIcon.style.color = '#198754'; /* Green */
+          internetStatusIcon.style.color = '#27ae60'; /* Green */
           internetStatusText.innerHTML = 'Online';
         })
         .catch(() => {
-          internetStatusIcon.style.color = '#dc3545'; /* Red */
+          internetStatusIcon.style.color = '#c0392b'; /* Red */
           internetStatusText.innerHTML = 'Offline';
         });
     }
@@ -1446,7 +1485,7 @@
         datasets: [{
           label: 'FPS',
           data: fpsData,
-          backgroundColor: 'rgba(13, 110, 253, 0.2)',
+          backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1501,7 +1540,7 @@
         datasets: [{
           label: 'Speed (Mbps)',
           data: networkSpeedData,
-          backgroundColor: 'rgba(13, 110, 253, 0.2)',
+          backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1542,10 +1581,10 @@
         networkSpeedChart.data.datasets[0].data = networkSpeedData;
         networkSpeedChart.update();
         currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
-        currentSpeedElement.style.color = '#198754';
+        currentSpeedElement.style.color = '#27ae60';
       } else {
         currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
-        currentSpeedElement.style.color = '#dc3545';
+        currentSpeedElement.style.color = '#c0392b';
       }
     }
     updateNetworkSpeedChart();
@@ -1559,9 +1598,9 @@
           const batteryLevel = (battery.level * 100).toFixed(0);
           const chargingStatus = battery.charging ? "Charging" : "Not Charging";
           batteryProgressBar.style.width = `${batteryLevel}%`;
-          batteryProgressBar.style.backgroundColor = battery.charging ? '#0dcaf0' : '#198754';
+          batteryProgressBar.style.backgroundColor = battery.charging ? '#0dcaf0' : '#27ae60';
           batteryStatusText.innerHTML = `${batteryLevel}% - ${chargingStatus}`;
-          batteryStatusText.style.color = battery.charging ? '#0dcaf0' : '#198754';
+          batteryStatusText.style.color = battery.charging ? '#0dcaf0' : '#27ae60';
         });
       } else {
         batteryStatusText.innerHTML = "Battery status not supported by your browser.";
@@ -1609,13 +1648,13 @@
           },
           () => {
             if (mapDiv) {
-              mapDiv.innerHTML = "<p style='color: #dc3545;'>Location access denied.</p>";
+              mapDiv.innerHTML = "<p style='color: #c0392b;'>Location access denied.</p>";
             }
           }
         );
       } else {
         if (mapDiv) {
-          mapDiv.innerHTML = "<p style='color: #dc3545;'>Geolocation not supported.</p>";
+          mapDiv.innerHTML = "<p style='color: #c0392b;'>Geolocation not supported.</p>";
         }
       }
     }
@@ -1650,7 +1689,7 @@
         datasets: [{
           label: 'Memory Usage (MB)',
           data: memoryUsageData,
-          backgroundColor: 'rgba(13, 110, 253, 0.2)',
+          backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
           borderColor: 'var(--primary-color)',
           borderWidth: 2,
           fill: true,
@@ -1674,12 +1713,12 @@
     function updateSensorsAvailability() {
       const sensorsContent = document.getElementById('sensors-content');
       const sensors = [];
-      if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #198754;"></i> Accelerometer</li>');
-      if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #198754;"></i> Gyroscope</li>');
+      if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Accelerometer</li>');
+      if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Gyroscope</li>');
       if ('Magnetometer' in window) {
-        sensors.push('<li><i class="fas fa-check-circle" style="color: #198754;"></i> Magnetometer</li>');
+        sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Magnetometer</li>');
       } else {
-        sensors.push('<li><i class="fas fa-times-circle" style="color: #dc3545;"></i> Magnetometer</li>');
+        sensors.push('<li><i class="fas fa-times-circle" style="color: #c0392b;"></i> Magnetometer</li>');
       }
       if (sensors.length > 0) {
         sensorsContent.innerHTML = `<ul>${sensors.join('')}</ul>`;
@@ -1702,30 +1741,10 @@
           mediaDevicesList.innerHTML = `<ul>${deviceList}</ul>`;
         }).catch(err => {
           console.error('Error accessing media devices:', err);
-          mediaDevicesList.innerHTML = "<p style='color: #dc3545;'>Could not access media devices.</p>";
+          mediaDevicesList.innerHTML = "<p style='color: #c0392b;'>Could not access media devices.</p>";
         });
       } else {
-        mediaDevicesList.innerHTML = "<p style='color: #dc3545;'>Media Devices API not supported.</p>";
-      }
-    }
-
-    function updateStorageUsage() {
-      const storageContent = document.getElementById('storage-usage-content');
-      if (navigator.storage && navigator.storage.estimate) {
-        navigator.storage.estimate().then(estimate => {
-          const used = estimate.usage || 0;
-          const quota = estimate.quota || 1;
-          const usedPercentage = ((used / quota) * 100).toFixed(2);
-          const usedMB = (used / (1024 * 1024)).toFixed(2);
-          const quotaMB = (quota / (1024 * 1024)).toFixed(2);
-          const progressBar = document.getElementById('storage-progress-bar');
-          const usageText = document.getElementById('storage-usage-text');
-          progressBar.style.width = `${usedPercentage}%`;
-          progressBar.style.backgroundColor = usedPercentage > 80 ? '#dc3545' : 'var(--primary-color)';
-          usageText.innerHTML = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
-        });
-      } else {
-        storageContent.innerHTML = "<p style='color: #dc3545;'>Storage API not supported by your browser.</p>";
+        mediaDevicesList.innerHTML = "<p style='color: #c0392b;'>Media Devices API not supported.</p>";
       }
     }
 
@@ -1734,9 +1753,9 @@
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       if (gl && gl instanceof WebGLRenderingContext) {
-        webglContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #198754;"></i><br><p>WebGL is supported.</p>';
+        webglContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>WebGL is supported.</p>';
       } else {
-        webglContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #dc3545;"></i><br><p>WebGL is not supported.</p>';
+        webglContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #c0392b;"></i><br><p>WebGL is not supported.</p>';
       }
     }
 
@@ -1750,9 +1769,9 @@
       document.body.appendChild(ad);
       window.setTimeout(() => {
         if (ad.offsetHeight === 0) {
-          adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ffc107;"></i><br><p>Ad blocker detected.</p>';
+          adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f39c12;"></i><br><p>Ad blocker detected.</p>';
         } else {
-          adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #198754;"></i><br><p>No ad blocker detected.</p>';
+          adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>No ad blocker detected.</p>';
         }
         ad.remove();
       }, 100);
@@ -1762,12 +1781,12 @@
       const serviceworkerContent = document.getElementById('serviceworker-content');
       if ('serviceWorker' in navigator) {
         if (navigator.serviceWorker.controller) {
-          serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #198754;"></i><br><p>Service Worker is active.</p>';
+          serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>Service Worker is active.</p>';
         } else {
           serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="font-size: 48px; color: #0dcaf0;"></i><br><p>Service Worker is supported but not registered.</p>';
         }
       } else {
-        serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #dc3545;"></i><br><p>Service Workers are not supported.</p>';
+        serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #c0392b;"></i><br><p>Service Workers are not supported.</p>';
       }
     }
 
@@ -1775,7 +1794,7 @@
       const webrtcContent = document.getElementById('webrtc-content');
       const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
       if (!RTCPeerConnection) {
-        webrtcContent.innerHTML = "<p style='color: #dc3545;'>WebRTC not supported.</p>";
+        webrtcContent.innerHTML = "<p style='color: #c0392b;'>WebRTC not supported.</p>";
         return;
       }
       const pc = new RTCPeerConnection({ iceServers: [] });
@@ -1799,7 +1818,7 @@
             webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
             webrtcContent.style.color = '#0dcaf0';
           } else {
-            webrtcContent.innerHTML = "<p style='color: #dc3545;'>No IP addresses detected.</p>";
+            webrtcContent.innerHTML = "<p style='color: #c0392b;'>No IP addresses detected.</p>";
           }
           pc.close();
         }
@@ -1832,7 +1851,7 @@
           datasets: [{
             label: 'Ping (ms)',
             data: [],
-            backgroundColor: 'rgba(13, 110, 253, 0.2)',
+            backgroundColor: 'rgba(27, 86, 255, 0.2)', /* Blue with transparency */
             borderColor: 'var(--primary-color)',
             borderWidth: 2,
             fill: true,
@@ -1955,17 +1974,17 @@
               displayJsError(event.data.error);
             }
           });
-          resultDiv.innerHTML = '<p style="color: #198754;">No JavaScript errors detected.</p>';
+          resultDiv.innerHTML = '<p style="color: #27ae60;">No JavaScript errors detected.</p>';
         } catch (e) {
-          resultDiv.innerHTML = '<p style="color: #dc3545;">Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.</p>';
+          resultDiv.innerHTML = '<p style="color: #c0392b;">Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.</p>';
           console.error('Cross-origin error:', e);
         }
       };
       function displayJsError(error) {
         if (resultDiv.innerHTML === 'Analyzing...') {
-          resultDiv.innerHTML = `<strong style="color: #dc3545;">Errors Detected:</strong><br>`;
+          resultDiv.innerHTML = `<strong style="color: #c0392b;">Errors Detected:</strong><br>`;
         }
-        resultDiv.innerHTML += `<span style="color: #dc3545;">${error.message}</span> at <span style="color: var(--muted-text);">${error.source}:${error.lineno}:${error.colno}</span><br>`;
+        resultDiv.innerHTML += `<span style="color: #c0392b;">${error.message}</span> at <span style="color: var(--muted-text);">${error.source}:${error.lineno}:${error.colno}</span><br>`;
       }
     }
 
@@ -2050,7 +2069,7 @@
     function updatePublicIP() {
       const publicIPElement = document.getElementById('public-ip');
       publicIPElement.innerHTML = 'Fetching...';
-      publicIPElement.style.color = '#198754';
+      publicIPElement.style.color = '#27ae60';
       fetch('https://api.ipify.org?format=json')
         .then(response => {
           if (!response.ok) {
@@ -2060,11 +2079,11 @@
         })
         .then(data => {
           publicIPElement.innerHTML = data.ip;
-          publicIPElement.style.color = '#198754';
+          publicIPElement.style.color = '#27ae60';
         })
         .catch(err => {
           publicIPElement.innerHTML = 'Unable to fetch IP.';
-          publicIPElement.style.color = '#dc3545';
+          publicIPElement.style.color = '#c0392b';
           console.error('Public IP fetch error:', err);
         });
     }
@@ -2094,19 +2113,19 @@
           const ips = data.Answer.filter(record => record.type === 1).map(record => record.data);
           if (ips.length > 0) {
             resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
-            resultDiv.style.color = '#198754';
+            resultDiv.style.color = '#27ae60';
           } else {
             resultDiv.innerHTML = 'No A records found.';
-            resultDiv.style.color = '#dc3545';
+            resultDiv.style.color = '#c0392b';
           }
         } else {
           resultDiv.innerHTML = 'DNS lookup failed or no records found.';
-          resultDiv.style.color = '#dc3545';
+          resultDiv.style.color = '#c0392b';
         }
       })
       .catch(err => {
         resultDiv.innerHTML = 'Error performing DNS lookup.';
-        resultDiv.style.color = '#dc3545';
+        resultDiv.style.color = '#c0392b';
         console.error('DNS lookup error:', err);
       });
     }
@@ -2126,7 +2145,7 @@
 
       let report = `<strong>Browser Compatibility Report:</strong><br>`;
       for (const [feature, supported] of Object.entries(features)) {
-        report += `${feature}: ${supported ? '<span style="color: #198754;">Supported</span>' : '<span style="color: #dc3545;">Not Supported</span>'}<br>`;
+        report += `${feature}: ${supported ? '<span style="color: #27ae60;">Supported</span>' : '<span style="color: #c0392b;">Not Supported</span>'}<br>`;
       }
       resultsDiv.innerHTML = report;
     }
@@ -2379,13 +2398,13 @@
       }
       
       let colorScheme = 'Good contrast';
-      let color = '#198754'; 
+      let color = '#27ae60'; 
       if (compliance === 'AA') {
         colorScheme = 'Acceptable contrast';
-        color = '#ffc107';
+        color = '#f39c12';
       } else if (compliance === 'Fail') {
         colorScheme = 'Poor contrast';
-        color = '#dc3545';
+        color = '#c0392b';
       }
       
       document.getElementById('contrast-result').innerHTML = `
@@ -2494,33 +2513,32 @@
       const li = document.createElement('li');
       li.style.display = 'flex';
       li.style.alignItems = 'center';
-      li.style.justifyContent = 'space-between';
-      li.style.padding = '8px 0';
-      li.style.borderBottom = '1px solid #444';
-      
-      const taskSpan = document.createElement('span');
-      taskSpan.innerText = taskText;
-      taskSpan.style.flexGrow = '1';
-      taskSpan.style.marginLeft = '10px';
+      li.style.marginBottom = '8px';
+      li.style.fontSize = '0.95rem';
+      li.style.color = 'var(--text-color)';
       
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.style.marginRight = '10px';
       checkbox.addEventListener('change', () => {
         if (checkbox.checked) {
-          taskSpan.style.textDecoration = 'line-through';
-          taskSpan.style.color = '#6c757d';
+          li.style.textDecoration = 'line-through';
+          li.style.color = '#6c757d';
         } else {
-          taskSpan.style.textDecoration = 'none';
-          taskSpan.style.color = '#ffffff';
+          li.style.textDecoration = 'none';
+          li.style.color = 'var(--text-color)';
         }
       });
+      
+      const taskSpan = document.createElement('span');
+      taskSpan.innerText = taskText;
+      taskSpan.style.flexGrow = '1';
       
       const deleteBtn = document.createElement('button');
       deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
       deleteBtn.style.background = 'none';
       deleteBtn.style.border = 'none';
-      deleteBtn.style.color = '#dc3545';
+      deleteBtn.style.color = '#c0392b';
       deleteBtn.style.cursor = 'pointer';
       deleteBtn.addEventListener('click', () => {
         todoList.removeChild(li);
@@ -2534,6 +2552,13 @@
       
       taskInput.value = '';
     });
+
+    const unitsList = {
+      length: ['Meters', 'Kilometers', 'Miles', 'Yards', 'Feet', 'Inches'],
+      weight: ['Kilograms', 'Grams', 'Pounds', 'Ounces'],
+      temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
+      volume: ['Liters', 'Milliliters', 'Gallons', 'Cups']
+    };
 
     function initializeDashboard() {
       updateSystemInfo();
