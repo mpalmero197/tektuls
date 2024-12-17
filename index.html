@@ -56,9 +56,6 @@
       border-radius: 4px;
     }
 
-    /* Remove the fixed sidebar and rely on a drawer menu */
-    /* Removed .sidebar styles */
-
     .main {
       flex-grow: 1;
       display: flex;
@@ -147,6 +144,32 @@
     .drawer-menu a:hover {
       background: var(--primary-dark);
       color: #fff;
+    }
+
+    /* Dark mode styling for drawer menu buttons */
+    .drawer-menu button {
+      background: var(--surface-color);
+      color: var(--text-primary);
+      border: 1px solid #333;
+      width: 100%;
+      text-align: left;
+      padding: 10px 15px;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .drawer-menu button:hover {
+      background: #2a2a2a; /* slightly lighter than surface color for hover feedback */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .drawer-menu button i {
+      color: var(--secondary-color);
     }
 
     .top-bar .search-container {
@@ -518,6 +541,7 @@
 <!-- Drawer menu with former sidebar links and now the utility buttons -->
 <nav class="drawer-menu" id="drawer-menu">
 <!-- Utility buttons from the hidden section moved here -->
+ <h2>&nbsp&nbsp&nbsp<i class="fas fa-box-open"></i> Tool Box</h2>
   <div style="margin-top: 20px; padding: 0 20px; display: flex; flex-direction: column; gap: 10px;">
     <button id="copy-system-info-btn" class="btn-primary"><i class="fas fa-copy"></i> Copy System Info</button>
     <button id="clear-cookies-btn" class="btn-primary"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
