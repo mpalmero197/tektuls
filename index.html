@@ -435,6 +435,23 @@
       margin-right: 5px;
       color: var(--text-primary);
     }
+ 
+ // Favorites code goes here
+  const savedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+  // Example: Render favorites on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const favoritesContainer = document.getElementById('favorites-grid');
+    savedFavorites.forEach(favorite => {
+      // create and append favorite elements
+    });
+  });
+
+  // Example: Add to favorites function
+  function addFavorite(item) {
+    savedFavorites.push(item);
+    localStorage.setItem('favorites', JSON.stringify(savedFavorites));
+  }
 
     .favorite-toggle {
       position: absolute;
