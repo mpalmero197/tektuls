@@ -20,19 +20,18 @@
       box-sizing: border-box;
     }
 
-    :root {
-      /* Material Design Dark Theme Inspired Palette */
-      --primary-color: #2196f3;
-      --primary-light: #64b5f6;
-      --primary-dark: #0b79d0;
-      --secondary-color: #03dac6;
-      --background-color: #121212;
-      --surface-color: #1E1E1E;
-      --text-primary: #ffffff;
-      --text-secondary: #cfcfcf;
-      --border-radius: 8px;
-      --font-family: 'Roboto', sans-serif;
-    }
+:root {
+  --primary-color: #2196f3;
+  --primary-light: #64b5f6;
+  --primary-dark: #0b79d0;
+  --secondary-color: #03dac6;
+  --background-color: #121212;
+  --surface-color: #1E1E1E;
+  --text-primary: #ffffff;
+  --text-secondary: #cfcfcf;
+  --border-radius: 8px;
+  --font-family: 'Roboto', sans-serif;
+}
 
     html, body {
       height: 100%;
@@ -179,6 +178,23 @@
       transform: translateY(-2px);
       box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
+
+.top-bar select {
+  background: #222;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-right: 10px;
+  max-width:100%;
+  border-radius: var(--border-radius);
+  padding: 5px;
+}
+
+.top-bar select option {
+  background-color: #222;
+  color: var(--text-primary);
+}
 
     .content {
       flex-grow: 1;
