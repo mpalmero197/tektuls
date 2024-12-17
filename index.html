@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TekTuls - Comprehensive Troubleshooting Dashboard</title>
+  <title>TekTuls - Comprehensive Troubleshooting Dashboard (Dark Mode)</title>
   <!-- Include Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Include FontAwesome for icons -->
@@ -21,74 +21,57 @@
     }
 
     :root {
-      --bg-color: #1e1e1e;
-      --panel-color: #242424;
-      --primary-color: #2776ea; 
-      --accent-color: #27ae60;
-      --secondary-color: #1e1e1e;
-      --danger-color: #c0392b; 
-      --warning-color: #f39c12; 
-      --info-color: #2980b9;
-      --light-bg: #2a2a2a;
-      --card-bg: #1e1e1e;
-      --text-color: #e0e0e0;
-      --muted-text: #b0b0b0;
-      --border-radius: 16px;
-      --transition-speed: 0.3s;
+      /* Material Design Dark Theme Inspired Palette */
+      --primary-color: #2196f3;
+      --primary-light: #64b5f6;
+      --primary-dark: #0b79d0;
+      --secondary-color: #03dac6;
+      --background-color: #121212;
+      --surface-color: #1E1E1E;
+      --text-primary: #ffffff;
+      --text-secondary: #cfcfcf;
+      --border-radius: 8px;
       --font-family: 'Roboto', sans-serif;
-      --input-bg: #2a2a2a;
-      --input-focus-bg: #3a3a3a;
-      --button-hover-bg: #0950cd;
-      --button-active-bg: #04156d;
-      --sidebar-width: 250px;
-      --shadow-inset: inset 5px 5px 10px #141414, inset -5px -5px 10px #2a2a2a;
-      --shadow-out: 5px 5px 15px #141414, -5px -5px 15px #2a2a2a;
     }
 
     html, body {
       height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+      background: var(--background-color);
+      color: var(--text-primary);
     }
 
     body {
-      font-family: var(--font-family);
-      background-color: var(--bg-color);
-      color: var(--text-color);
       display: flex;
       min-height: 100vh;
-      overflow: auto; 
+      overflow: auto;
     }
 
     ::-webkit-scrollbar {
       width: 8px;
     }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
     ::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 8px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #777;
+      background-color: #333;
+      border-radius: 4px;
     }
 
     .sidebar {
       width: 80px;
-      background: var(--bg-color);
+      background: var(--surface-color);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px 0;
-      box-shadow: 2px 0 10px #000;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
       flex-shrink: 0;
     }
 
     .sidebar .logo {
-      font-size: 2rem;
-      color: var(--primary-color);
+      width: 60px;
+      height: 60px;
+      background: url('YOUR_IMAGE_PATH_HERE') no-repeat center center / contain;
       margin-bottom: 40px;
     }
 
@@ -99,13 +82,13 @@
     }
 
     .sidebar nav a {
-      color: var(--muted-text);
+      color: var(--text-secondary);
       text-decoration: none;
       font-size: 1.4rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: color var(--transition-speed);
+      transition: color 0.3s;
       position: relative;
     }
 
@@ -116,6 +99,7 @@
     .sidebar nav a span {
       font-size: 0.7rem;
       margin-top: 4px;
+      color: var(--text-secondary);
     }
 
     .main {
@@ -127,57 +111,53 @@
     .top-bar {
       height: 60px;
       flex-shrink: 0;
-      background: var(--bg-color);
+      background: var(--surface-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 20px;
-      box-shadow: 0 2px 10px #000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
       position: relative;
       z-index: 1000;
     }
 
     .top-bar .title {
-      font-size: 1.5rem;
-      color: var(--text-color);
       display: flex;
       align-items: center;
       gap: 10px;
+      height: 60px;
+    }
+
+    .top-bar .title::before {
+      content: '';
+      width: 120px;
+      height: 60px;
+      background: url('https://github.com/mpalmero197/tektuls/blob/main/tektuls.png?raw=true') no-repeat center center / contain;
+      display: inline-block;
     }
 
     .top-bar .search-container {
       display: flex;
       align-items: center;
-      background: var(--panel-color);
+      background: var(--surface-color);
       border-radius: var(--border-radius);
       padding: 5px 10px;
-      box-shadow: var(--shadow-inset);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
       max-width: 100%;
     }
 
-    .top-bar input {
+    .top-bar input, .top-bar select {
       border: none;
       background: transparent;
       outline: none;
-      color: var(--text-color);
+      color: var(--text-primary);
       margin: 0 10px;
-      max-width: 100%;
-      display: block;
-      white-space: normal;
+      font-size: 0.9rem;
+      flex-shrink: 1;
     }
 
     .top-bar input::placeholder {
-      color: var(--muted-text);
-    }
-
-    .top-bar select {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text-color);
-      font-size: 0.9rem;
-      margin-right: 10px;
-      max-width:100%;
+      color: var(--text-secondary);
     }
 
     .top-bar button {
@@ -191,14 +171,13 @@
       align-items: center;
       gap: 5px;
       cursor: pointer;
-      box-shadow: var(--shadow-out);
-      transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
+      transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
     }
 
     .top-bar button:hover {
-      background: var(--button-hover-bg);
+      background: var(--primary-dark);
       transform: translateY(-2px);
-      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
 
     .content {
@@ -211,10 +190,10 @@
     }
 
     .panel {
-      background: var(--panel-color);
+      background: var(--surface-color);
       border-radius: var(--border-radius);
       padding: 20px;
-      box-shadow: var(--shadow-out);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -222,10 +201,11 @@
 
     .panel h2 {
       font-size: 1.5rem;
-      color: var(--text-color);
       display: flex;
       align-items: center;
       gap: 10px;
+      color: var(--text-primary);
+      margin: 0;
     }
 
     .panel-section {
@@ -234,62 +214,46 @@
       gap: 20px;
     }
 
-    .panel-section.single-column {
-      grid-template-columns: 1fr;
-    }
-
     .panel-sub {
-      background: var(--bg-color);
+      background: var(--surface-color);
       border-radius: var(--border-radius);
       padding: 15px;
-      box-shadow: var(--shadow-inset);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
       gap: 15px;
       position: relative;
       word-break: break-word;
       white-space: normal;
-      max-width: 100%;
-    }
-
-    .panel-sub img,
-    .panel-sub canvas,
-    .panel-sub video,
-    .panel-sub iframe,
-    .panel-sub input,
-    .panel-sub textarea,
-    .panel-sub select {
-      max-width: 100%;
     }
 
     .panel-sub h3 {
       font-size: 1.2rem;
       margin-bottom: 5px;
-      color: var(--text-color);
+      color: var(--text-primary);
+      margin: 0;
     }
 
     .input-field {
       width: 100%;
       max-width: 100%;
       padding: 10px 15px;
-      border: none;
+      border: 1px solid #333;
       outline: none;
-      background-color: var(--input-bg);
-      color: var(--text-color);
+      background-color: #222;
+      color: var(--text-primary);
       font-size: 1rem;
       border-radius: var(--border-radius);
-      transition: background-color var(--transition-speed), color var(--transition-speed);
-      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
-      display: block;
-      white-space: normal;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
     .input-field::placeholder {
-      color: var(--muted-text);
+      color: var(--text-secondary);
     }
 
     .input-field:focus {
-      background-color: var(--input-focus-bg);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(33,150,243,0.2);
     }
 
     .btn-primary {
@@ -304,31 +268,24 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
-      transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
-      box-shadow: var(--shadow-out);
-      max-width:100%;
+      transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
     }
 
     .btn-primary:hover {
-      background-color: var(--button-hover-bg);
+      background-color: var(--primary-dark);
       transform: translateY(-2px);
-      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
 
     .btn-primary:active {
-      background-color: var(--button-active-bg);
       transform: translateY(0);
-      box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
-    }
-
-    .btn-primary i {
-      margin-right: 5px;
+      box-shadow: none;
     }
 
     .result, #dns-result, #js-error-analyzer-result, #compatibility-results, #url-result, #contrast-result, #text-analysis-result {
       margin-top: 10px;
       font-size: 0.95rem;
-      color: var(--text-color);
+      color: var(--text-primary);
       word-break: break-word;
       white-space: normal;
     }
@@ -340,23 +297,22 @@
       overflow: hidden;
       height: 20px;
       margin-top: 10px;
-      box-shadow: inset 2px 2px 5px #141414, inset -2px -2px 5px #2a2a2a;
     }
 
     .progress-bar, #mic-level, #battery-progress-bar, #storage-progress-bar {
       width: 0%;
       height: 100%;
       background-color: var(--primary-color);
-      transition: width 0.3s, background-color 0.3s;
+      transition: width 0.3s;
       border-radius: var(--border-radius);
     }
 
     #mic-level {
-      background-color: var(--accent-color);
+      background-color: var(--secondary-color);
     }
 
     #battery-progress-bar {
-      background-color: var(--accent-color);
+      background-color: var(--secondary-color);
     }
 
     #storage-progress-bar {
@@ -365,7 +321,7 @@
 
     #webcam-video {
       width: 100%;
-      max-height: 300px;
+      max-height: 500px;
       background-color: #000;
       border-radius: var(--border-radius);
       display: none;
@@ -374,7 +330,7 @@
     }
 
     #screen-rectangle {
-      background-color: var(--accent-color);
+      background-color: var(--secondary-color);
       width: 100px;
       height: 100px;
       margin: 0 auto;
@@ -390,7 +346,7 @@
     .info-table th, .info-table td {
       text-align: left;
       padding: 8px 10px;
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid #333;
       font-size: 0.95rem;
       word-break: break-word;
       white-space: normal;
@@ -398,16 +354,19 @@
 
     .info-table th {
       width: 40%;
-      color: var(--accent-color);
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .info-table td {
       width: 60%;
+      color: var(--text-primary);
     }
 
     ul {
       list-style: none;
       padding-left: 0;
+      margin: 0;
     }
 
     ul li {
@@ -415,7 +374,7 @@
       align-items: center;
       margin-bottom: 8px;
       font-size: 0.95rem;
-      color: var(--text-color);
+      color: var(--text-primary);
       word-break: break-word;
       white-space: normal;
     }
@@ -423,12 +382,12 @@
     ul li i {
       margin-right: 8px;
       font-size: 1.1rem;
-      color: var(--accent-color);
+      color: var(--secondary-color);
     }
 
     .footer {
-      background-color: var(--bg-color);
-      color: var(--muted-text);
+      background-color: var(--surface-color);
+      color: var(--text-secondary);
       text-align: center;
       padding: 15px 30px;
       font-size: 0.9rem;
@@ -446,53 +405,48 @@
     }
 
     .footer a {
-      color: var(--accent-color);
+      color: var(--secondary-color);
       text-decoration: none;
-      transition: color var(--transition-speed);
+      transition: color 0.3s;
     }
 
     .footer a:hover {
       color: var(--primary-color);
     }
 
-    .footer .visitor-count {
-      display: flex;
-      align-items: center;
-    }
-
     .footer .visitor-count .label {
-      font-weight: bold;
+      font-weight: 500;
       margin-right: 5px;
-      color: var(--accent-color);
+      color: var(--text-primary);
     }
 
     .favorite-toggle {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: var(--bg-color);
+      background: var(--surface-color);
       border: none;
-      color: var(--warning-color);
+      color: var(--secondary-color);
       cursor: pointer;
       font-size: 1.4rem;
-      transition: transform 0.2s, color var(--transition-speed), box-shadow var(--transition-speed);
+      transition: transform 0.2s, color 0.3s, box-shadow 0.3s;
       border-radius: 50%;
       width: 35px;
       height: 35px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: var(--shadow-out);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
 
     .favorite-toggle:hover {
       transform: scale(1.1);
-      box-shadow: 3px 3px 10px #141414, -3px -3px 10px #2a2a2a;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
 
     .favorite-toggle.favorited {
-      color: var(--accent-color);
-      box-shadow: inset 3px 3px 6px #141414, inset -3px -3px 6px #2a2a2a;
+      color: var(--secondary-color);
+      box-shadow: inset 0 0 0 3px rgba(3,218,198,0.2);
     }
 
     .network-speed-chart-container {
@@ -521,6 +475,8 @@
       .top-bar {
         flex-direction: column;
         align-items: flex-start;
+        height: auto;
+        padding-bottom: 10px;
       }
 
       .top-bar .search-container {
@@ -536,7 +492,7 @@
 </head>
 <body>
 <div class="sidebar">
-  <div class="logo"><i class="fas fa-tools"></i></div>
+  <div class="logo"></div>
   <nav>
     <a href="#" title="Network Tools"><i class="fas fa-network-wired"></i><span>Net</span></a>
     <a href="#" title="System Info"><i class="fas fa-desktop"></i><span>Sys</span></a>
@@ -551,7 +507,7 @@
 
 <div class="main">
   <div class="top-bar">
-    <div class="title"><i class="fas fa-tools"></i> TekTuls</div>
+    <div class="title"></div>
     <div class="search-container">
       <select id="search-engine">
         <option value="google">Google</option>
