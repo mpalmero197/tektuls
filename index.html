@@ -20,18 +20,18 @@
       box-sizing: border-box;
     }
 
-:root {
-  --primary-color: #2196f3;
-  --primary-light: #64b5f6;
-  --primary-dark: #0b79d0;
-  --secondary-color: #03dac6;
-  --background-color: #121212;
-  --surface-color: #1E1E1E;
-  --text-primary: #ffffff;
-  --text-secondary: #cfcfcf;
-  --border-radius: 8px;
-  --font-family: 'Roboto', sans-serif;
-}
+    :root {
+      --primary-color: #2196f3;
+      --primary-light: #64b5f6;
+      --primary-dark: #0b79d0;
+      --secondary-color: #03dac6;
+      --background-color: #121212;
+      --surface-color: #1E1E1E;
+      --text-primary: #ffffff;
+      --text-secondary: #cfcfcf;
+      --border-radius: 8px;
+      --font-family: 'Roboto', sans-serif;
+    }
 
     html, body {
       height: 100%;
@@ -56,50 +56,8 @@
       border-radius: 4px;
     }
 
-    .sidebar {
-      width: 80px;
-      background: var(--surface-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 0;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-      flex-shrink: 0;
-    }
-
-    .sidebar .logo {
-      width: 60px;
-      height: 60px;
-      background: url('YOUR_IMAGE_PATH_HERE') no-repeat center center / contain;
-      margin-bottom: 40px;
-    }
-
-    .sidebar nav {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .sidebar nav a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: color 0.3s;
-      position: relative;
-    }
-
-    .sidebar nav a:hover {
-      color: var(--primary-color);
-    }
-
-    .sidebar nav a span {
-      font-size: 0.7rem;
-      margin-top: 4px;
-      color: var(--text-secondary);
-    }
+    /* Remove the fixed sidebar and rely on a drawer menu */
+    /* Removed .sidebar styles */
 
     .main {
       flex-grow: 1;
@@ -125,6 +83,27 @@
       align-items: center;
       gap: 10px;
       height: 60px;
+      position: relative;
+    }
+
+    /* Hamburger menu icon */
+    .hamburger-menu {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 5px 0;
+      margin-right: 10px;
+    }
+
+    .hamburger-menu span {
+      display: block;
+      height: 3px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: transform 0.3s ease;
     }
 
     .top-bar .title::before {
@@ -133,6 +112,41 @@
       height: 60px;
       background: url('https://github.com/mpalmero197/tektuls/blob/main/tektuls-01.png?raw=true') no-repeat center center / contain;
       display: inline-block;
+    }
+
+    /* Hidden drawer menu */
+    .drawer-menu {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 200px;
+      background: var(--surface-color);
+      border-right: 1px solid #333;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 9999;
+      padding: 20px 0;
+    }
+
+    .drawer-menu.open {
+      transform: translateX(0);
+    }
+
+    .drawer-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    .drawer-menu a:hover {
+      background: var(--primary-dark);
+      color: #fff;
     }
 
     .top-bar .search-container {
@@ -179,22 +193,22 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
 
-.top-bar select {
-  background: #222;
-  border: none;
-  outline: none;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  margin-right: 10px;
-  max-width:100%;
-  border-radius: var(--border-radius);
-  padding: 5px;
-}
+    .top-bar select {
+      background: #222;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin-right: 10px;
+      max-width:100%;
+      border-radius: var(--border-radius);
+      padding: 5px;
+    }
 
-.top-bar select option {
-  background-color: #222;
-  color: var(--text-primary);
-}
+    .top-bar select option {
+      background-color: #222;
+      color: var(--text-primary);
+    }
 
     .content {
       flex-grow: 1;
@@ -435,23 +449,6 @@
       margin-right: 5px;
       color: var(--text-primary);
     }
- 
- // Favorites code goes here
-  const savedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-  // Example: Render favorites on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    const favoritesContainer = document.getElementById('favorites-grid');
-    savedFavorites.forEach(favorite => {
-      // create and append favorite elements
-    });
-  });
-
-  // Example: Add to favorites function
-  function addFavorite(item) {
-    savedFavorites.push(item);
-    localStorage.setItem('favorites', JSON.stringify(savedFavorites));
-  }
 
     .favorite-toggle {
       position: absolute;
@@ -494,17 +491,6 @@
         grid-template-columns: 1fr;
       }
 
-      .sidebar {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 10px 0;
-      }
-
-      .sidebar .logo {
-        display: none;
-      }
-
       .top-bar {
         flex-direction: column;
         align-items: flex-start;
@@ -520,27 +506,39 @@
       .content {
         padding: 20px;
       }
+
+      .drawer-menu {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="logo"></div>
-  <nav>
-    <a href="#" title="Network Tools"><i class="fas fa-network-wired"></i><span>Net</span></a>
-    <a href="#" title="System Info"><i class="fas fa-desktop"></i><span>Sys</span></a>
-    <a href="#" title="Sensors"><i class="fas fa-cogs"></i><span>Dev</span></a>
-    <a href="#" title="Security"><i class="fas fa-shield-alt"></i><span>Sec</span></a>
-    <a href="#" title="Performance"><i class="fas fa-tachometer-alt"></i><span>Perf</span></a>
-    <a href="#" title="Compatibility"><i class="fas fa-universal-access"></i><span>Compat</span></a>
-    <a href="#" title="Website Tools"><i class="fas fa-globe"></i><span>Web</span></a>
-    <a href="#" title="Utilities"><i class="fas fa-tools"></i><span>Util</span></a>
-  </nav>
-</div>
+
+<!-- Drawer menu with former sidebar links and now the utility buttons -->
+<nav class="drawer-menu" id="drawer-menu">
+<!-- Utility buttons from the hidden section moved here -->
+  <div style="margin-top: 20px; padding: 0 20px; display: flex; flex-direction: column; gap: 10px;">
+    <button id="copy-system-info-btn" class="btn-primary"><i class="fas fa-copy"></i> Copy System Info</button>
+    <button id="clear-cookies-btn" class="btn-primary"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
+    <button id="reset-app-data-btn" class="btn-primary"><i class="fas fa-sync-alt"></i> Reset App Data</button>
+    <button id="reload-page-btn" class="btn-primary"><i class="fas fa-redo"></i> Reload Page</button>
+    <button id="retest-connectivity-btn" class="btn-primary"><i class="fas fa-globe"></i> Retest Connectivity</button>
+    <button id="retest-location-btn" class="btn-primary"><i class="fas fa-map-marker-alt"></i> Retest Location</button>
+    <button id="retest-media-devices-btn" class="btn-primary"><i class="fas fa-video"></i> Retest Media Devices</button>
+    <button id="retest-webrtc-btn" class="btn-primary"><i class="fas fa-network-wired"></i> Retest WebRTC</button>
+  </div>
+</nav>
 
 <div class="main">
   <div class="top-bar">
-    <div class="title"></div>
+    <div class="title">
+      <div class="hamburger-menu" id="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
     <div class="search-container">
       <select id="search-engine">
         <option value="google">Google</option>
@@ -936,17 +934,26 @@
     </div>
   </div>
 
-  <div class="footer">
-    <span>© 2024-2025 Michael Palmero</span>
-    <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
-    <div class="visitor-count">
-      <span class="label">Visitors:</span> <span id="visitor-count">0</span>
+    <div class="footer">
+      <span>© 2024-2025 Michael Palmero</span>
+      <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
+      <div class="visitor-count">
+        <span class="label">Visitors:</span> <span id="visitor-count">0</span>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- JavaScript -->
 <script>
+  // Toggle drawer menu functionality
+  const hamburgerMenu = document.getElementById('hamburger-menu');
+  const drawerMenu = document.getElementById('drawer-menu');
+
+  hamburgerMenu.addEventListener('click', () => {
+    drawerMenu.classList.toggle('open');
+  });
+
     let errorLogs = [];
 
     window.onerror = function(message, source, lineno, colno, error) {
