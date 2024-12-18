@@ -31,6 +31,8 @@
       --text-secondary: #cfcfcf;
       --border-radius: 8px;
       --font-family: 'Roboto', sans-serif;
+      --accent-color: #03dac6;
+      --muted-text: #a0a0a0;
     }
 
     html, body {
@@ -534,77 +536,62 @@
         width: 100%;
       }
     }
-// JavaScript for Weather Card
-document.getElementById('get-weather-btn').addEventListener('click', () => {
-  const location = document.getElementById('weather-location').value.trim();
-  const resultDiv = document.getElementById('weather-result');
-  const iconImg = document.getElementById('weather-icon');
-  const descriptionP = document.getElementById('weather-description');
-  const tempP = document.getElementById('weather-temp');
-  const detailsP = document.getElementById('weather-details');
 
-  if (!location) {
-    alert('Please enter a city name.');
-    return;
-  }
+    /* Weather Card Specific Styles */
+    #weather-card input[type="text"] {
+      padding: 10px 15px;
+      border: 1px solid #333;
+      outline: none;
+      background-color: #222;
+      color: var(--text-primary);
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
 
-  // Show loading state
-  resultDiv.style.display = 'block';
-  descriptionP.innerText = 'Fetching weather data...';
-  tempP.innerText = '';
-  detailsP.innerText = '';
-  iconImg.src = '';
+    #weather-card input[type="text"]::placeholder {
+      color: var(--text-secondary);
+    }
 
-  // Use your actual OpenWeatherMap API key here
-  const apiKey = 'ae6dbc04bfe41073d60c4f494b310bb7';
-  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
+    #weather-card input[type="text"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(33,150,243,0.2);
+    }
 
-  fetch(apiUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('City not found or API error.');
-      }
-      return response.json();
-    })
-    .then(data => {
-      const { weather, main, wind, sys, name, timezone } = data;
-      const weatherDesc = weather[0].description;
-      const weatherIcon = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
-      const temperature = main.temp;
-      const humidity = main.humidity;
-      const windSpeed = wind.speed;
-      const country = sys.country;
+    #weather-result {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-      // Calculate local time based on timezone offset
-      const timezoneOffset = timezone; // in seconds
-      const localTime = new Date((Date.now() + timezoneOffset * 1000));
-      const options = { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
-        hour: '2-digit', minute: '2-digit', second: '2-digit' 
-      };
-      const formattedTime = localTime.toLocaleDateString(undefined, options);
+    #weather-result img {
+      width: 50px;
+      height: 50px;
+    }
 
-      // Update DOM elements with fetched data
-      descriptionP.innerText = `${weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1)}`;
-      tempP.innerText = `${temperature}°C`;
-      iconImg.src = weatherIcon;
-      iconImg.alt = weatherDesc;
+    #weather-result p {
+      margin: 0;
+    }
 
-      detailsP.innerHTML = `
-        <strong>Location:</strong> ${name}, ${country}<br>
-        <strong>Humidity:</strong> ${humidity}%<br>
-        <strong>Wind Speed:</strong> ${windSpeed} m/s<br>
-        <strong>Local Time:</strong> ${formattedTime}
-      `;
-    })
-    .catch(err => {
-      descriptionP.innerText = 'Error fetching weather data.';
-      tempP.innerText = '';
-      detailsP.innerText = '';
-      iconImg.src = '';
-      console.error('Weather Card error:', err);
-    });
-});
+    /* Additional styling for better presentation */
+    #weather-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #weather-result {
+      margin-top: 15px;
+      background: var(--surface-color);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* Optional: Add transitions for smooth appearance */
+    #weather-result {
+      transition: display 0.3s ease;
+    }
 
   </style>
 </head>
@@ -889,6 +876,30 @@ document.getElementById('get-weather-btn').addEventListener('click', () => {
     <div class="panel" id="utilities-section">
       <h2><i class="fas fa-tools"></i> Utilities</h2>
       <div class="panel-section">
+        <!-- Weather Card Integration Starts Here -->
+        <div class="panel-sub" id="weather-card">
+          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
+          <h3><i class="fas fa-cloud-sun"></i> Weather</h3>
+          
+          <input type="text" id="weather-location" class="input-field" placeholder="Enter city name (e.g., London)">
+          
+          <button id="get-weather-btn" class="btn-primary" style="margin-top: 10px;">
+            <i class="fas fa-search-location"></i> Get Weather
+          </button>
+          
+          <div id="weather-result" style="margin-top: 15px; display: none;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img id="weather-icon" src="" alt="Weather Icon" style="width: 50px; height: 50px;">
+              <div>
+                <p id="weather-description" style="margin: 0; font-size: 1.1rem;"></p>
+                <p id="weather-temp" style="margin: 0; font-size: 1.2rem; font-weight: bold;"></p>
+              </div>
+            </div>
+            <p id="weather-details" style="margin-top: 10px; font-size: 0.95rem;"></p>
+          </div>
+        </div>
+        <!-- Weather Card Integration Ends Here -->
+
         <div class="panel-sub" id="password-generator-card">
           <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
           <h3><i class="fas fa-key"></i> Password Generator</h3>
@@ -912,24 +923,6 @@ document.getElementById('get-weather-btn').addEventListener('click', () => {
           <button id="generate-password-btn" class="btn-primary" style="margin-top: 15px;"><i class="fas fa-random"></i> Generate Password</button>
           <div id="generated-password" style="margin-top: 15px; word-wrap: break-word; font-size: 1rem; color: var(--accent-color);"></div>
         </div>
-
-	<!-- Weather Card -->
-<div class="panel-sub" id="weather-card">
-  <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-  <h3><i class="fas fa-cloud-sun"></i> Weather</h3>
-  <input type="text" id="weather-location" class="input-field" placeholder="Enter city name (e.g., London)">
-  <button id="get-weather-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-search-location"></i> Get Weather</button>
-  <div id="weather-result" style="margin-top: 15px; display: none;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <img id="weather-icon" src="" alt="Weather Icon" style="width: 50px; height: 50px;">
-      <div>
-        <p id="weather-description" style="margin: 0; font-size: 1.1rem;"></p>
-        <p id="weather-temp" style="margin: 0; font-size: 1.2rem; font-weight: bold;"></p>
-      </div>
-    </div>
-    <p id="weather-details" style="margin-top: 10px; font-size: 0.95rem;"></p>
-  </div>
-</div>
 
         <div class="panel-sub" id="unit-converter-card">
           <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
@@ -2418,6 +2411,79 @@ document.getElementById('get-weather-btn').addEventListener('click', () => {
       if (retestLocationBtn) retestLocationBtn.addEventListener('click', updateLocation);
       if (retestMediaDevicesBtn) retestMediaDevicesBtn.addEventListener('click', updateMediaDevices);
       if (retestWebrtcBtn) retestWebrtcBtn.addEventListener('click', getWebRTCIpAddresses);
+    });
+
+    // JavaScript for Weather Card
+    document.getElementById('get-weather-btn').addEventListener('click', () => {
+      const location = document.getElementById('weather-location').value.trim();
+      const resultDiv = document.getElementById('weather-result');
+      const iconImg = document.getElementById('weather-icon');
+      const descriptionP = document.getElementById('weather-description');
+      const tempP = document.getElementById('weather-temp');
+      const detailsP = document.getElementById('weather-details');
+
+      if (!location) {
+        alert('Please enter a city name.');
+        return;
+      }
+
+      // Show loading state
+      resultDiv.style.display = 'block';
+      descriptionP.innerText = 'Fetching weather data...';
+      tempP.innerText = '';
+      detailsP.innerText = '';
+      iconImg.src = '';
+
+      // Your OpenWeatherMap API Key (⚠️ Replace with your own API key)
+      const apiKey = 'ae6dbc04bfe41073d60c4f494b310bb7';
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
+
+      fetch(apiUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('City not found or API error.');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const { weather, main, wind, sys, name, timezone } = data;
+          const weatherDesc = weather[0].description;
+          const weatherIcon = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
+          const temperature = main.temp;
+          const humidity = main.humidity;
+          const windSpeed = wind.speed;
+          const country = sys.country;
+
+          // Calculate local time based on timezone offset
+          const timezoneOffset = timezone; // in seconds
+          const localTime = new Date((Date.now() + timezoneOffset * 1000));
+          const options = { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+          };
+          const formattedTime = localTime.toLocaleDateString(undefined, options);
+
+          // Update DOM elements with fetched data
+          descriptionP.innerText = `${weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1)}`;
+          tempP.innerText = `${temperature}°C`;
+          iconImg.src = weatherIcon;
+          iconImg.alt = weatherDesc;
+
+          detailsP.innerHTML = `
+            <strong>Location:</strong> ${name}, ${country}<br>
+            <strong>Humidity:</strong> ${humidity}%<br>
+            <strong>Wind Speed:</strong> ${windSpeed} m/s<br>
+            <strong>Local Time:</strong> ${formattedTime}
+          `;
+        })
+        .catch(err => {
+          descriptionP.innerText = 'Error fetching weather data.';
+          tempP.innerText = '';
+          detailsP.innerText = '';
+          iconImg.src = '';
+          console.error('Weather Card error:', err);
+          alert('Unable to fetch weather data. Please check the city name and try again.');
+        });
     });
 </script>
 </body>
