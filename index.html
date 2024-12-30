@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- NEW: Responsive Meta Tag for Mobile Devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TekTuls - Comprehensive Troubleshooting Dashboard (Dark Mode)</title>
   <!-- Include Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -537,6 +539,29 @@
       }
     }
 
+    /* ADDITIONAL: Fine-tune for very small screens */
+    @media (max-width: 480px) {
+      .hamburger-menu {
+        width: 40px;
+        height: 40px;
+      }
+      .hamburger-menu span {
+        height: 4px;
+      }
+      .btn-primary {
+        padding: 12px 20px;
+      }
+      .content {
+        padding: 15px;
+      }
+      .panel-section {
+        gap: 15px;
+      }
+      .panel-sub h3 {
+        font-size: 1rem;
+      }
+    }
+
     /* Weather Card Specific Styles */
     #weather-card input[type="text"] {
       padding: 10px 15px;
@@ -586,13 +611,8 @@
       padding: 15px;
       border-radius: var(--border-radius);
       box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-
-    /* Optional: Add transitions for smooth appearance */
-    #weather-result {
       transition: display 0.3s ease;
     }
-
   </style>
 </head>
 <body>
@@ -2128,12 +2148,12 @@
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numbers = '0123456789';
     const special = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
-    
+
     let characters = lowercase;
     if (includeUpper) characters += uppercase;
     if (includeNumbers) characters += numbers;
     if (includeSpecial) characters += special;
-    
+
     let password = '';
     for (let i = 0; i < length; i++) {
       password += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -2146,12 +2166,12 @@
     const includeUpper = document.getElementById('include-uppercase').checked;
     const includeNumbers = document.getElementById('include-numbers').checked;
     const includeSpecial = document.getElementById('include-special').checked;
-    
+
     if (length < 4) {
       alert('Password length should be at least 4 characters.');
       return;
     }
-    
+
     const password = generatePassword(length, includeUpper, includeNumbers, includeSpecial);
     document.getElementById('generated-password').innerText = password;
   });
@@ -2198,16 +2218,16 @@
     const category = document.getElementById('conversion-category').value;
     const fromUnit = document.getElementById('from-unit');
     const toUnit = document.getElementById('to-unit');
-    
+
     fromUnit.innerHTML = '';
     toUnit.innerHTML = '';
-    
+
     units[category].forEach(unit => {
       const option1 = document.createElement('option');
       option1.value = unit;
       option1.text = unit;
       fromUnit.appendChild(option1);
-      
+
       const option2 = document.createElement('option');
       option2.value = unit;
       option2.text = unit;
@@ -2223,14 +2243,14 @@
     const fromUnit = document.getElementById('from-unit').value;
     const toUnit = document.getElementById('to-unit').value;
     const value = parseFloat(document.getElementById('input-value').value);
-    
+
     if (isNaN(value)) {
       alert('Please enter a valid number.');
       return;
     }
-    
+
     let result;
-    
+
     if (category === 'temperature') {
       if (fromUnit === 'Celsius') {
         if (toUnit === 'Fahrenheit') {
@@ -2262,7 +2282,7 @@
       const toRate = conversionRates[category][toUnit];
       result = (value * toRate) / fromRate;
     }
-    
+
     document.getElementById('conversion-result').innerText = `${value} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`;
   }
 
@@ -2278,7 +2298,7 @@
     const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
     const sentenceCount = sentences.length;
     const readingTime = (wordCount / 200).toFixed(2);
-    
+
     const frequency = {};
     words.forEach(word => {
       const normalized = word.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -2286,10 +2306,10 @@
         frequency[normalized] = (frequency[normalized] || 0) + 1;
       }
     });
-    
+
     const sortedWords = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
     const topKeywords = sortedWords.slice(0, 5).map(entry => `${entry[0]} (${entry[1]})`).join(', ');
-    
+
     return `
       <strong>Word Count:</strong> ${wordCount}<br>
       <strong>Character Count:</strong> ${charCount}<br>
@@ -2372,7 +2392,7 @@
     const color1 = document.getElementById('color1').value;
     const color2 = document.getElementById('color2').value;
     const contrastRatio = calculateContrast(color1, color2);
-    
+
     let compliance = '';
     if (contrastRatio >= 7) {
       compliance = 'AAA';
@@ -2381,7 +2401,7 @@
     } else {
       compliance = 'Fail';
     }
-    
+
     let colorScheme = 'Good contrast';
     let color = '#27ae60'; 
     if (compliance === 'AA') {
@@ -2391,7 +2411,7 @@
       colorScheme = 'Poor contrast';
       color = '#c0392b';
     }
-    
+
     document.getElementById('contrast-result').innerHTML = `
       <strong>Contrast Ratio:</strong> ${contrastRatio}:1<br>
       <strong>WCAG Compliance:</strong> ${compliance} (${colorScheme})
@@ -2411,9 +2431,9 @@
   document.querySelectorAll('.calc-btn').forEach(button => {
     button.addEventListener('click', () => {
       const value = button.getAttribute('data-value');
-      
+
       if (!value) return;
-      
+
       if (!isNaN(value) || value === '.') {
         currentInput += value;
         display.value = currentInput;
@@ -2435,11 +2455,11 @@
 
   document.getElementById('equals-btn').addEventListener('click', () => {
     if (operator === '' || currentInput === '' || previousInput === '') return;
-    
+
     const num1 = parseFloat(previousInput);
     const num2 = parseFloat(currentInput);
     let result;
-    
+
     switch(operator) {
       case '+':
         result = num1 + num2;
@@ -2460,7 +2480,7 @@
       default:
         return;
     }
-    
+
     display.value = result;
     currentInput = result.toString();
     operator = '';
@@ -2473,12 +2493,12 @@
   document.getElementById('generate-qr-btn').addEventListener('click', () => {
     const qrText = document.getElementById('qr-text-input').value.trim();
     const qrCodeDiv = document.getElementById('qr-code');
-    
+
     if (!qrText) {
       alert('Please enter text or a URL to generate QR Code.');
       return;
     }
-    
+
     qrCodeDiv.innerHTML = '';
     new QRCode(qrCodeDiv, {
       text: qrText,
