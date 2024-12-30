@@ -599,8 +599,7 @@
 
 <!-- Drawer menu with former sidebar links and now the utility buttons -->
 <nav class="drawer-menu" id="drawer-menu">
-<!-- Utility buttons from the hidden section moved here -->
- <h2>&nbsp&nbsp&nbsp<i class="fas fa-box-open"></i> Tool Box</h2>
+  <h2>&nbsp;&nbsp;&nbsp;<i class="fas fa-box-open"></i> Tool Box</h2>
   <div style="margin-top: 20px; padding: 0 20px; display: flex; flex-direction: column; gap: 10px;">
     <button id="copy-system-info-btn" class="btn-primary"><i class="fas fa-copy"></i> Copy System Info</button>
     <button id="clear-cookies-btn" class="btn-primary"><i class="fas fa-cookie-bite"></i> Clear Cookies</button>
@@ -1019,6 +1018,7 @@
           </div>
         </div>
 
+        <!-- To-Do List Panel -->
         <div class="panel-sub" id="todo-list-card">
           <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
           <h3><i class="fas fa-tasks"></i> To-Do List</h3>
@@ -1026,6 +1026,7 @@
           <button id="add-todo-btn" class="btn-primary" style="margin-top: 10px;"><i class="fas fa-plus"></i> Add Task</button>
           <ul id="todo-list" style="margin-top: 15px;"></ul>
         </div>
+
       </div>
     </div>
 
@@ -1041,1304 +1042,69 @@
     </div>
   </div>
 
-    <div class="footer">
-      <span>© 2024-2025 Michael Palmero</span>
-      <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
-      <div class="visitor-count">
-        <span class="label">Visitors:</span> <span id="visitor-count">0</span>
-      </div>
+  <div class="footer">
+    <span>© 2024-2025 Michael Palmero</span>
+    <a href="https://buymeacoffee.com/mpalmero" target="_blank"><i class="fas fa-coffee"></i> Buy me a coffee?</a>
+    <div class="visitor-count">
+      <span class="label">Visitors:</span> <span id="visitor-count">0</span>
     </div>
   </div>
 </div>
 
 <!-- JavaScript -->
 <script>
-  // Toggle drawer menu functionality
-  const hamburgerMenu = document.getElementById('hamburger-menu');
-  const drawerMenu = document.getElementById('drawer-menu');
+  // =========================================
+  // To-Do List: Local Storage & Rendering
+  // =========================================
 
-  hamburgerMenu.addEventListener('click', () => {
-    drawerMenu.classList.toggle('open');
-  });
+  // Array to store task objects: { text: 'Task description', completed: false }
+  let tasks = [];
 
-    let errorLogs = [];
-
-    window.onerror = function(message, source, lineno, colno, error) {
-      const errorMessage = `${message} at ${source}:${lineno}:${colno}`;
-      errorLogs.push(errorMessage);
-      updateJsErrors();
-      return false;
-    };
-
-    const originalLocations = new Map(); 
-    const favoritesGrid = document.getElementById('favorites-grid');
-    const favoritesSection = document.getElementById('favorites-section');
-
-    function toggleFavorite(card) {
-      const favBtn = card.querySelector('.favorite-toggle');
-      const isFavorite = favBtn.classList.contains('favorited');
-      
-      if (isFavorite) {
-        favBtn.classList.remove('favorited');
-        const originalParent = originalLocations.get(card.id);
-        if (originalParent) {
-          originalParent.appendChild(card);
-        }
-      } else {
-        favBtn.classList.add('favorited');
-        if (!originalLocations.has(card.id)) {
-          originalLocations.set(card.id, card.parentNode);
-        }
-        favoritesGrid.appendChild(card);
-      }
-
-      updateFavoritesVisibility();
+  // Load tasks from local storage when the page loads
+  function loadTasksFromLocalStorage() {
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+      tasks = JSON.parse(savedTasks);
     }
-
-    function updateFavoritesVisibility() {
-      const hasFavorites = favoritesGrid.children.length > 0;
-      favoritesSection.style.display = hasFavorites ? 'block' : 'none';
-    }
-
-    window.addEventListener('load', () => {
-      document.querySelectorAll('.panel-sub').forEach(card => {
-        const favBtn = card.querySelector('.favorite-toggle');
-        if (favBtn) {
-          favBtn.addEventListener('click', () => toggleFavorite(card));
-        }
-      });
-    });
-
-    function updateVisitorCount() {
-      const visitorCountElement = document.getElementById('visitor-count');
-      let count = localStorage.getItem('visitorCount');
-      if (count === null) {
-        count = 1;
-      } else {
-        count = parseInt(count) + 1;
-      }
-      localStorage.setItem('visitorCount', count);
-      visitorCountElement.innerText = count;
-    }
-
-    function copySystemInfo() {
-      const systemInfoContentElement = document.getElementById('system-info-content');
-      if (!systemInfoContentElement) {
-        alert('System information content not found.');
-        return;
-      }
-      const systemInfoContent = systemInfoContentElement.innerText;
-      navigator.clipboard.writeText(systemInfoContent).then(() => {
-        alert('System information copied to clipboard.');
-      }, () => {
-        alert('Failed to copy system information.');
-      });
-    }
-
-    function clearCookies() {
-      document.cookie.split(";").forEach(function(c) {
-        document.cookie = c.trim().startsWith("=") ? c : c.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-      });
-      alert('Cookies cleared.');
-    }
-
-    function resetAppData() {
-      let count = localStorage.getItem('visitorCount');
-      const keys = Object.keys(localStorage);
-      for (let i=0; i<keys.length; i++) {
-        if (keys[i] !== 'visitorCount') {
-          localStorage.removeItem(keys[i]);
-        }
-      }
-      if (count !== null) {
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('visitor-count').innerText = count;
-      }
-      sessionStorage.clear();
-      clearCookies();
-      alert('Application data reset. Reloading page...');
-      reloadPage();
-    }
-
-    function reloadPage() {
-      location.reload();
-    }
-
-    function updateJsErrors() {
-      const jsErrorsContent = document.getElementById('js-errors-content');
-      if (jsErrorsContent) {
-        if (errorLogs.length > 0) {
-          jsErrorsContent.innerHTML = `<strong>Errors Detected (${errorLogs.length}):</strong><br>${errorLogs.join('<br>')}`;
-        } else {
-          jsErrorsContent.innerHTML = 'No errors detected.';
-        }
-      }
-    }
-
-    function getOS(userAgent) {
-      if (userAgent.indexOf("Win") !== -1) return "Windows";
-      if (userAgent.indexOf("Mac") !== -1) return "macOS";
-      if (userAgent.indexOf("X11") !== -1) return "UNIX";
-      if (userAgent.indexOf("Linux") !== -1) return "Linux";
-      return "Unknown";
-    }
-
-    function getDeviceType() {
-      const ua = navigator.userAgent;
-      if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-        return "Mobile";
-      }
-      return "Desktop";
-    }
-
-    function updateSystemInfo() {
-      const osInfo = document.getElementById('os-info');
-      const deviceTypeInfo = document.getElementById('device-type-info');
-      const ramInfo = document.getElementById('ram-info');
-      const processorInfo = document.getElementById('processor-info');
-      const diskSpaceInfo = document.getElementById('disk-space-info');
-      const browserInfo = document.getElementById('browser-info');
-      const platformInfo = document.getElementById('platform-info');
-      const languageInfo = document.getElementById('language-info');
-      const onlineStatusInfo = document.getElementById('online-status-info');
-      const cookiesEnabledInfo = document.getElementById('cookies-enabled-info');
-      const touchSupportInfo = document.getElementById('touch-support-info');
-
-      const userAgent = navigator.userAgent;
-      const platform = navigator.platform;
-      const language = navigator.language;
-      const onlineStatus = navigator.onLine ? "Yes" : "No";
-      const cookiesEnabled = navigator.cookieEnabled ? "Yes" : "No";
-      const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Yes" : "No";
-      const os = getOS(userAgent);
-      const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not Available";
-      const processor = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Logical Processor(s)` : "Not Available";
-      const deviceType = getDeviceType();
-
-      osInfo.innerText = os;
-      deviceTypeInfo.innerText = deviceType;
-      ramInfo.innerText = ram;
-      processorInfo.innerText = processor;
-      browserInfo.innerText = userAgent;
-      platformInfo.innerText = platform;
-      languageInfo.innerText = language;
-      onlineStatusInfo.innerText = onlineStatus;
-      cookiesEnabledInfo.innerText = cookiesEnabled;
-      touchSupportInfo.innerText = touchSupport;
-
-      if (navigator.storage && navigator.storage.estimate) {
-        navigator.storage.estimate().then(estimate => {
-          const used = estimate.usage || 0;
-          const quota = estimate.quota || 1;
-          const usedPercentage = ((used / quota) * 100).toFixed(2);
-          const usedMB = (used / (1024 * 1024)).toFixed(2);
-          const quotaMB = (quota / (1024 * 1024)).toFixed(2);
-          diskSpaceInfo.innerText = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
-        }).catch(() => {
-          diskSpaceInfo.innerText = 'Not Available';
-        });
-      } else {
-        diskSpaceInfo.innerText = 'Not Available';
-      }
-    }
-
-    function updateInternetConnectivity() {
-      const internetStatusIcon = document.getElementById('internet-status-icon');
-      const internetStatusText = document.getElementById('internet-status-text');
-      fetch('https://www.google.com/', { mode: 'no-cors' })
-        .then(() => {
-          internetStatusIcon.style.color = '#27ae60';
-          internetStatusText.innerHTML = 'Online';
-        })
-        .catch(() => {
-          internetStatusIcon.style.color = '#c0392b';
-          internetStatusText.innerHTML = 'Offline';
-        });
-    }
-
-    let fpsData = [];
-    let fpsTimestamps = [];
-
-    function updateFPSChart() {
-      const now = performance.now();
-      while (fpsTimestamps.length > 0 && fpsTimestamps[0] <= now - 1000) {
-        fpsTimestamps.shift();
-      }
-      fpsTimestamps.push(now);
-      const fps = fpsTimestamps.length;
-      fpsData.push(fps);
-      if (fpsData.length > 30) {
-        fpsData.shift();
-      }
-
-      const maxFPS = Math.max(...fpsData);
-      const nextHundred = Math.ceil(maxFPS / 100) * 100 || 100;
-      fpsChart.options.scales.y.max = nextHundred;
-
-      fpsChart.data.datasets[0].data = fpsData;
-      fpsChart.update();
-    }
-
-    function trackFPS() {
-      requestAnimationFrame(() => {
-        updateFPSChart();
-        trackFPS();
-      });
-    }
-
-    const fpsCtx = document.getElementById('performanceChart').getContext('2d');
-    const fpsChart = new Chart(fpsCtx, {
-      type: 'line',
-      data: {
-        labels: Array(30).fill(''),
-        datasets: [{
-          label: 'FPS',
-          data: fpsData,
-          backgroundColor: 'rgba(27, 86, 255, 0.2)',
-          borderColor: 'var(--primary-color)',
-          borderWidth: 2,
-          fill: true,
-          pointRadius: 0,
-          tension: 0.4
-        }]
-      },
-      options: {
-        animation: false,
-        scales: {
-          x: { display: false },
-          y: { beginAtZero: true, title: { display: false } }
-        },
-        plugins: {
-          legend: { display: false }
-        }
-      }
-    });
-    trackFPS();
-
-    async function measureNetworkSpeed() {
-      try {
-        const startTime = performance.now();
-        const response = await fetch('https://speed.hetzner.de/10MB.bin', { cache: 'no-cache' });
-        if (!response.ok) {
-          throw new Error(`Network response was not ok (${response.status})`);
-        }
-        const reader = response.body.getReader();
-        let receivedLength = 0;
-        while(true) {
-          const {done, value} = await reader.read();
-          if (done) break;
-          receivedLength += value.length;
-        }
-        const endTime = performance.now();
-        const durationInSeconds = (endTime - startTime) / 1000;
-        const bitsLoaded = receivedLength * 8;
-        const speedBps = bitsLoaded / durationInSeconds;
-        const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
-        return speedMbps;
-      } catch {
-        return null;
-      }
-    }
-
-    let networkSpeedData = [];
-    const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
-    const networkSpeedChart = new Chart(networkSpeedCtx, {
-      type: 'line',
-      data: {
-        labels: Array(10).fill(''),
-        datasets: [{
-          label: 'Speed (Mbps)',
-          data: networkSpeedData,
-          backgroundColor: 'rgba(27, 86, 255, 0.2)',
-          borderColor: 'var(--primary-color)',
-          borderWidth: 2,
-          fill: true,
-          pointRadius: 3,
-          tension: 0.4
-        }]
-      },
-      options: {
-        animation: false,
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { display: false },
-          y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' }, grid: { color: '#333' } }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return `Speed: ${context.parsed.y} Mbps`;
-              }
-            }
-          }
-        }
-      }
-    });
-
-    async function updateNetworkSpeedChart() {
-      const speedMbps = await measureNetworkSpeed();
-      const currentSpeedElement = document.getElementById('current-speed');
-      if (speedMbps !== null) {
-        networkSpeedData.push(speedMbps);
-        if (networkSpeedData.length > 10) {
-          networkSpeedData.shift();
-          networkSpeedChart.data.labels.shift();
-        }
-        networkSpeedChart.data.datasets[0].data = networkSpeedData;
-        networkSpeedChart.update();
-        currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
-        currentSpeedElement.style.color = '#27ae60';
-      } else {
-        currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
-        currentSpeedElement.style.color = '#c0392b';
-      }
-    }
-    updateNetworkSpeedChart();
-    setInterval(updateNetworkSpeedChart, 60000);
-
-    function updateBatteryStatus() {
-      const batteryProgressBar = document.getElementById('battery-progress-bar');
-      const batteryStatusText = document.getElementById('battery-status-text');
-      if (navigator.getBattery) {
-        navigator.getBattery().then(battery => {
-          const batteryLevel = (battery.level * 100).toFixed(0);
-          const chargingStatus = battery.charging ? "Charging" : "Not Charging";
-          batteryProgressBar.style.width = `${batteryLevel}%`;
-          batteryProgressBar.style.backgroundColor = battery.charging ? '#0dcaf0' : '#27ae60';
-          batteryStatusText.innerHTML = `${batteryLevel}% - ${chargingStatus}`;
-          batteryStatusText.style.color = battery.charging ? '#0dcaf0' : '#27ae60';
-        });
-      } else {
-        batteryStatusText.innerHTML = "Battery status not supported by your browser.";
-      }
-    }
-
-    function updateScreenResolution() {
-      const screenRectangle = document.getElementById('screen-rectangle');
-      const screenDimensionsText = document.getElementById('screen-dimensions-text');
-      const width = window.screen.width;
-      const height = window.screen.height;
-      const maxDimension = Math.max(width, height);
-      const scaledWidth = (width / maxDimension) * 280;
-      const scaledHeight = (height / maxDimension) * 280;
-      screenRectangle.style.width = `${scaledWidth}px`;
-      screenRectangle.style.height = `${scaledHeight}px`;
-      screenDimensionsText.innerHTML = `<strong>${width}px</strong> x <strong>${height}px</strong>`;
-    }
-
-    let mapInitialized = false;
-    let mapInstance;
-    function updateLocation() {
-      const mapDiv = document.getElementById('map');
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            const { latitude, longitude } = position.coords;
-            if (mapDiv) {
-              if (!mapInitialized) {
-                mapInstance = L.map('map').setView([latitude, longitude], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                  attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(mapInstance);
-                L.marker([latitude, longitude]).addTo(mapInstance)
-                  .bindPopup('You are here.')
-                  .openPopup();
-                mapInitialized = true;
-              } else {
-                mapInstance.setView([latitude, longitude], 13);
-                L.marker([latitude, longitude]).addTo(mapInstance)
-                  .bindPopup('You are here.')
-                  .openPopup();
-              }
-            }
-          },
-          () => {
-            if (mapDiv) {
-              mapDiv.innerHTML = "<p style='color: #c0392b;'>Location access denied.</p>";
-            }
-          }
-        );
-      } else {
-        if (mapDiv) {
-          mapDiv.innerHTML = "<p style='color: #c0392b;'>Geolocation not supported.</p>";
-        }
-      }
-    }
-
-    function updateTimeZone() {
-      const timezoneInfo = document.getElementById('timezone-info');
-      const localeInfo = document.getElementById('locale-info');
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const locale = navigator.language;
-      timezoneInfo.innerText = timeZone;
-      localeInfo.innerText = locale;
-    }
-
-    let memoryUsageData = [];
-    function updateMemoryUsage() {
-      const memoryUsage = performance.memory ? (performance.memory.usedJSHeapSize / 1048576).toFixed(2) : null;
-      if (memoryUsage !== null) {
-        memoryUsageData.push(memoryUsage);
-        if (memoryUsageData.length > 30) {
-          memoryUsageData.shift();
-        }
-        memoryChart.data.datasets[0].data = memoryUsageData;
-        memoryChart.update();
-      }
-    }
-
-    const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-    const memoryChart = new Chart(memoryCtx, {
-      type: 'line',
-      data: {
-        labels: Array(30).fill(''),
-        datasets: [{
-          label: 'Memory Usage (MB)',
-          data: memoryUsageData,
-          backgroundColor: 'rgba(27, 86, 255, 0.2)',
-          borderColor: 'var(--primary-color)',
-          borderWidth: 2,
-          fill: true,
-          pointRadius: 0,
-          tension: 0.4
-        }]
-      },
-      options: {
-        animation: false,
-        scales: {
-          x: { display: false },
-          y: { beginAtZero: true, title: { display: false } }
-        },
-        plugins: {
-          legend: { display: false }
-        }
-      }
-    });
-    setInterval(updateMemoryUsage, 1000);
-
-    function updateSensorsAvailability() {
-      const sensorsContent = document.getElementById('sensors-content');
-      const sensors = [];
-      if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Accelerometer</li>');
-      if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Gyroscope</li>');
-      if ('Magnetometer' in window) {
-        sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Magnetometer</li>');
-      } else {
-        sensors.push('<li><i class="fas fa-times-circle" style="color: #c0392b;"></i> Magnetometer</li>');
-      }
-      if (sensors.length > 0) {
-        sensorsContent.innerHTML = `<ul>${sensors.join('')}</ul>`;
-      } else {
-        sensorsContent.innerHTML = "<p>No motion sensors available.</p>";
-      }
-    }
-
-    function updateMediaDevices() {
-      const mediaDevicesList = document.getElementById('media-devices-list');
-      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        navigator.mediaDevices.enumerateDevices().then(devices => {
-          const deviceList = devices.map(device => {
-            let icon = '';
-            if (device.kind === 'audioinput') icon = '<i class="fas fa-microphone" style="color: var(--accent-color);"></i>';
-            if (device.kind === 'audiooutput') icon = '<i class="fas fa-volume-up" style="color: var(--accent-color);"></i>';
-            if (device.kind === 'videoinput') icon = '<i class="fas fa-video" style="color: var(--accent-color);"></i>';
-            return `<li>${icon} ${device.label || 'Not Named'}</li>`;
-          }).join('');
-          mediaDevicesList.innerHTML = `<ul>${deviceList}</ul>`;
-        }).catch(err => {
-          console.error('Error accessing media devices:', err);
-          mediaDevicesList.innerHTML = "<p style='color: #c0392b;'>Could not access media devices.</p>";
-        });
-      } else {
-        mediaDevicesList.innerHTML = "<p style='color: #c0392b;'>Media Devices API not supported.</p>";
-      }
-    }
-
-    function checkWebGLSupport() {
-      const webglContent = document.getElementById('webgl-content');
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (gl && gl instanceof WebGLRenderingContext) {
-        webglContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>WebGL is supported.</p>';
-      } else {
-        webglContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #c0392b;"></i><br><p>WebGL is not supported.</p>';
-      }
-    }
-
-    function detectAdBlocker() {
-      const adblockerContent = document.getElementById('adblocker-content');
-      const ad = document.createElement('div');
-      ad.innerHTML = '&nbsp;';
-      ad.className = 'adsbox';
-      ad.style.position = 'absolute';
-      ad.style.top = '-9999px';
-      document.body.appendChild(ad);
-      window.setTimeout(() => {
-        if (ad.offsetHeight === 0) {
-          adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f39c12;"></i><br><p>Ad blocker detected.</p>';
-        } else {
-          adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>No ad blocker detected.</p>';
-        }
-        ad.remove();
-      }, 100);
-    }
-
-    function checkServiceWorkerStatus() {
-      const serviceworkerContent = document.getElementById('serviceworker-content');
-      if ('serviceWorker' in navigator) {
-        if (navigator.serviceWorker.controller) {
-          serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>Service Worker is active.</p>';
-        } else {
-          serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="font-size: 48px; color: #0dcaf0;"></i><br><p>Service Worker is supported but not registered.</p>';
-        }
-      } else {
-        serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #c0392b;"></i><br><p>Service Workers are not supported.</p>';
-      }
-    }
-
-    function getWebRTCIpAddresses() {
-      const webrtcContent = document.getElementById('webrtc-content');
-      const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
-      if (!RTCPeerConnection) {
-        webrtcContent.innerHTML = "<p style='color: #c0392b;'>WebRTC not supported.</p>";
-        return;
-      }
-      const pc = new RTCPeerConnection({ iceServers: [] });
-      pc.createDataChannel("");
-      pc.createOffer()
-        .then(offer => pc.setLocalDescription(offer))
-        .catch(err => {
-          console.error('Error creating offer:', err);
-        });
-      const ips = new Set();
-      pc.onicecandidate = event => {
-        if (event.candidate) {
-          const candidate = event.candidate.candidate;
-          const regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
-          const match = candidate.match(regex);
-          if (match) {
-            ips.add(match[0]);
-          }
-        } else {
-          if (ips.size > 0) {
-            webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
-            webrtcContent.style.color = '#0dcaf0';
-          } else {
-            webrtcContent.innerHTML = "<p style='color: #c0392b;'>No IP addresses detected.</p>";
-          }
-          pc.close();
-        }
-      };
-    }
-
-    function startPingTest(event) {
-      event.preventDefault();
-      const addressInput = document.getElementById('ping-address');
-      const address = addressInput.value.trim();
-      if (!address) {
-        alert('Please enter a server address.');
-        return;
-      }
-      if (pingChartInstance) {
-        pingChartInstance.destroy();
-        pingChartInstance = null;
-      }
-      const pingCtx = document.getElementById('pingChart').getContext('2d');
-      pingChartInstance = new Chart(pingCtx, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Ping (ms)',
-            data: [],
-            backgroundColor: 'rgba(27, 86, 255, 0.2)',
-            borderColor: 'var(--primary-color)',
-            borderWidth: 2,
-            fill: true,
-            pointRadius: 3,
-            tension: 0.1
-          }]
-        },
-        options: {
-          animation: false,
-          scales: {
-            x: { display: true, title: { display: true, text: 'Ping Number' }, grid: { color: '#333' } },
-            y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' }, suggestedMax: 1000, grid: { color: '#333' } }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `Latency: ${context.parsed.y} ms`;
-                }
-              }
-            }
-          }
-        }
-      });
-      let count = 0;
-      function ping() {
-        const startTime = Date.now();
-        const img = new Image();
-        img.onload = () => {
-          const endTime = Date.now();
-          const latency = endTime - startTime;
-          pingChartInstance.data.labels.push(count + 1);
-          pingChartInstance.data.datasets[0].data.push(latency);
-          pingChartInstance.update();
-          count++;
-          if (count < 10) {
-            setTimeout(ping, 1000);
-          }
-        };
-        img.onerror = () => {
-          pingChartInstance.data.labels.push(count + 1);
-          pingChartInstance.data.datasets[0].data.push(null);
-          pingChartInstance.update();
-          count++;
-          if (count < 10) {
-            setTimeout(ping, 1000);
-          }
-        };
-        img.src = `https://${address}/favicon.ico?cache=${Math.random()}`;
-      }
-      ping();
-    }
-
-    let pingChartInstance = null;
-
-    function performWebSearch(event) {
-      event.preventDefault();
-      const searchEngine = document.getElementById('search-engine').value;
-      const query = document.getElementById('search-query').value.trim();
-      if (!query) {
-        alert('Please enter a search query.');
-        return;
-      }
-      let searchURL = '';
-      switch(searchEngine) {
-        case 'google':
-          searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-          break;
-        case 'bing':
-          searchURL = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-          break;
-        case 'duckduckgo':
-          searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-          break;
-        case 'brave':
-          searchURL = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
-          break;
-        case 'yahoo':
-          searchURL = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
-          break;
-        default:
-          alert('Invalid search engine selected.');
-          return;
-      }
-      window.open(searchURL, '_blank');
-    }
-
-    function startJsErrorAnalysis() {
-      const analyzerUrlInput = document.getElementById('analyzer-url');
-      const url = analyzerUrlInput.value.trim();
-      const resultDiv = document.getElementById('js-error-analyzer-result');
-      const iframe = document.getElementById('js-error-analyzer-iframe');
-      if (!url) {
-        alert('Please enter a website URL.');
-        return;
-      }
-      try {
-        new URL(url);
-      } catch (e) {
-        alert('Please enter a valid URL.');
-        return;
-      }
-      resultDiv.innerHTML = 'Analyzing...';
-      iframe.style.display = 'none';
-      iframe.src = '';
-      iframe.src = url;
-      iframe.style.display = 'none';
-      iframe.onload = function() {
-        try {
-          const iframeWindow = iframe.contentWindow;
-          void iframeWindow.location.href;
-          iframeWindow.onerror = function(message, source, lineno, colno, error) {
-            iframeWindow.postMessage({
-              type: 'js-error',
-              error: { message: message, source: source, lineno: lineno, colno: colno }
-            }, '*');
-          };
-          window.addEventListener('message', function messageHandler(event) {
-            if (event.source !== iframeWindow) return;
-            if (event.data.type === 'js-error') {
-              displayJsError(event.data.error);
-            }
-          });
-          resultDiv.innerHTML = '<p style="color: #27ae60;">No JavaScript errors detected.</p>';
-        } catch (e) {
-          resultDiv.innerHTML = '<p style="color: #c0392b;">Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.</p>';
-          console.error('Cross-origin error:', e);
-        }
-      };
-      function displayJsError(error) {
-        if (resultDiv.innerHTML === 'Analyzing...') {
-          resultDiv.innerHTML = `<strong style="color: #c0392b;">Errors Detected:</strong><br>`;
-        }
-        resultDiv.innerHTML += `<span style="color: #c0392b;">${error.message}</span> at <span style="color: var(--muted-text);">${error.source}:${error.lineno}:${error.colno}</span><br>`;
-      }
-    }
-
-    let webcamStream = null;
-    function toggleWebcam(event) {
-      event.preventDefault();
-      const videoElement = document.getElementById('webcam-video');
-      const button = event.currentTarget;
-      if (webcamStream) {
-        webcamStream.getTracks().forEach(track => track.stop());
-        webcamStream = null;
-        videoElement.srcObject = null;
-        videoElement.style.display = 'none';
-        button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
-      } else {
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(stream => {
-            webcamStream = stream;
-            videoElement.srcObject = stream;
-            videoElement.style.display = 'block';
-            button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
-          })
-          .catch(err => {
-            alert('Unable to access the webcam: ' + err.message);
-            console.error('Webcam access error:', err);
-          });
-      }
-    }
-
-    let micStream = null;
-    let audioContext = null;
-    let analyserMic = null;
-    let microphoneSource = null;
-    let javascriptNodeMic = null;
-    function toggleMicrophone(event) {
-      event.preventDefault();
-      const micLevel = document.getElementById('mic-level');
-      const button = event.currentTarget;
-      if (micStream) {
-        micStream.getTracks().forEach(track => track.stop());
-        micStream = null;
-        if (audioContext) {
-          audioContext.close();
-          audioContext = null;
-        }
-        micLevel.style.width = '0%';
-        button.innerHTML = '<i class="fas fa-microphone"></i> Test Microphone';
-      } else {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-          .then(stream => {
-            micStream = stream;
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyserMic = audioContext.createAnalyser();
-            microphoneSource = audioContext.createMediaStreamSource(stream);
-            javascriptNodeMic = audioContext.createScriptProcessor(2048, 1, 1);
-            analyserMic.smoothingTimeConstant = 0.8;
-            analyserMic.fftSize = 1024;
-            microphoneSource.connect(analyserMic);
-            analyserMic.connect(javascriptNodeMic);
-            javascriptNodeMic.connect(audioContext.destination);
-            javascriptNodeMic.onaudioprocess = function() {
-              const array = new Uint8Array(analyserMic.frequencyBinCount);
-              analyserMic.getByteFrequencyData(array);
-              let values = 0;
-              const length = array.length;
-              for (let i = 0; i < length; i++) {
-                values += array[i];
-              }
-              const average = values / length;
-              const percentage = Math.min(100, Math.max(0, average));
-              micLevel.style.width = `${percentage}%`;
-            };
-            button.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Microphone';
-          })
-          .catch(err => {
-            alert('Unable to access the microphone: ' + err.message);
-            console.error('Microphone access error:', err);
-          });
-      }
-    }
-
-    function updatePublicIP() {
-      const publicIPElement = document.getElementById('public-ip');
-      publicIPElement.innerHTML = 'Fetching...';
-      publicIPElement.style.color = '#27ae60';
-      fetch('https://api.ipify.org?format=json')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Network response was not ok (${response.status})`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          publicIPElement.innerHTML = data.ip;
-          publicIPElement.style.color = '#27ae60';
-        })
-        .catch(err => {
-          publicIPElement.innerHTML = 'Unable to fetch IP.';
-          publicIPElement.style.color = '#c0392b';
-          console.error('Public IP fetch error:', err);
-        });
-    }
-
-    function performDNSLookup() {
-      const domainInput = document.getElementById('dns-domain');
-      const domain = domainInput.value.trim();
-      const resultDiv = document.getElementById('dns-result');
-      if (!domain) {
-        alert('Please enter a domain name.');
-        return;
-      }
-      resultDiv.innerHTML = 'Looking up...';
-      resultDiv.style.color = '#0dcaf0';
-      fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
-        method: 'GET',
-        headers: { 'Accept': 'application/dns-json' }
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Network response was not ok (${response.status})`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.Status === 0 && data.Answer) {
-          const ips = data.Answer.filter(record => record.type === 1).map(record => record.data);
-          if (ips.length > 0) {
-            resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
-            resultDiv.style.color = '#27ae60';
-          } else {
-            resultDiv.innerHTML = 'No A records found.';
-            resultDiv.style.color = '#c0392b';
-          }
-        } else {
-          resultDiv.innerHTML = 'DNS lookup failed or no records found.';
-          resultDiv.style.color = '#c0392b';
-        }
-      })
-      .catch(err => {
-        resultDiv.innerHTML = 'Error performing DNS lookup.';
-        resultDiv.style.color = '#c0392b';
-        console.error('DNS lookup error:', err);
-      });
-    }
-
-    function runCompatibilityCheck() {
-      const resultsDiv = document.getElementById('compatibility-results');
-      resultsDiv.innerHTML = 'Checking...';
-      resultsDiv.style.color = '#0dcaf0';
-
-      const features = {
-        'Service Workers': 'serviceWorker' in navigator,
-        'WebAssembly': typeof WebAssembly === 'object',
-        'Web Components (customElements)': 'customElements' in window,
-        'Intersection Observer': 'IntersectionObserver' in window,
-        'Fetch API': 'fetch' in window
-      };
-
-      let report = `<strong>Browser Compatibility Report:</strong><br>`;
-      for (const [feature, supported] of Object.entries(features)) {
-        report += `${feature}: ${supported ? '<span style="color: #27ae60;">Supported</span>' : '<span style="color: #c0392b;">Not Supported</span>'}<br>`;
-      }
-      resultsDiv.innerHTML = report;
-    }
-
-    function generatePassword(length, includeUpper, includeNumbers, includeSpecial) {
-      const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-      const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      const numbers = '0123456789';
-      const special = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
-      
-      let characters = lowercase;
-      if (includeUpper) characters += uppercase;
-      if (includeNumbers) characters += numbers;
-      if (includeSpecial) characters += special;
-      
-      let password = '';
-      for (let i = 0; i < length; i++) {
-        password += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      return password;
-    }
-    
-    document.getElementById('generate-password-btn').addEventListener('click', () => {
-      const length = parseInt(document.getElementById('password-length').value);
-      const includeUpper = document.getElementById('include-uppercase').checked;
-      const includeNumbers = document.getElementById('include-numbers').checked;
-      const includeSpecial = document.getElementById('include-special').checked;
-      
-      if (length < 4) {
-        alert('Password length should be at least 4 characters.');
-        return;
-      }
-      
-      const password = generatePassword(length, includeUpper, includeNumbers, includeSpecial);
-      document.getElementById('generated-password').innerText = password;
-    });
-
-    const units = {
-      length: ['Meters', 'Kilometers', 'Miles', 'Yards', 'Feet', 'Inches'],
-      weight: ['Kilograms', 'Grams', 'Pounds', 'Ounces'],
-      temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
-      volume: ['Liters', 'Milliliters', 'Gallons', 'Cups']
-    };
-
-    const conversionRates = {
-      length: {
-        Meters: 1,
-        Kilometers: 0.001,
-        Miles: 0.000621371,
-        Yards: 1.09361,
-        Feet: 3.28084,
-        Inches: 39.3701
-      },
-      weight: {
-        Kilograms: 1,
-        Grams: 1000,
-        Pounds: 2.20462,
-        Ounces: 35.274
-      },
-      temperature: {
-        Celsius: 'Celsius',
-        Fahrenheit: 'Fahrenheit',
-        Kelvin: 'Kelvin'
-      },
-      volume: {
-        Liters: 1,
-        Milliliters: 1000,
-        Gallons: 0.264172,
-        Cups: 4.22675
-      }
-    };
-
-    function populateUnits() {
-      const category = document.getElementById('conversion-category').value;
-      const fromUnit = document.getElementById('from-unit');
-      const toUnit = document.getElementById('to-unit');
-      
-      fromUnit.innerHTML = '';
-      toUnit.innerHTML = '';
-      
-      units[category].forEach(unit => {
-        const option1 = document.createElement('option');
-        option1.value = unit;
-        option1.text = unit;
-        fromUnit.appendChild(option1);
-        
-        const option2 = document.createElement('option');
-        option2.value = unit;
-        option2.text = unit;
-        toUnit.appendChild(option2);
-      });
-    }
-
-    document.getElementById('conversion-category').addEventListener('change', populateUnits);
-    window.addEventListener('load', populateUnits);
-
-    function convertUnits() {
-      const category = document.getElementById('conversion-category').value;
-      const fromUnit = document.getElementById('from-unit').value;
-      const toUnit = document.getElementById('to-unit').value;
-      const value = parseFloat(document.getElementById('input-value').value);
-      
-      if (isNaN(value)) {
-        alert('Please enter a valid number.');
-        return;
-      }
-      
-      let result;
-      
-      if (category === 'temperature') {
-        if (fromUnit === 'Celsius') {
-          if (toUnit === 'Fahrenheit') {
-            result = (value * 9/5) + 32;
-          } else if (toUnit === 'Kelvin') {
-            result = value + 273.15;
-          } else {
-            result = value;
-          }
-        } else if (fromUnit === 'Fahrenheit') {
-          if (toUnit === 'Celsius') {
-            result = (value - 32) * 5/9;
-          } else if (toUnit === 'Kelvin') {
-            result = ((value - 32) * 5/9) + 273.15;
-          } else {
-            result = value;
-          }
-        } else if (fromUnit === 'Kelvin') {
-          if (toUnit === 'Celsius') {
-            result = value - 273.15;
-          } else if (toUnit === 'Fahrenheit') {
-            result = ((value - 273.15) * 9/5) + 32;
-          } else {
-            result = value;
-          }
-        }
-      } else {
-        const fromRate = conversionRates[category][fromUnit];
-        const toRate = conversionRates[category][toUnit];
-        result = (value * toRate) / fromRate;
-      }
-      
-      document.getElementById('conversion-result').innerText = `${value} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`;
-    }
-
-    document.getElementById('convert-btn').addEventListener('click', convertUnits);
-
-    function analyzeText(text) {
-      const words = text.trim().split(/\s+/).filter(word => word.length > 0);
-      const wordCount = words.length;
-      const charCount = text.length;
-      const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
-      const sentenceCount = sentences.length;
-      const readingTime = (wordCount / 200).toFixed(2);
-      
-      const frequency = {};
-      words.forEach(word => {
-        const normalized = word.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (normalized) {
-          frequency[normalized] = (frequency[normalized] || 0) + 1;
-        }
-      });
-      
-      const sortedWords = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
-      const topKeywords = sortedWords.slice(0, 5).map(entry => `${entry[0]} (${entry[1]})`).join(', ');
-      
-      return `
-        <strong>Word Count:</strong> ${wordCount}<br>
-        <strong>Character Count:</strong> ${charCount}<br>
-        <strong>Sentence Count:</strong> ${sentenceCount}<br>
-        <strong>Estimated Reading Time:</strong> ${readingTime} minutes<br>
-        <strong>Top Keywords:</strong> ${topKeywords || 'N/A'}
-      `;
-    }
-
-    document.getElementById('analyze-text-btn').addEventListener('click', () => {
-      const text = document.getElementById('text-input').value;
-      if (!text.trim()) {
-        alert('Please enter some text to analyze.');
-        return;
-      }
-      const analysis = analyzeText(text);
-      document.getElementById('text-analysis-result').innerHTML = analysis;
-    });
-
-    function encodeURL(url) {
-      try {
-        return encodeURIComponent(url);
-      } catch {
-        return 'Invalid URL';
-      }
-    }
-
-    function decodeURL(url) {
-      try {
-        return decodeURIComponent(url);
-      } catch {
-        return 'Invalid URL';
-      }
-    }
-
-    document.getElementById('encode-url-btn').addEventListener('click', () => {
-      const url = document.getElementById('url-input').value;
-      if (!url.trim()) {
-        alert('Please enter a URL to encode.');
-        return;
-      }
-      const encoded = encodeURL(url);
-      document.getElementById('url-result').innerText = encoded;
-    });
-
-    document.getElementById('decode-url-btn').addEventListener('click', () => {
-      const url = document.getElementById('url-input').value;
-      if (!url.trim()) {
-        alert('Please enter a URL to decode.');
-        return;
-      }
-      const decoded = decodeURL(url);
-      document.getElementById('url-result').innerText = decoded;
-    });
-
-    function getLuminance(hex) {
-      const rgb = hex.match(/\w\w/g).map(x => parseInt(x, 16) / 255);
-      const a = rgb.map(v => {
-        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-      });
-      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
-    }
-
-    function calculateContrast(hex1, hex2) {
-      const lum1 = getLuminance(hex1);
-      const lum2 = getLuminance(hex2);
-      const brightest = Math.max(lum1, lum2);
-      const darkest = Math.min(lum1, lum2);
-      const contrast = (brightest + 0.05) / (darkest + 0.05);
-      return contrast.toFixed(2);
-    }
-
-    document.getElementById('check-contrast-btn').addEventListener('click', () => {
-      const color1 = document.getElementById('color1').value;
-      const color2 = document.getElementById('color2').value;
-      const contrastRatio = calculateContrast(color1, color2);
-      
-      let compliance = '';
-      if (contrastRatio >= 7) {
-        compliance = 'AAA';
-      } else if (contrastRatio >= 4.5) {
-        compliance = 'AA';
-      } else {
-        compliance = 'Fail';
-      }
-      
-      let colorScheme = 'Good contrast';
-      let color = '#27ae60'; 
-      if (compliance === 'AA') {
-        colorScheme = 'Acceptable contrast';
-        color = '#f39c12';
-      } else if (compliance === 'Fail') {
-        colorScheme = 'Poor contrast';
-        color = '#c0392b';
-      }
-      
-      document.getElementById('contrast-result').innerHTML = `
-        <strong>Contrast Ratio:</strong> ${contrastRatio}:1<br>
-        <strong>WCAG Compliance:</strong> ${compliance} (${colorScheme})
-      `;
-      document.getElementById('contrast-result').style.color = color;
-    });
-
-    let currentInput = '';
-    let operator = '';
-    let previousInput = '';
-
-    const display = document.getElementById('calculator-display');
-
-    document.querySelectorAll('.calc-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        const value = button.getAttribute('data-value');
-        
-        if (!value) return;
-        
-        if (!isNaN(value) || value === '.') {
-          currentInput += value;
-          display.value = currentInput;
-        } else if (['+', '-', '*', '/'].includes(value)) {
-          if (currentInput === '') return;
-          operator = value;
-          previousInput = currentInput;
-          currentInput = '';
-        }
-      });
-    });
-
-    document.getElementById('clear-btn').addEventListener('click', () => {
-      currentInput = '';
-      operator = '';
-      previousInput = '';
-      display.value = '';
-    });
-
-    document.getElementById('equals-btn').addEventListener('click', () => {
-      if (operator === '' || currentInput === '' || previousInput === '') return;
-      
-      const num1 = parseFloat(previousInput);
-      const num2 = parseFloat(currentInput);
-      let result;
-      
-      switch(operator) {
-        case '+':
-          result = num1 + num2;
-          break;
-        case '-':
-          result = num1 - num2;
-          break;
-        case '*':
-          result = num1 * num2;
-          break;
-        case '/':
-          if (num2 === 0) {
-            alert('Cannot divide by zero.');
-            return;
-          }
-          result = num1 / num2;
-          break;
-        default:
-          return;
-      }
-      
-      display.value = result;
-      currentInput = result.toString();
-      operator = '';
-      previousInput = '';
-    });
-
-    document.getElementById('generate-qr-btn').addEventListener('click', () => {
-      const qrText = document.getElementById('qr-text-input').value.trim();
-      const qrCodeDiv = document.getElementById('qr-code');
-      
-      if (!qrText) {
-        alert('Please enter text or a URL to generate QR Code.');
-        return;
-      }
-      
-      qrCodeDiv.innerHTML = '';
-      new QRCode(qrCodeDiv, {
-        text: qrText,
-        width: 128,
-        height: 128,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-      });
-    });
-
-    document.getElementById('add-todo-btn').addEventListener('click', () => {
-      const taskInput = document.getElementById('todo-input');
-      const taskText = taskInput.value.trim();
-      
-      if (!taskText) {
-        alert('Please enter a task.');
-        return;
-      }
-      
-      const todoList = document.getElementById('todo-list');
-      
+  }
+
+  // Save tasks to local storage
+  function saveTasksToLocalStorage() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  // Render the tasks onto the page
+  function renderTasks() {
+    const todoList = document.getElementById('todo-list');
+    todoList.innerHTML = ''; // Clear current list
+
+    tasks.forEach((task, index) => {
       const li = document.createElement('li');
       li.style.display = 'flex';
       li.style.alignItems = 'center';
       li.style.marginBottom = '8px';
       li.style.fontSize = '0.95rem';
       li.style.color = 'var(--text-color)';
-      
+
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.style.marginRight = '10px';
+      checkbox.checked = task.completed;
       checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-          li.style.textDecoration = 'line-through';
-          li.style.color = '#6c757d';
-        } else {
-          li.style.textDecoration = 'none';
-          li.style.color = 'var(--text-color)';
-        }
+        task.completed = checkbox.checked;
+        saveTasksToLocalStorage();
+        renderTasks();
       });
-      
+
       const taskSpan = document.createElement('span');
-      taskSpan.innerText = taskText;
+      taskSpan.innerText = task.text;
       taskSpan.style.flexGrow = '1';
-      
+
+      if (task.completed) {
+        li.style.textDecoration = 'line-through';
+        li.style.color = '#6c757d';
+      }
+
       const deleteBtn = document.createElement('button');
       deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
       deleteBtn.style.background = 'none';
@@ -2346,145 +1112,1516 @@
       deleteBtn.style.color = '#c0392b';
       deleteBtn.style.cursor = 'pointer';
       deleteBtn.addEventListener('click', () => {
-        todoList.removeChild(li);
+        // Remove from tasks array
+        tasks.splice(index, 1);
+        saveTasksToLocalStorage();
+        renderTasks();
       });
-      
+
       li.appendChild(checkbox);
       li.appendChild(taskSpan);
       li.appendChild(deleteBtn);
-      
       todoList.appendChild(li);
-      
-      taskInput.value = '';
     });
+  }
 
-    function initializeDashboard() {
-      updateSystemInfo();
-      updateInternetConnectivity();
-      updateBatteryStatus();
-      updateScreenResolution();
-      updateLocation();
-      updateTimeZone();
-      updateMemoryUsage();
-      updateSensorsAvailability();
-      updateMediaDevices();
-      checkWebGLSupport();
-      detectAdBlocker();
-      checkServiceWorkerStatus();
-      getWebRTCIpAddresses();
-      updateJsErrors();
-      updatePublicIP();
-      updateVisitorCount();
+  // Add a new task when the button is clicked
+  document.getElementById('add-todo-btn').addEventListener('click', () => {
+    const taskInput = document.getElementById('todo-input');
+    const taskText = taskInput.value.trim();
 
-      setInterval(updateInternetConnectivity, 5000);
-      setInterval(updateBatteryStatus, 60000);
-      setInterval(updateSystemInfo, 60000);
+    if (!taskText) {
+      alert('Please enter a task.');
+      return;
     }
 
-    window.addEventListener('resize', updateScreenResolution);
-    window.addEventListener('load', () => {
-      initializeDashboard();
+    // Create a new task object
+    tasks.push({ text: taskText, completed: false });
 
-      document.getElementById('search-button').addEventListener('click', performWebSearch);
-      document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
-      document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
-      document.getElementById('dns-lookup-btn').addEventListener('click', performDNSLookup);
-      document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
-      document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
-      document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
-      document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
+    // Save to local storage and re-render
+    saveTasksToLocalStorage();
+    renderTasks();
 
-      const copySystemInfoBtn = document.getElementById('copy-system-info-btn');
-      const clearCookiesBtn = document.getElementById('clear-cookies-btn');
-      const resetAppDataBtn = document.getElementById('reset-app-data-btn');
-      const reloadPageBtn = document.getElementById('reload-page-btn');
-      const retestConnectivityBtn = document.getElementById('retest-connectivity-btn');
-      const retestLocationBtn = document.getElementById('retest-location-btn');
-      const retestMediaDevicesBtn = document.getElementById('retest-media-devices-btn');
-      const retestWebrtcBtn = document.getElementById('retest-webrtc-btn');
+    taskInput.value = '';
+  });
 
-      if (copySystemInfoBtn) copySystemInfoBtn.addEventListener('click', copySystemInfo);
-      if (clearCookiesBtn) clearCookiesBtn.addEventListener('click', clearCookies);
-      if (resetAppDataBtn) resetAppDataBtn.addEventListener('click', resetAppData);
-      if (reloadPageBtn) reloadPageBtn.addEventListener('click', reloadPage);
-      if (retestConnectivityBtn) retestConnectivityBtn.addEventListener('click', updateInternetConnectivity);
-      if (retestLocationBtn) retestLocationBtn.addEventListener('click', updateLocation);
-      if (retestMediaDevicesBtn) retestMediaDevicesBtn.addEventListener('click', updateMediaDevices);
-      if (retestWebrtcBtn) retestWebrtcBtn.addEventListener('click', getWebRTCIpAddresses);
-    });
+  // Load tasks when the page loads, then render them
+  window.addEventListener('load', () => {
+    loadTasksFromLocalStorage();
+    renderTasks();
+  });
 
-    // JavaScript for Weather Card
-    document.getElementById('get-weather-btn').addEventListener('click', () => {
-      const location = document.getElementById('weather-location').value.trim();
-      const resultDiv = document.getElementById('weather-result');
-      const iconImg = document.getElementById('weather-icon');
-      const descriptionP = document.getElementById('weather-description');
-      const tempP = document.getElementById('weather-temp');
-      const detailsP = document.getElementById('weather-details');
+  // =====================================
+  // Drawer Menu / Favorites / Misc Setup
+  // =====================================
+  const hamburgerMenu = document.getElementById('hamburger-menu');
+  const drawerMenu = document.getElementById('drawer-menu');
 
-      if (!location) {
-        alert('Please enter a city name.');
-        return;
+  hamburgerMenu.addEventListener('click', () => {
+    drawerMenu.classList.toggle('open');
+  });
+
+  let errorLogs = [];
+
+  window.onerror = function(message, source, lineno, colno, error) {
+    const errorMessage = `${message} at ${source}:${lineno}:${colno}`;
+    errorLogs.push(errorMessage);
+    updateJsErrors();
+    return false;
+  };
+
+  const originalLocations = new Map(); 
+  const favoritesGrid = document.getElementById('favorites-grid');
+  const favoritesSection = document.getElementById('favorites-section');
+
+  function toggleFavorite(card) {
+    const favBtn = card.querySelector('.favorite-toggle');
+    const isFavorite = favBtn.classList.contains('favorited');
+    
+    if (isFavorite) {
+      favBtn.classList.remove('favorited');
+      const originalParent = originalLocations.get(card.id);
+      if (originalParent) {
+        originalParent.appendChild(card);
       }
+    } else {
+      favBtn.classList.add('favorited');
+      if (!originalLocations.has(card.id)) {
+        originalLocations.set(card.id, card.parentNode);
+      }
+      favoritesGrid.appendChild(card);
+    }
 
-      // Show loading state
-      resultDiv.style.display = 'block';
-      descriptionP.innerText = 'Fetching weather data...';
-      tempP.innerText = '';
-      detailsP.innerText = '';
-      iconImg.src = '';
+    updateFavoritesVisibility();
+  }
 
-      // Your OpenWeatherMap API Key (⚠️ Replace with your own API key)
-      const apiKey = 'ae6dbc04bfe41073d60c4f494b310bb7';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
+  function updateFavoritesVisibility() {
+    const hasFavorites = favoritesGrid.children.length > 0;
+    favoritesSection.style.display = hasFavorites ? 'block' : 'none';
+  }
 
-      fetch(apiUrl)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('City not found or API error.');
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.panel-sub').forEach(card => {
+      const favBtn = card.querySelector('.favorite-toggle');
+      if (favBtn) {
+        favBtn.addEventListener('click', () => toggleFavorite(card));
+      }
+    });
+  });
+
+  function updateVisitorCount() {
+    const visitorCountElement = document.getElementById('visitor-count');
+    let count = localStorage.getItem('visitorCount');
+    if (count === null) {
+      count = 1;
+    } else {
+      count = parseInt(count) + 1;
+    }
+    localStorage.setItem('visitorCount', count);
+    visitorCountElement.innerText = count;
+  }
+
+  function copySystemInfo() {
+    const systemInfoContentElement = document.getElementById('system-info-content');
+    if (!systemInfoContentElement) {
+      alert('System information content not found.');
+      return;
+    }
+    const systemInfoContent = systemInfoContentElement.innerText;
+    navigator.clipboard.writeText(systemInfoContent).then(() => {
+      alert('System information copied to clipboard.');
+    }, () => {
+      alert('Failed to copy system information.');
+    });
+  }
+
+  function clearCookies() {
+    document.cookie.split(";").forEach(function(c) {
+      document.cookie = c.trim().startsWith("=") ? c : c.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    alert('Cookies cleared.');
+  }
+
+  function resetAppData() {
+    let count = localStorage.getItem('visitorCount');
+    const keys = Object.keys(localStorage);
+    for (let i=0; i<keys.length; i++) {
+      if (keys[i] !== 'visitorCount') {
+        localStorage.removeItem(keys[i]);
+      }
+    }
+    if (count !== null) {
+      localStorage.setItem('visitorCount', count);
+      document.getElementById('visitor-count').innerText = count;
+    }
+    sessionStorage.clear();
+    clearCookies();
+    alert('Application data reset. Reloading page...');
+    reloadPage();
+  }
+
+  function reloadPage() {
+    location.reload();
+  }
+
+  function updateJsErrors() {
+    const jsErrorsContent = document.getElementById('js-errors-content');
+    if (jsErrorsContent) {
+      if (errorLogs.length > 0) {
+        jsErrorsContent.innerHTML = `<strong>Errors Detected (${errorLogs.length}):</strong><br>${errorLogs.join('<br>')}`;
+      } else {
+        jsErrorsContent.innerHTML = 'No errors detected.';
+      }
+    }
+  }
+
+  // ======================
+  // System Info Functions
+  // ======================
+  function getOS(userAgent) {
+    if (userAgent.indexOf("Win") !== -1) return "Windows";
+    if (userAgent.indexOf("Mac") !== -1) return "macOS";
+    if (userAgent.indexOf("X11") !== -1) return "UNIX";
+    if (userAgent.indexOf("Linux") !== -1) return "Linux";
+    return "Unknown";
+  }
+
+  function getDeviceType() {
+    const ua = navigator.userAgent;
+    if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+      return "Mobile";
+    }
+    return "Desktop";
+  }
+
+  function updateSystemInfo() {
+    const osInfo = document.getElementById('os-info');
+    const deviceTypeInfo = document.getElementById('device-type-info');
+    const ramInfo = document.getElementById('ram-info');
+    const processorInfo = document.getElementById('processor-info');
+    const diskSpaceInfo = document.getElementById('disk-space-info');
+    const browserInfo = document.getElementById('browser-info');
+    const platformInfo = document.getElementById('platform-info');
+    const languageInfo = document.getElementById('language-info');
+    const onlineStatusInfo = document.getElementById('online-status-info');
+    const cookiesEnabledInfo = document.getElementById('cookies-enabled-info');
+    const touchSupportInfo = document.getElementById('touch-support-info');
+
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const language = navigator.language;
+    const onlineStatus = navigator.onLine ? "Yes" : "No";
+    const cookiesEnabled = navigator.cookieEnabled ? "Yes" : "No";
+    const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Yes" : "No";
+    const os = getOS(userAgent);
+    const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not Available";
+    const processor = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Logical Processor(s)` : "Not Available";
+    const deviceType = getDeviceType();
+
+    osInfo.innerText = os;
+    deviceTypeInfo.innerText = deviceType;
+    ramInfo.innerText = ram;
+    processorInfo.innerText = processor;
+    browserInfo.innerText = userAgent;
+    platformInfo.innerText = platform;
+    languageInfo.innerText = language;
+    onlineStatusInfo.innerText = onlineStatus;
+    cookiesEnabledInfo.innerText = cookiesEnabled;
+    touchSupportInfo.innerText = touchSupport;
+
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(estimate => {
+        const used = estimate.usage || 0;
+        const quota = estimate.quota || 1;
+        const usedPercentage = ((used / quota) * 100).toFixed(2);
+        const usedMB = (used / (1024 * 1024)).toFixed(2);
+        const quotaMB = (quota / (1024 * 1024)).toFixed(2);
+        diskSpaceInfo.innerText = `Used: ${usedMB} MB / Total: ${quotaMB} MB (${usedPercentage}%)`;
+      }).catch(() => {
+        diskSpaceInfo.innerText = 'Not Available';
+      });
+    } else {
+      diskSpaceInfo.innerText = 'Not Available';
+    }
+  }
+
+  // ===================
+  // Internet Connectivity
+  // ===================
+  function updateInternetConnectivity() {
+    const internetStatusIcon = document.getElementById('internet-status-icon');
+    const internetStatusText = document.getElementById('internet-status-text');
+    fetch('https://www.google.com/', { mode: 'no-cors' })
+      .then(() => {
+        internetStatusIcon.style.color = '#27ae60';
+        internetStatusText.innerHTML = 'Online';
+      })
+      .catch(() => {
+        internetStatusIcon.style.color = '#c0392b';
+        internetStatusText.innerHTML = 'Offline';
+      });
+  }
+
+  // =======
+  // FPS
+  // =======
+  let fpsData = [];
+  let fpsTimestamps = [];
+
+  function updateFPSChart() {
+    const now = performance.now();
+    while (fpsTimestamps.length > 0 && fpsTimestamps[0] <= now - 1000) {
+      fpsTimestamps.shift();
+    }
+    fpsTimestamps.push(now);
+    const fps = fpsTimestamps.length;
+    fpsData.push(fps);
+    if (fpsData.length > 30) {
+      fpsData.shift();
+    }
+
+    const maxFPS = Math.max(...fpsData);
+    const nextHundred = Math.ceil(maxFPS / 100) * 100 || 100;
+    fpsChart.options.scales.y.max = nextHundred;
+
+    fpsChart.data.datasets[0].data = fpsData;
+    fpsChart.update();
+  }
+
+  function trackFPS() {
+    requestAnimationFrame(() => {
+      updateFPSChart();
+      trackFPS();
+    });
+  }
+
+  const fpsCtx = document.getElementById('performanceChart').getContext('2d');
+  const fpsChart = new Chart(fpsCtx, {
+    type: 'line',
+    data: {
+      labels: Array(30).fill(''),
+      datasets: [{
+        label: 'FPS',
+        data: fpsData,
+        backgroundColor: 'rgba(27, 86, 255, 0.2)',
+        borderColor: 'var(--primary-color)',
+        borderWidth: 2,
+        fill: true,
+        pointRadius: 0,
+        tension: 0.4
+      }]
+    },
+    options: {
+      animation: false,
+      scales: {
+        x: { display: false },
+        y: { beginAtZero: true, title: { display: false } }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+  trackFPS();
+
+  // ====================
+  // Network Speed
+  // ====================
+  async function measureNetworkSpeed() {
+    try {
+      const startTime = performance.now();
+      const response = await fetch('https://speed.hetzner.de/10MB.bin', { cache: 'no-cache' });
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+      const reader = response.body.getReader();
+      let receivedLength = 0;
+      while(true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        receivedLength += value.length;
+      }
+      const endTime = performance.now();
+      const durationInSeconds = (endTime - startTime) / 1000;
+      const bitsLoaded = receivedLength * 8;
+      const speedBps = bitsLoaded / durationInSeconds;
+      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+      return speedMbps;
+    } catch {
+      return null;
+    }
+  }
+
+  let networkSpeedData = [];
+  const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
+  const networkSpeedChart = new Chart(networkSpeedCtx, {
+    type: 'line',
+    data: {
+      labels: Array(10).fill(''),
+      datasets: [{
+        label: 'Speed (Mbps)',
+        data: networkSpeedData,
+        backgroundColor: 'rgba(27, 86, 255, 0.2)',
+        borderColor: 'var(--primary-color)',
+        borderWidth: 2,
+        fill: true,
+        pointRadius: 3,
+        tension: 0.4
+      }]
+    },
+    options: {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { display: false },
+        y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' }, grid: { color: '#333' } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `Speed: ${context.parsed.y} Mbps`;
+            }
           }
-          return response.json();
-        })
-        .then(data => {
-          const { weather, main, wind, sys, name, timezone } = data;
-          const weatherDesc = weather[0].description;
-          const weatherIcon = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
-          const temperature = main.temp;
-          const humidity = main.humidity;
-          const windSpeed = wind.speed;
-          const country = sys.country;
+        }
+      }
+    }
+  });
 
-          // Calculate local time based on timezone offset
-          const timezoneOffset = timezone; // in seconds
-          const localTime = new Date((Date.now() + timezoneOffset * 1000));
-          const options = { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
-            hour: '2-digit', minute: '2-digit', second: '2-digit' 
-          };
-          const formattedTime = localTime.toLocaleDateString(undefined, options);
+  async function updateNetworkSpeedChart() {
+    const speedMbps = await measureNetworkSpeed();
+    const currentSpeedElement = document.getElementById('current-speed');
+    if (speedMbps !== null) {
+      networkSpeedData.push(speedMbps);
+      if (networkSpeedData.length > 10) {
+        networkSpeedData.shift();
+        networkSpeedChart.data.labels.shift();
+      }
+      networkSpeedChart.data.datasets[0].data = networkSpeedData;
+      networkSpeedChart.update();
+      currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
+      currentSpeedElement.style.color = '#27ae60';
+    } else {
+      currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
+      currentSpeedElement.style.color = '#c0392b';
+    }
+  }
+  updateNetworkSpeedChart();
+  setInterval(updateNetworkSpeedChart, 60000);
 
-          // Update DOM elements with fetched data
-          descriptionP.innerText = `${weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1)}`;
-          tempP.innerText = `${temperature}°C`;
-          iconImg.src = weatherIcon;
-          iconImg.alt = weatherDesc;
+  // ====================
+  // Battery Status
+  // ====================
+  function updateBatteryStatus() {
+    const batteryProgressBar = document.getElementById('battery-progress-bar');
+    const batteryStatusText = document.getElementById('battery-status-text');
+    if (navigator.getBattery) {
+      navigator.getBattery().then(battery => {
+        const batteryLevel = (battery.level * 100).toFixed(0);
+        const chargingStatus = battery.charging ? "Charging" : "Not Charging";
+        batteryProgressBar.style.width = `${batteryLevel}%`;
+        batteryProgressBar.style.backgroundColor = battery.charging ? '#0dcaf0' : '#27ae60';
+        batteryStatusText.innerHTML = `${batteryLevel}% - ${chargingStatus}`;
+        batteryStatusText.style.color = battery.charging ? '#0dcaf0' : '#27ae60';
+      });
+    } else {
+      batteryStatusText.innerHTML = "Battery status not supported by your browser.";
+    }
+  }
 
-          detailsP.innerHTML = `
-            <strong>Location:</strong> ${name}, ${country}<br>
-            <strong>Humidity:</strong> ${humidity}%<br>
-            <strong>Wind Speed:</strong> ${windSpeed} m/s<br>
-            <strong>Local Time:</strong> ${formattedTime}
-          `;
+  // ====================
+  // Screen Resolution
+  // ====================
+  function updateScreenResolution() {
+    const screenRectangle = document.getElementById('screen-rectangle');
+    const screenDimensionsText = document.getElementById('screen-dimensions-text');
+    const width = window.screen.width;
+    const height = window.screen.height;
+    const maxDimension = Math.max(width, height);
+    const scaledWidth = (width / maxDimension) * 280;
+    const scaledHeight = (height / maxDimension) * 280;
+    screenRectangle.style.width = `${scaledWidth}px`;
+    screenRectangle.style.height = `${scaledHeight}px`;
+    screenDimensionsText.innerHTML = `<strong>${width}px</strong> x <strong>${height}px</strong>`;
+  }
+
+  // ====================
+  // Location / Map
+  // ====================
+  let mapInitialized = false;
+  let mapInstance;
+  function updateLocation() {
+    const mapDiv = document.getElementById('map');
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          if (mapDiv) {
+            if (!mapInitialized) {
+              mapInstance = L.map('map').setView([latitude, longitude], 13);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+              }).addTo(mapInstance);
+              L.marker([latitude, longitude]).addTo(mapInstance)
+                .bindPopup('You are here.')
+                .openPopup();
+              mapInitialized = true;
+            } else {
+              mapInstance.setView([latitude, longitude], 13);
+              L.marker([latitude, longitude]).addTo(mapInstance)
+                .bindPopup('You are here.')
+                .openPopup();
+            }
+          }
+        },
+        () => {
+          if (mapDiv) {
+            mapDiv.innerHTML = "<p style='color: #c0392b;'>Location access denied.</p>";
+          }
+        }
+      );
+    } else {
+      if (mapDiv) {
+        mapDiv.innerHTML = "<p style='color: #c0392b;'>Geolocation not supported.</p>";
+      }
+    }
+  }
+
+  // ====================
+  // Time Zone
+  // ====================
+  function updateTimeZone() {
+    const timezoneInfo = document.getElementById('timezone-info');
+    const localeInfo = document.getElementById('locale-info');
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const locale = navigator.language;
+    timezoneInfo.innerText = timeZone;
+    localeInfo.innerText = locale;
+  }
+
+  // =====================
+  // Memory Usage
+  // =====================
+  let memoryUsageData = [];
+  function updateMemoryUsage() {
+    const memoryUsage = performance.memory ? (performance.memory.usedJSHeapSize / 1048576).toFixed(2) : null;
+    if (memoryUsage !== null) {
+      memoryUsageData.push(memoryUsage);
+      if (memoryUsageData.length > 30) {
+        memoryUsageData.shift();
+      }
+      memoryChart.data.datasets[0].data = memoryUsageData;
+      memoryChart.update();
+    }
+  }
+
+  const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+  const memoryChart = new Chart(memoryCtx, {
+    type: 'line',
+    data: {
+      labels: Array(30).fill(''),
+      datasets: [{
+        label: 'Memory Usage (MB)',
+        data: memoryUsageData,
+        backgroundColor: 'rgba(27, 86, 255, 0.2)',
+        borderColor: 'var(--primary-color)',
+        borderWidth: 2,
+        fill: true,
+        pointRadius: 0,
+        tension: 0.4
+      }]
+    },
+    options: {
+      animation: false,
+      scales: {
+        x: { display: false },
+        y: { beginAtZero: true, title: { display: false } }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+  setInterval(updateMemoryUsage, 1000);
+
+  // ======================
+  // Sensors Availability
+  // ======================
+  function updateSensorsAvailability() {
+    const sensorsContent = document.getElementById('sensors-content');
+    const sensors = [];
+    if ('Accelerometer' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Accelerometer</li>');
+    if ('Gyroscope' in window) sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Gyroscope</li>');
+    if ('Magnetometer' in window) {
+      sensors.push('<li><i class="fas fa-check-circle" style="color: #27ae60;"></i> Magnetometer</li>');
+    } else {
+      sensors.push('<li><i class="fas fa-times-circle" style="color: #c0392b;"></i> Magnetometer</li>');
+    }
+    if (sensors.length > 0) {
+      sensorsContent.innerHTML = `<ul>${sensors.join('')}</ul>`;
+    } else {
+      sensorsContent.innerHTML = "<p>No motion sensors available.</p>";
+    }
+  }
+
+  // ======================
+  // Media Devices
+  // ======================
+  function updateMediaDevices() {
+    const mediaDevicesList = document.getElementById('media-devices-list');
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        const deviceList = devices.map(device => {
+          let icon = '';
+          if (device.kind === 'audioinput') icon = '<i class="fas fa-microphone" style="color: var(--accent-color);"></i>';
+          if (device.kind === 'audiooutput') icon = '<i class="fas fa-volume-up" style="color: var(--accent-color);"></i>';
+          if (device.kind === 'videoinput') icon = '<i class="fas fa-video" style="color: var(--accent-color);"></i>';
+          return `<li>${icon} ${device.label || 'Not Named'}</li>`;
+        }).join('');
+        mediaDevicesList.innerHTML = `<ul>${deviceList}</ul>`;
+      }).catch(err => {
+        console.error('Error accessing media devices:', err);
+        mediaDevicesList.innerHTML = "<p style='color: #c0392b;'>Could not access media devices.</p>";
+      });
+    } else {
+      mediaDevicesList.innerHTML = "<p style='color: #c0392b;'>Media Devices API not supported.</p>";
+    }
+  }
+
+  // ======================
+  // WebGL Support
+  // ======================
+  function checkWebGLSupport() {
+    const webglContent = document.getElementById('webgl-content');
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl && gl instanceof WebGLRenderingContext) {
+      webglContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>WebGL is supported.</p>';
+    } else {
+      webglContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #c0392b;"></i><br><p>WebGL is not supported.</p>';
+    }
+  }
+
+  // ======================
+  // Ad Blocker Detection
+  // ======================
+  function detectAdBlocker() {
+    const adblockerContent = document.getElementById('adblocker-content');
+    const ad = document.createElement('div');
+    ad.innerHTML = '&nbsp;';
+    ad.className = 'adsbox';
+    ad.style.position = 'absolute';
+    ad.style.top = '-9999px';
+    document.body.appendChild(ad);
+    window.setTimeout(() => {
+      if (ad.offsetHeight === 0) {
+        adblockerContent.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f39c12;"></i><br><p>Ad blocker detected.</p>';
+      } else {
+        adblockerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>No ad blocker detected.</p>';
+      }
+      ad.remove();
+    }, 100);
+  }
+
+  // ======================
+  // Service Worker Status
+  // ======================
+  function checkServiceWorkerStatus() {
+    const serviceworkerContent = document.getElementById('serviceworker-content');
+    if ('serviceWorker' in navigator) {
+      if (navigator.serviceWorker.controller) {
+        serviceworkerContent.innerHTML = '<i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i><br><p>Service Worker is active.</p>';
+      } else {
+        serviceworkerContent.innerHTML = '<i class="fas fa-info-circle" style="font-size: 48px; color: #0dcaf0;"></i><br><p>Service Worker is supported but not registered.</p>';
+      }
+    } else {
+      serviceworkerContent.innerHTML = '<i class="fas fa-times-circle" style="font-size: 48px; color: #c0392b;"></i><br><p>Service Workers are not supported.</p>';
+    }
+  }
+
+  // ======================
+  // WebRTC IP Addresses
+  // ======================
+  function getWebRTCIpAddresses() {
+    const webrtcContent = document.getElementById('webrtc-content');
+    const RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
+    if (!RTCPeerConnection) {
+      webrtcContent.innerHTML = "<p style='color: #c0392b;'>WebRTC not supported.</p>";
+      return;
+    }
+    const pc = new RTCPeerConnection({ iceServers: [] });
+    pc.createDataChannel("");
+    pc.createOffer()
+      .then(offer => pc.setLocalDescription(offer))
+      .catch(err => {
+        console.error('Error creating offer:', err);
+      });
+    const ips = new Set();
+    pc.onicecandidate = event => {
+      if (event.candidate) {
+        const candidate = event.candidate.candidate;
+        const regex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
+        const match = candidate.match(regex);
+        if (match) {
+          ips.add(match[0]);
+        }
+      } else {
+        if (ips.size > 0) {
+          webrtcContent.innerHTML = `<strong>IP Addresses:</strong><br>${Array.from(ips).join('<br>')}`;
+          webrtcContent.style.color = '#0dcaf0';
+        } else {
+          webrtcContent.innerHTML = "<p style='color: #c0392b;'>No IP addresses detected.</p>";
+        }
+        pc.close();
+      }
+    };
+  }
+
+  // ===============
+  // Ping Test
+  // ===============
+  let pingChartInstance = null;
+  function startPingTest(event) {
+    event.preventDefault();
+    const addressInput = document.getElementById('ping-address');
+    const address = addressInput.value.trim();
+    if (!address) {
+      alert('Please enter a server address.');
+      return;
+    }
+    if (pingChartInstance) {
+      pingChartInstance.destroy();
+      pingChartInstance = null;
+    }
+    const pingCtx = document.getElementById('pingChart').getContext('2d');
+    pingChartInstance = new Chart(pingCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Ping (ms)',
+          data: [],
+          backgroundColor: 'rgba(27, 86, 255, 0.2)',
+          borderColor: 'var(--primary-color)',
+          borderWidth: 2,
+          fill: true,
+          pointRadius: 3,
+          tension: 0.1
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          x: { display: true, title: { display: true, text: 'Ping Number' }, grid: { color: '#333' } },
+          y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' }, suggestedMax: 1000, grid: { color: '#333' } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Latency: ${context.parsed.y} ms`;
+              }
+            }
+          }
+        }
+      }
+    });
+    let count = 0;
+    function ping() {
+      const startTime = Date.now();
+      const img = new Image();
+      img.onload = () => {
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        pingChartInstance.data.labels.push(count + 1);
+        pingChartInstance.data.datasets[0].data.push(latency);
+        pingChartInstance.update();
+        count++;
+        if (count < 10) {
+          setTimeout(ping, 1000);
+        }
+      };
+      img.onerror = () => {
+        pingChartInstance.data.labels.push(count + 1);
+        pingChartInstance.data.datasets[0].data.push(null);
+        pingChartInstance.update();
+        count++;
+        if (count < 10) {
+          setTimeout(ping, 1000);
+        }
+      };
+      img.src = `https://${address}/favicon.ico?cache=${Math.random()}`;
+    }
+    ping();
+  }
+
+  // ===============
+  // Search
+  // ===============
+  function performWebSearch(event) {
+    event.preventDefault();
+    const searchEngine = document.getElementById('search-engine').value;
+    const query = document.getElementById('search-query').value.trim();
+    if (!query) {
+      alert('Please enter a search query.');
+      return;
+    }
+    let searchURL = '';
+    switch(searchEngine) {
+      case 'google':
+        searchURL = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        break;
+      case 'bing':
+        searchURL = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+        break;
+      case 'duckduckgo':
+        searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+        break;
+      case 'brave':
+        searchURL = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
+        break;
+      case 'yahoo':
+        searchURL = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+        break;
+      default:
+        alert('Invalid search engine selected.');
+        return;
+    }
+    window.open(searchURL, '_blank');
+  }
+
+  // =========================
+  // JavaScript Error Analyzer
+  // =========================
+  function startJsErrorAnalysis() {
+    const analyzerUrlInput = document.getElementById('analyzer-url');
+    const url = analyzerUrlInput.value.trim();
+    const resultDiv = document.getElementById('js-error-analyzer-result');
+    const iframe = document.getElementById('js-error-analyzer-iframe');
+    if (!url) {
+      alert('Please enter a website URL.');
+      return;
+    }
+    try {
+      new URL(url);
+    } catch (e) {
+      alert('Please enter a valid URL.');
+      return;
+    }
+    resultDiv.innerHTML = 'Analyzing...';
+    iframe.style.display = 'none';
+    iframe.src = '';
+    iframe.src = url;
+    iframe.style.display = 'none';
+    iframe.onload = function() {
+      try {
+        const iframeWindow = iframe.contentWindow;
+        void iframeWindow.location.href;
+        iframeWindow.onerror = function(message, source, lineno, colno, error) {
+          iframeWindow.postMessage({
+            type: 'js-error',
+            error: { message: message, source: source, lineno: lineno, colno: colno }
+          }, '*');
+        };
+        window.addEventListener('message', function messageHandler(event) {
+          if (event.source !== iframeWindow) return;
+          if (event.data.type === 'js-error') {
+            displayJsError(event.data.error);
+          }
+        });
+        resultDiv.innerHTML = '<p style="color: #27ae60;">No JavaScript errors detected.</p>';
+      } catch (e) {
+        resultDiv.innerHTML = '<p style="color: #c0392b;">Unable to analyze JavaScript errors due to cross-origin restrictions. Please ensure the URL is same-origin or use a local server.</p>';
+        console.error('Cross-origin error:', e);
+      }
+    };
+    function displayJsError(error) {
+      if (resultDiv.innerHTML === 'Analyzing...') {
+        resultDiv.innerHTML = `<strong style="color: #c0392b;">Errors Detected:</strong><br>`;
+      }
+      resultDiv.innerHTML += `<span style="color: #c0392b;">${error.message}</span> at <span style="color: var(--muted-text);">${error.source}:${error.lineno}:${error.colno}</span><br>`;
+    }
+  }
+
+  // =======================
+  // Webcam / Microphone
+  // =======================
+  let webcamStream = null;
+  function toggleWebcam(event) {
+    event.preventDefault();
+    const videoElement = document.getElementById('webcam-video');
+    const button = event.currentTarget;
+    if (webcamStream) {
+      webcamStream.getTracks().forEach(track => track.stop());
+      webcamStream = null;
+      videoElement.srcObject = null;
+      videoElement.style.display = 'none';
+      button.innerHTML = '<i class="fas fa-camera"></i> Test Webcam';
+    } else {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          webcamStream = stream;
+          videoElement.srcObject = stream;
+          videoElement.style.display = 'block';
+          button.innerHTML = '<i class="fas fa-camera-slash"></i> Stop Webcam';
         })
         .catch(err => {
-          descriptionP.innerText = 'Error fetching weather data.';
-          tempP.innerText = '';
-          detailsP.innerText = '';
-          iconImg.src = '';
-          console.error('Weather Card error:', err);
-          alert('Unable to fetch weather data. Please check the city name and try again.');
+          alert('Unable to access the webcam: ' + err.message);
+          console.error('Webcam access error:', err);
         });
+    }
+  }
+
+  let micStream = null;
+  let audioContext = null;
+  let analyserMic = null;
+  let microphoneSource = null;
+  let javascriptNodeMic = null;
+  function toggleMicrophone(event) {
+    event.preventDefault();
+    const micLevel = document.getElementById('mic-level');
+    const button = event.currentTarget;
+    if (micStream) {
+      micStream.getTracks().forEach(track => track.stop());
+      micStream = null;
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+      micLevel.style.width = '0%';
+      button.innerHTML = '<i class="fas fa-microphone"></i> Test Microphone';
+    } else {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          micStream = stream;
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyserMic = audioContext.createAnalyser();
+          microphoneSource = audioContext.createMediaStreamSource(stream);
+          javascriptNodeMic = audioContext.createScriptProcessor(2048, 1, 1);
+          analyserMic.smoothingTimeConstant = 0.8;
+          analyserMic.fftSize = 1024;
+          microphoneSource.connect(analyserMic);
+          analyserMic.connect(javascriptNodeMic);
+          javascriptNodeMic.connect(audioContext.destination);
+          javascriptNodeMic.onaudioprocess = function() {
+            const array = new Uint8Array(analyserMic.frequencyBinCount);
+            analyserMic.getByteFrequencyData(array);
+            let values = 0;
+            const length = array.length;
+            for (let i = 0; i < length; i++) {
+              values += array[i];
+            }
+            const average = values / length;
+            const percentage = Math.min(100, Math.max(0, average));
+            micLevel.style.width = `${percentage}%`;
+          };
+          button.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Microphone';
+        })
+        .catch(err => {
+          alert('Unable to access the microphone: ' + err.message);
+          console.error('Microphone access error:', err);
+        });
+    }
+  }
+
+  // =================
+  // Public IP
+  // =================
+  function updatePublicIP() {
+    const publicIPElement = document.getElementById('public-ip');
+    publicIPElement.innerHTML = 'Fetching...';
+    publicIPElement.style.color = '#27ae60';
+    fetch('https://api.ipify.org?format=json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok (${response.status})`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        publicIPElement.innerHTML = data.ip;
+        publicIPElement.style.color = '#27ae60';
+      })
+      .catch(err => {
+        publicIPElement.innerHTML = 'Unable to fetch IP.';
+        publicIPElement.style.color = '#c0392b';
+        console.error('Public IP fetch error:', err);
+      });
+  }
+
+  // ====================
+  // DNS Lookup
+  // ====================
+  function performDNSLookup() {
+    const domainInput = document.getElementById('dns-domain');
+    const domain = domainInput.value.trim();
+    const resultDiv = document.getElementById('dns-result');
+    if (!domain) {
+      alert('Please enter a domain name.');
+      return;
+    }
+    resultDiv.innerHTML = 'Looking up...';
+    resultDiv.style.color = '#0dcaf0';
+    fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/dns-json' }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.Status === 0 && data.Answer) {
+        const ips = data.Answer.filter(record => record.type === 1).map(record => record.data);
+        if (ips.length > 0) {
+          resultDiv.innerHTML = `<strong>A Records:</strong><br>${ips.join('<br>')}`;
+          resultDiv.style.color = '#27ae60';
+        } else {
+          resultDiv.innerHTML = 'No A records found.';
+          resultDiv.style.color = '#c0392b';
+        }
+      } else {
+        resultDiv.innerHTML = 'DNS lookup failed or no records found.';
+        resultDiv.style.color = '#c0392b';
+      }
+    })
+    .catch(err => {
+      resultDiv.innerHTML = 'Error performing DNS lookup.';
+      resultDiv.style.color = '#c0392b';
+      console.error('DNS lookup error:', err);
     });
+  }
+
+  // =====================
+  // Browser Compatibility
+  // =====================
+  function runCompatibilityCheck() {
+    const resultsDiv = document.getElementById('compatibility-results');
+    resultsDiv.innerHTML = 'Checking...';
+    resultsDiv.style.color = '#0dcaf0';
+
+    const features = {
+      'Service Workers': 'serviceWorker' in navigator,
+      'WebAssembly': typeof WebAssembly === 'object',
+      'Web Components (customElements)': 'customElements' in window,
+      'Intersection Observer': 'IntersectionObserver' in window,
+      'Fetch API': 'fetch' in window
+    };
+
+    let report = `<strong>Browser Compatibility Report:</strong><br>`;
+    for (const [feature, supported] of Object.entries(features)) {
+      report += `${feature}: ${supported ? '<span style="color: #27ae60;">Supported</span>' : '<span style="color: #c0392b;">Not Supported</span>'}<br>`;
+    }
+    resultsDiv.innerHTML = report;
+  }
+
+  // ======================
+  // Password Generation
+  // ======================
+  function generatePassword(length, includeUpper, includeNumbers, includeSpecial) {
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const special = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+    
+    let characters = lowercase;
+    if (includeUpper) characters += uppercase;
+    if (includeNumbers) characters += numbers;
+    if (includeSpecial) characters += special;
+    
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return password;
+  }
+
+  document.getElementById('generate-password-btn').addEventListener('click', () => {
+    const length = parseInt(document.getElementById('password-length').value);
+    const includeUpper = document.getElementById('include-uppercase').checked;
+    const includeNumbers = document.getElementById('include-numbers').checked;
+    const includeSpecial = document.getElementById('include-special').checked;
+    
+    if (length < 4) {
+      alert('Password length should be at least 4 characters.');
+      return;
+    }
+    
+    const password = generatePassword(length, includeUpper, includeNumbers, includeSpecial);
+    document.getElementById('generated-password').innerText = password;
+  });
+
+  // ======================
+  // Unit Converter
+  // ======================
+  const units = {
+    length: ['Meters', 'Kilometers', 'Miles', 'Yards', 'Feet', 'Inches'],
+    weight: ['Kilograms', 'Grams', 'Pounds', 'Ounces'],
+    temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
+    volume: ['Liters', 'Milliliters', 'Gallons', 'Cups']
+  };
+
+  const conversionRates = {
+    length: {
+      Meters: 1,
+      Kilometers: 0.001,
+      Miles: 0.000621371,
+      Yards: 1.09361,
+      Feet: 3.28084,
+      Inches: 39.3701
+    },
+    weight: {
+      Kilograms: 1,
+      Grams: 1000,
+      Pounds: 2.20462,
+      Ounces: 35.274
+    },
+    temperature: {
+      Celsius: 'Celsius',
+      Fahrenheit: 'Fahrenheit',
+      Kelvin: 'Kelvin'
+    },
+    volume: {
+      Liters: 1,
+      Milliliters: 1000,
+      Gallons: 0.264172,
+      Cups: 4.22675
+    }
+  };
+
+  function populateUnits() {
+    const category = document.getElementById('conversion-category').value;
+    const fromUnit = document.getElementById('from-unit');
+    const toUnit = document.getElementById('to-unit');
+    
+    fromUnit.innerHTML = '';
+    toUnit.innerHTML = '';
+    
+    units[category].forEach(unit => {
+      const option1 = document.createElement('option');
+      option1.value = unit;
+      option1.text = unit;
+      fromUnit.appendChild(option1);
+      
+      const option2 = document.createElement('option');
+      option2.value = unit;
+      option2.text = unit;
+      toUnit.appendChild(option2);
+    });
+  }
+
+  document.getElementById('conversion-category').addEventListener('change', populateUnits);
+  window.addEventListener('load', populateUnits);
+
+  function convertUnits() {
+    const category = document.getElementById('conversion-category').value;
+    const fromUnit = document.getElementById('from-unit').value;
+    const toUnit = document.getElementById('to-unit').value;
+    const value = parseFloat(document.getElementById('input-value').value);
+    
+    if (isNaN(value)) {
+      alert('Please enter a valid number.');
+      return;
+    }
+    
+    let result;
+    
+    if (category === 'temperature') {
+      if (fromUnit === 'Celsius') {
+        if (toUnit === 'Fahrenheit') {
+          result = (value * 9/5) + 32;
+        } else if (toUnit === 'Kelvin') {
+          result = value + 273.15;
+        } else {
+          result = value;
+        }
+      } else if (fromUnit === 'Fahrenheit') {
+        if (toUnit === 'Celsius') {
+          result = (value - 32) * 5/9;
+        } else if (toUnit === 'Kelvin') {
+          result = ((value - 32) * 5/9) + 273.15;
+        } else {
+          result = value;
+        }
+      } else if (fromUnit === 'Kelvin') {
+        if (toUnit === 'Celsius') {
+          result = value - 273.15;
+        } else if (toUnit === 'Fahrenheit') {
+          result = ((value - 273.15) * 9/5) + 32;
+        } else {
+          result = value;
+        }
+      }
+    } else {
+      const fromRate = conversionRates[category][fromUnit];
+      const toRate = conversionRates[category][toUnit];
+      result = (value * toRate) / fromRate;
+    }
+    
+    document.getElementById('conversion-result').innerText = `${value} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`;
+  }
+
+  document.getElementById('convert-btn').addEventListener('click', convertUnits);
+
+  // =====================
+  // Text Analyzer
+  // =====================
+  function analyzeText(text) {
+    const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
+    const charCount = text.length;
+    const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+    const sentenceCount = sentences.length;
+    const readingTime = (wordCount / 200).toFixed(2);
+    
+    const frequency = {};
+    words.forEach(word => {
+      const normalized = word.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalized) {
+        frequency[normalized] = (frequency[normalized] || 0) + 1;
+      }
+    });
+    
+    const sortedWords = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
+    const topKeywords = sortedWords.slice(0, 5).map(entry => `${entry[0]} (${entry[1]})`).join(', ');
+    
+    return `
+      <strong>Word Count:</strong> ${wordCount}<br>
+      <strong>Character Count:</strong> ${charCount}<br>
+      <strong>Sentence Count:</strong> ${sentenceCount}<br>
+      <strong>Estimated Reading Time:</strong> ${readingTime} minutes<br>
+      <strong>Top Keywords:</strong> ${topKeywords || 'N/A'}
+    `;
+  }
+
+  document.getElementById('analyze-text-btn').addEventListener('click', () => {
+    const text = document.getElementById('text-input').value;
+    if (!text.trim()) {
+      alert('Please enter some text to analyze.');
+      return;
+    }
+    const analysis = analyzeText(text);
+    document.getElementById('text-analysis-result').innerHTML = analysis;
+  });
+
+  // =====================
+  // URL Encoder/Decoder
+  // =====================
+  function encodeURL(url) {
+    try {
+      return encodeURIComponent(url);
+    } catch {
+      return 'Invalid URL';
+    }
+  }
+
+  function decodeURL(url) {
+    try {
+      return decodeURIComponent(url);
+    } catch {
+      return 'Invalid URL';
+    }
+  }
+
+  document.getElementById('encode-url-btn').addEventListener('click', () => {
+    const url = document.getElementById('url-input').value;
+    if (!url.trim()) {
+      alert('Please enter a URL to encode.');
+      return;
+    }
+    const encoded = encodeURL(url);
+    document.getElementById('url-result').innerText = encoded;
+  });
+
+  document.getElementById('decode-url-btn').addEventListener('click', () => {
+    const url = document.getElementById('url-input').value;
+    if (!url.trim()) {
+      alert('Please enter a URL to decode.');
+      return;
+    }
+    const decoded = decodeURL(url);
+    document.getElementById('url-result').innerText = decoded;
+  });
+
+  // =====================
+  // Contrast Checker
+  // =====================
+  function getLuminance(hex) {
+    const rgb = hex.match(/\w\w/g).map(x => parseInt(x, 16) / 255);
+    const a = rgb.map(v => {
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+  }
+
+  function calculateContrast(hex1, hex2) {
+    const lum1 = getLuminance(hex1);
+    const lum2 = getLuminance(hex2);
+    const brightest = Math.max(lum1, lum2);
+    const darkest = Math.min(lum1, lum2);
+    const contrast = (brightest + 0.05) / (darkest + 0.05);
+    return contrast.toFixed(2);
+  }
+
+  document.getElementById('check-contrast-btn').addEventListener('click', () => {
+    const color1 = document.getElementById('color1').value;
+    const color2 = document.getElementById('color2').value;
+    const contrastRatio = calculateContrast(color1, color2);
+    
+    let compliance = '';
+    if (contrastRatio >= 7) {
+      compliance = 'AAA';
+    } else if (contrastRatio >= 4.5) {
+      compliance = 'AA';
+    } else {
+      compliance = 'Fail';
+    }
+    
+    let colorScheme = 'Good contrast';
+    let color = '#27ae60'; 
+    if (compliance === 'AA') {
+      colorScheme = 'Acceptable contrast';
+      color = '#f39c12';
+    } else if (compliance === 'Fail') {
+      colorScheme = 'Poor contrast';
+      color = '#c0392b';
+    }
+    
+    document.getElementById('contrast-result').innerHTML = `
+      <strong>Contrast Ratio:</strong> ${contrastRatio}:1<br>
+      <strong>WCAG Compliance:</strong> ${compliance} (${colorScheme})
+    `;
+    document.getElementById('contrast-result').style.color = color;
+  });
+
+  // =====================
+  // Calculator
+  // =====================
+  let currentInput = '';
+  let operator = '';
+  let previousInput = '';
+
+  const display = document.getElementById('calculator-display');
+
+  document.querySelectorAll('.calc-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const value = button.getAttribute('data-value');
+      
+      if (!value) return;
+      
+      if (!isNaN(value) || value === '.') {
+        currentInput += value;
+        display.value = currentInput;
+      } else if (['+', '-', '*', '/'].includes(value)) {
+        if (currentInput === '') return;
+        operator = value;
+        previousInput = currentInput;
+        currentInput = '';
+      }
+    });
+  });
+
+  document.getElementById('clear-btn').addEventListener('click', () => {
+    currentInput = '';
+    operator = '';
+    previousInput = '';
+    display.value = '';
+  });
+
+  document.getElementById('equals-btn').addEventListener('click', () => {
+    if (operator === '' || currentInput === '' || previousInput === '') return;
+    
+    const num1 = parseFloat(previousInput);
+    const num2 = parseFloat(currentInput);
+    let result;
+    
+    switch(operator) {
+      case '+':
+        result = num1 + num2;
+        break;
+      case '-':
+        result = num1 - num2;
+        break;
+      case '*':
+        result = num1 * num2;
+        break;
+      case '/':
+        if (num2 === 0) {
+          alert('Cannot divide by zero.');
+          return;
+        }
+        result = num1 / num2;
+        break;
+      default:
+        return;
+    }
+    
+    display.value = result;
+    currentInput = result.toString();
+    operator = '';
+    previousInput = '';
+  });
+
+  // =====================
+  // QR Code Generator
+  // =====================
+  document.getElementById('generate-qr-btn').addEventListener('click', () => {
+    const qrText = document.getElementById('qr-text-input').value.trim();
+    const qrCodeDiv = document.getElementById('qr-code');
+    
+    if (!qrText) {
+      alert('Please enter text or a URL to generate QR Code.');
+      return;
+    }
+    
+    qrCodeDiv.innerHTML = '';
+    new QRCode(qrCodeDiv, {
+      text: qrText,
+      width: 128,
+      height: 128,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+  });
+
+  // =====================
+  // Initialize Dashboard
+  // =====================
+  function initializeDashboard() {
+    updateSystemInfo();
+    updateInternetConnectivity();
+    updateBatteryStatus();
+    updateScreenResolution();
+    updateLocation();
+    updateTimeZone();
+    updateMemoryUsage();
+    updateSensorsAvailability();
+    updateMediaDevices();
+    checkWebGLSupport();
+    detectAdBlocker();
+    checkServiceWorkerStatus();
+    getWebRTCIpAddresses();
+    updateJsErrors();
+    updatePublicIP();
+    updateVisitorCount();
+
+    setInterval(updateInternetConnectivity, 5000);
+    setInterval(updateBatteryStatus, 60000);
+    setInterval(updateSystemInfo, 60000);
+  }
+
+  window.addEventListener('resize', updateScreenResolution);
+  window.addEventListener('load', () => {
+    initializeDashboard();
+
+    document.getElementById('search-button').addEventListener('click', performWebSearch);
+    document.getElementById('start-ping-test-btn').addEventListener('click', startPingTest);
+    document.getElementById('refresh-ip-btn').addEventListener('click', updatePublicIP);
+    document.getElementById('dns-lookup-btn').addEventListener('click', performDNSLookup);
+    document.getElementById('start-js-error-analysis-btn').addEventListener('click', startJsErrorAnalysis);
+    document.getElementById('toggle-webcam-btn').addEventListener('click', toggleWebcam);
+    document.getElementById('toggle-microphone-btn').addEventListener('click', toggleMicrophone);
+    document.getElementById('run-compatibility-check').addEventListener('click', runCompatibilityCheck);
+
+    const copySystemInfoBtn = document.getElementById('copy-system-info-btn');
+    const clearCookiesBtn = document.getElementById('clear-cookies-btn');
+    const resetAppDataBtn = document.getElementById('reset-app-data-btn');
+    const reloadPageBtn = document.getElementById('reload-page-btn');
+    const retestConnectivityBtn = document.getElementById('retest-connectivity-btn');
+    const retestLocationBtn = document.getElementById('retest-location-btn');
+    const retestMediaDevicesBtn = document.getElementById('retest-media-devices-btn');
+    const retestWebrtcBtn = document.getElementById('retest-webrtc-btn');
+
+    if (copySystemInfoBtn) copySystemInfoBtn.addEventListener('click', copySystemInfo);
+    if (clearCookiesBtn) clearCookiesBtn.addEventListener('click', clearCookies);
+    if (resetAppDataBtn) resetAppDataBtn.addEventListener('click', resetAppData);
+    if (reloadPageBtn) reloadPageBtn.addEventListener('click', reloadPage);
+    if (retestConnectivityBtn) retestConnectivityBtn.addEventListener('click', updateInternetConnectivity);
+    if (retestLocationBtn) retestLocationBtn.addEventListener('click', updateLocation);
+    if (retestMediaDevicesBtn) retestMediaDevicesBtn.addEventListener('click', updateMediaDevices);
+    if (retestWebrtcBtn) retestWebrtcBtn.addEventListener('click', getWebRTCIpAddresses);
+  });
+
+  // =====================
+  // Weather Card
+  // =====================
+  document.getElementById('get-weather-btn').addEventListener('click', () => {
+    const location = document.getElementById('weather-location').value.trim();
+    const resultDiv = document.getElementById('weather-result');
+    const iconImg = document.getElementById('weather-icon');
+    const descriptionP = document.getElementById('weather-description');
+    const tempP = document.getElementById('weather-temp');
+    const detailsP = document.getElementById('weather-details');
+
+    if (!location) {
+      alert('Please enter a city name.');
+      return;
+    }
+
+    // Show loading state
+    resultDiv.style.display = 'block';
+    descriptionP.innerText = 'Fetching weather data...';
+    tempP.innerText = '';
+    detailsP.innerText = '';
+    iconImg.src = '';
+
+    // Your OpenWeatherMap API Key (⚠️ Replace with your own API key)
+    const apiKey = 'ae6dbc04bfe41073d60c4f494b310bb7';
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
+
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('City not found or API error.');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const { weather, main, wind, sys, name, timezone } = data;
+        const weatherDesc = weather[0].description;
+        const weatherIcon = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
+        const temperature = main.temp;
+        const humidity = main.humidity;
+        const windSpeed = wind.speed;
+        const country = sys.country;
+
+        // Calculate local time based on timezone offset
+        const timezoneOffset = timezone; // in seconds
+        const localTime = new Date((Date.now() + timezoneOffset * 1000));
+        const options = { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+          hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        };
+        const formattedTime = localTime.toLocaleDateString(undefined, options);
+
+        // Update DOM elements with fetched data
+        descriptionP.innerText = `${weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1)}`;
+        tempP.innerText = `${temperature}°C`;
+        iconImg.src = weatherIcon;
+        iconImg.alt = weatherDesc;
+
+        detailsP.innerHTML = `
+          <strong>Location:</strong> ${name}, ${country}<br>
+          <strong>Humidity:</strong> ${humidity}%<br>
+          <strong>Wind Speed:</strong> ${windSpeed} m/s<br>
+          <strong>Local Time:</strong> ${formattedTime}
+        `;
+      })
+      .catch(err => {
+        descriptionP.innerText = 'Error fetching weather data.';
+        tempP.innerText = '';
+        detailsP.innerText = '';
+        iconImg.src = '';
+        console.error('Weather Card error:', err);
+        alert('Unable to fetch weather data. Please check the city name and try again.');
+      });
+  });
 </script>
 </body>
 </html>
