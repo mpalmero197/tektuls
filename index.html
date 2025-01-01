@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- NEW: Responsive Meta Tag for Mobile Devices -->
+  <!-- Responsive Meta Tag for Mobile Devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TekTuls - Comprehensive Troubleshooting Dashboard (Dark Mode)</title>
   <!-- Include Chart.js CDN -->
@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
 
   <style>
+    /* Existing CSS styles remain unchanged */
+
     *, *::before, *::after {
       box-sizing: border-box;
     }
@@ -657,11 +659,13 @@
   <div class="overlay" id="overlay" style="display:none;"></div>
 
   <div class="content" id="main-content">
+    <!-- Favorites Section -->
     <div class="panel" id="favorites-section" style="display:none;">
       <h2><i class="fas fa-star"></i> Favorites</h2>
       <div class="panel-section" id="favorites-grid"></div>
     </div>
 
+    <!-- Network Tools Section -->
     <div class="panel" id="network-tools-section">
       <h2><i class="fas fa-network-wired"></i> Network Tools</h2>
       <div class="panel-section">
@@ -715,6 +719,7 @@
       </div>
     </div>
 
+    <!-- System Information Section -->
     <div class="panel" id="system-info-section">
       <h2><i class="fas fa-desktop"></i> System Information</h2>
       <div class="panel-section">
@@ -779,6 +784,7 @@
       </div>
     </div>
 
+    <!-- Device Sensors and Media Section -->
     <div class="panel" id="device-sensors-section">
       <h2><i class="fas fa-cogs"></i> Device Sensors and Media</h2>
       <div class="panel-section">
@@ -807,6 +813,7 @@
       </div>
     </div>
 
+    <!-- Security and Privacy Section -->
     <div class="panel" id="security-privacy-section">
       <h2><i class="fas fa-shield-alt"></i> Security and Privacy</h2>
       <div class="panel-section">
@@ -845,6 +852,7 @@
       </div>
     </div>
 
+    <!-- Performance Monitoring Section -->
     <div class="panel" id="performance-section">
       <h2><i class="fas fa-tachometer-alt"></i> Performance Monitoring</h2>
       <div class="panel-section">
@@ -864,6 +872,7 @@
       </div>
     </div>
 
+    <!-- Compatibility Section -->
     <div class="panel" id="compatibility-section">
       <h2><i class="fas fa-universal-access"></i> Compatibility</h2>
       <div class="panel-section">
@@ -879,6 +888,7 @@
       </div>
     </div>
 
+    <!-- Website Tools Section -->
     <div class="panel" id="website-tools-section">
       <h2><i class="fas fa-globe"></i> Website Tools</h2>
       <div class="panel-section">
@@ -892,6 +902,7 @@
       </div>
     </div>
 
+    <!-- Utilities Section -->
     <div class="panel" id="utilities-section">
       <h2><i class="fas fa-tools"></i> Utilities</h2>
       <div class="panel-section">
@@ -1165,12 +1176,6 @@
     taskInput.value = '';
   });
 
-  // Load tasks when the page loads, then render them
-  window.addEventListener('load', () => {
-    loadTasksFromLocalStorage();
-    renderTasks();
-  });
-
   // =====================================
   // Drawer Menu / Favorites / Misc Setup
   // =====================================
@@ -1194,6 +1199,7 @@
   const favoritesGrid = document.getElementById('favorites-grid');
   const favoritesSection = document.getElementById('favorites-section');
 
+  // Function to toggle favorite state of a card
   function toggleFavorite(card) {
     const favBtn = card.querySelector('.favorite-toggle');
     const isFavorite = favBtn.classList.contains('favorited');
@@ -1213,20 +1219,51 @@
     }
 
     updateFavoritesVisibility();
+    saveFavorites(); // Save favorites after toggling
   }
 
+  // Function to update the visibility of the favorites section
   function updateFavoritesVisibility() {
     const hasFavorites = favoritesGrid.children.length > 0;
     favoritesSection.style.display = hasFavorites ? 'block' : 'none';
   }
 
+  // Function to save the list of favorite card IDs to localStorage
+  function saveFavorites() {
+    const favoriteIds = Array.from(favoritesGrid.children).map(card => card.id);
+    localStorage.setItem('favorites', JSON.stringify(favoriteIds));
+  }
+
+  // Function to load the list of favorite card IDs from localStorage and set their state
+  function loadFavorites() {
+    const favoriteIds = JSON.parse(localStorage.getItem('favorites')) || [];
+    favoriteIds.forEach(id => {
+      const card = document.getElementById(id);
+      if (card) {
+        const favBtn = card.querySelector('.favorite-toggle');
+        if (favBtn && !favBtn.classList.contains('favorited')) {
+          favBtn.classList.add('favorited');
+        }
+        if (!originalLocations.has(card.id)) {
+          originalLocations.set(card.id, card.parentNode);
+        }
+        favoritesGrid.appendChild(card);
+      }
+    });
+    updateFavoritesVisibility();
+  }
+
   window.addEventListener('load', () => {
+    // Attach click event listeners to all favorite-toggle buttons
     document.querySelectorAll('.panel-sub').forEach(card => {
       const favBtn = card.querySelector('.favorite-toggle');
       if (favBtn) {
         favBtn.addEventListener('click', () => toggleFavorite(card));
       }
     });
+
+    // Load favorites from localStorage
+    loadFavorites();
   });
 
   function updateVisitorCount() {
@@ -1966,9 +2003,9 @@
     }
   }
 
-  // =======================
+  // =====================
   // Webcam / Microphone
-  // =======================
+  // =====================
   let webcamStream = null;
   function toggleWebcam(event) {
     event.preventDefault();
@@ -2140,9 +2177,9 @@
     resultsDiv.innerHTML = report;
   }
 
-  // ======================
+  // =====================
   // Password Generation
-  // ======================
+  // =====================
   function generatePassword(length, includeUpper, includeNumbers, includeSpecial) {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
