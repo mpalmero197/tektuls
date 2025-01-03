@@ -1484,9 +1484,7 @@
   // ====================
   // Network Speed
   // ====================
-  // -------------------------------
-  // 1) Chart Setup
-  // -------------------------------
+  // 1) Prepare the chart
   let networkSpeedData = [];
   const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
   const networkSpeedChart = new Chart(networkSpeedCtx, {
@@ -1512,7 +1510,7 @@
         x: { display: false },
         y: {
           beginAtZero: true,
-          suggestedMax: 100,
+          suggestedMax: 500,
           title: { display: true, text: 'Mbps' },
           grid: { color: '#333' }
         }
@@ -1530,42 +1528,37 @@
     }
   });
 
-  // -------------------------------
-  // 2) Measure Network Speed
-  // -------------------------------
+  // 2) Measure network speed with fetch
   async function measureNetworkSpeed() {
     try {
-      // ***** IMPORTANT: Choose your actual file URL below. *****
-      // Option A: GitHub Pages file (if placed in your tektuls folder):
-      // let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin`;
+      // IMPORTANT: If you have 25MB.bin in your tektuls root, use this:
+      // let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin?cb=${Date.now()}`;
 
-      // Option B: Raw GitHub URL for 10MB.bin in a public repo:
-      // let fileUrl = `https://raw.githubusercontent.com/mpalmero197/tektuls/main/25MB.bin`;
+      // Otherwise, if it's a raw GitHub link (public repo), do something like:
+      // let fileUrl = `https://raw.githubusercontent.com/mpalmero197/tektuls/main/25MB.bin?cb=${Date.now()}`;
 
-      // For demonstration, we'll pick Option A:
-      let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin`;
+      // Replace the line below with whichever is correct for your setup:
+      let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin?cb=${Date.now()}`;
 
       const startTime = performance.now();
       const response = await fetch(fileUrl, {
         cache: 'no-cache',
         mode: 'cors'
       });
-
       if (!response.ok) {
-        throw new Error(`Network response was not ok (${response.status})`);
+        throw new Error(`Network response was not ok (HTTP ${response.status})`);
       }
 
       // Read the response in chunks
       const reader = response.body.getReader();
       let receivedLength = 0;
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         receivedLength += value.length;
       }
 
-      // Calculate total time and convert to Mbps
+      // Calculate total time and speed
       const endTime = performance.now();
       const durationInSeconds = (endTime - startTime) / 1000;
       const bitsLoaded = receivedLength * 8;
@@ -1574,46 +1567,46 @@
 
       return speedMbps;
     } catch (err) {
-      console.error('Network speed test error:', err);
+      console.error('Network Speed Error:', err);
       return null;
     }
   }
 
-  // -------------------------------
-  // 3) Update the Chart + Display
-  // -------------------------------
+  // 3) Update the chart and UI
   async function updateNetworkSpeedChart() {
     const speedMbps = await measureNetworkSpeed();
     const currentSpeedElement = document.getElementById('current-speed');
 
     if (speedMbps !== null) {
-      // Add new data point (limit to 10 data points)
+      // Add new data point
       networkSpeedData.push(speedMbps);
+      // Keep the last 10
       if (networkSpeedData.length > 10) {
         networkSpeedData.shift();
         networkSpeedChart.data.labels.shift();
       }
-
-      // Update chart
+      // Update chart data
       networkSpeedChart.data.datasets[0].data = networkSpeedData;
       networkSpeedChart.update();
 
-      // Update UI text
+      // Display speed
       currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
       currentSpeedElement.style.color = '#27ae60';
     } else {
+      // Show error
       currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
       currentSpeedElement.style.color = '#c0392b';
     }
   }
 
-  // -------------------------------
-  // 4) Initialize
-  // -------------------------------
-  // On DOM load, start measuring every 2 seconds
+  // 4) Start the speed checks
+  // If you have a global initialization (initializeDashboard?), place the call there.
+  // Otherwise, we can start it on DOMContentLoaded:
   document.addEventListener('DOMContentLoaded', () => {
+    // Run once now:
     updateNetworkSpeedChart();
-    setInterval(updateNetworkSpeedChart, 2000); // 2 seconds
+    // Repeat every 2 seconds (adjust as you wish):
+    setInterval(updateNetworkSpeedChart, 2000);
   });
 
   // ====================
