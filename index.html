@@ -686,16 +686,22 @@
           </div>
         </div>
 
-        <div class="panel-sub network-speed-card" id="network-speed-card">
-          <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
-          <h3><i class="fas fa-chart-line"></i> Network Speed</h3>
-          <div class="network-speed-chart-container">
-            <canvas id="networkSpeedChart"></canvas>
-          </div>
-          <p id="current-speed" style="text-align: center; margin-top: 15px; font-size: 1rem; color: #27ae60;">
-            Current Speed: <strong>-- Mbps</strong>
-          </p>
-        </div>
+<div class="panel-sub" id="network-speed-card-new">
+  <button class="favorite-toggle" aria-label="Favorite Toggle">
+    <i class="fas fa-star"></i>
+  </button>
+  <h3><i class="fas fa-network-wired"></i> Network Speed (New)</h3>
+  
+  <!-- Where we show the measured speed -->
+  <p id="current-speed-new" style="text-align: center; margin-top: 10px;">
+    Current Speed: <strong>-- Mbps</strong>
+  </p>
+
+  <!-- Chart container -->
+  <div style="width: 100%; height: 300px; position: relative;">
+    <canvas id="networkSpeedChartNew"></canvas>
+  </div>
+</div>
 
         <div class="panel-sub" id="network-info-card">
           <button class="favorite-toggle" aria-label="Favorite Toggle"><i class="fas fa-star"></i></button>
@@ -1484,130 +1490,128 @@
   // ====================
   // Network Speed
   // ====================
-  // 1) Prepare the chart
-  let networkSpeedData = [];
-  const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
-  const networkSpeedChart = new Chart(networkSpeedCtx, {
-    type: 'line',
-    data: {
-      labels: Array(10).fill(''),
-      datasets: [{
-        label: 'Speed (Mbps)',
-        data: networkSpeedData,
-        backgroundColor: 'rgba(27, 86, 255, 0.2)',
-        borderColor: 'var(--primary-color)',
-        borderWidth: 2,
-        fill: true,
-        pointRadius: 3,
-        tension: 0.4
-      }]
+// ==========================
+// 1) Chart Setup
+// ==========================
+let networkSpeedDataNew = [];
+const speedChartCtxNew = document.getElementById('networkSpeedChartNew').getContext('2d');
+
+// Create the new chart instance
+const networkSpeedChartNew = new Chart(speedChartCtxNew, {
+  type: 'line',
+  data: {
+    labels: Array(10).fill(''), // 10 placeholders for labels
+    datasets: [{
+      label: 'Speed (Mbps)',
+      data: networkSpeedDataNew,
+      backgroundColor: 'rgba(27, 86, 255, 0.2)',
+      borderColor: 'var(--primary-color)', // Or your chosen color
+      borderWidth: 2,
+      fill: true,
+      pointRadius: 3,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    animation: false,
+    maintainAspectRatio: false,
+    scales: {
+      x: { display: false },
+      y: {
+        beginAtZero: true,
+        suggestedMax: 300, // Adjust if you expect faster speeds
+        title: { display: true, text: 'Mbps' },
+        grid: { color: '#333' }
+      }
     },
-    options: {
-      animation: false,
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { display: false },
-        y: {
-          beginAtZero: true,
-          suggestedMax: 500,
-          title: { display: true, text: 'Mbps' },
-          grid: { color: '#333' }
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `Speed: ${context.parsed.y} Mbps`;
-            }
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `Speed: ${context.parsed.y} Mbps`;
           }
         }
       }
     }
-  });
-
-  // 2) Measure network speed with fetch
-  async function measureNetworkSpeed() {
-    try {
-      // IMPORTANT: If you have 25MB.bin in your tektuls root, use this:
-      // let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin?cb=${Date.now()}`;
-
-      // Otherwise, if it's a raw GitHub link (public repo), do something like:
-      // let fileUrl = `https://raw.githubusercontent.com/mpalmero197/tektuls/main/25MB.bin?cb=${Date.now()}`;
-
-      // Replace the line below with whichever is correct for your setup:
-      let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin?cb=${Date.now()}`;
-
-      const startTime = performance.now();
-      const response = await fetch(fileUrl, {
-        cache: 'no-cache',
-        mode: 'cors'
-      });
-      if (!response.ok) {
-        throw new Error(`Network response was not ok (HTTP ${response.status})`);
-      }
-
-      // Read the response in chunks
-      const reader = response.body.getReader();
-      let receivedLength = 0;
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        receivedLength += value.length;
-      }
-
-      // Calculate total time and speed
-      const endTime = performance.now();
-      const durationInSeconds = (endTime - startTime) / 1000;
-      const bitsLoaded = receivedLength * 8;
-      const speedBps = bitsLoaded / durationInSeconds;
-      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
-
-      return speedMbps;
-    } catch (err) {
-      console.error('Network Speed Error:', err);
-      return null;
-    }
   }
+});
 
-  // 3) Update the chart and UI
-  async function updateNetworkSpeedChart() {
-    const speedMbps = await measureNetworkSpeed();
-    const currentSpeedElement = document.getElementById('current-speed');
+// ==========================
+// 2) Measure Network Speed
+// ==========================
+async function measureNetworkSpeedNew() {
+  try {
+    // Use your actual GitHub Pages URL to the 25MB file
+    // and append cache-busting to prevent reusing a cached response:
+    const fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin`;
 
-    if (speedMbps !== null) {
-      // Add new data point
-      networkSpeedData.push(speedMbps);
-      // Keep the last 10
-      if (networkSpeedData.length > 10) {
-        networkSpeedData.shift();
-        networkSpeedChart.data.labels.shift();
-      }
-      // Update chart data
-      networkSpeedChart.data.datasets[0].data = networkSpeedData;
-      networkSpeedChart.update();
-
-      // Display speed
-      currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
-      currentSpeedElement.style.color = '#27ae60';
-    } else {
-      // Show error
-      currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
-      currentSpeedElement.style.color = '#c0392b';
+    const startTime = performance.now();
+    const response = await fetch(fileUrl, {
+      cache: 'no-cache',
+      mode: 'cors'
+    });
+    if (!response.ok) {
+      throw new Error(`Network response was not ok (HTTP ${response.status})`);
     }
-  }
 
-  // 4) Start the speed checks
-  // If you have a global initialization (initializeDashboard?), place the call there.
-  // Otherwise, we can start it on DOMContentLoaded:
-  document.addEventListener('DOMContentLoaded', () => {
-    // Run once now:
-    updateNetworkSpeedChart();
-    // Repeat every 2 seconds (adjust as you wish):
-    setInterval(updateNetworkSpeedChart, 2000);
-  });
+    // Instead of reading chunks, we read the entire file as an ArrayBuffer
+    const arrayBuffer = await response.arrayBuffer();
+    const endTime = performance.now();
+
+    // Calculate bytes, time, convert to Mbps
+    const bytesDownloaded = arrayBuffer.byteLength;
+    const timeSec = (endTime - startTime) / 1000;
+    const bits = bytesDownloaded * 8;
+    const speedBps = bits / timeSec;
+    const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+
+    return speedMbps;
+  } catch (err) {
+    console.error('Network Speed Error (New):', err);
+    return null;
+  }
+}
+
+// ==========================
+// 3) Update the Chart + Display
+// ==========================
+async function updateNetworkSpeedChartNew() {
+  const speedMbps = await measureNetworkSpeedNew();
+  const speedDisplay = document.getElementById('current-speed-new');
+
+  if (speedMbps !== null) {
+    // Push data to the array
+    networkSpeedDataNew.push(speedMbps);
+    // Keep only 10 data points
+    if (networkSpeedDataNew.length > 10) {
+      networkSpeedDataNew.shift();
+      networkSpeedChartNew.data.labels.shift();
+    }
+
+    // Update chart data
+    networkSpeedChartNew.data.datasets[0].data = networkSpeedDataNew;
+    networkSpeedChartNew.update();
+
+    // Show speed in UI
+    speedDisplay.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
+    speedDisplay.style.color = '#27ae60';
+  } else {
+    // If null, show an error
+    speedDisplay.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
+    speedDisplay.style.color = '#c0392b';
+  }
+}
+
+// ==========================
+// 4) Start the Speed Test
+// ==========================
+// We'll run it once on DOMContentLoaded, then every 2 seconds (adjust as desired).
+document.addEventListener('DOMContentLoaded', () => {
+  updateNetworkSpeedChartNew();
+  setInterval(updateNetworkSpeedChartNew, 2000); // 2 seconds
+});
 
   // ====================
   // Battery Status
