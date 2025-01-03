@@ -1527,10 +1527,13 @@
     }
   });
 
+  // Measure network speed by fetching a large file from your own GitHub Pages
   async function measureNetworkSpeed() {
     try {
+      // IMPORTANT: Replace the URL below with your actual GitHub Pages URL + file
+      // Example: 'https://mpalmero197.github.io/tektuls/10MB.bin'
       const startTime = performance.now();
-      const response = await fetch('https://speed.hetzner.de/10MB.bin', {
+      const response = await fetch('https://mpalmero197.github.io/tektuls/10MB.bin', {
         cache: 'no-cache',
         mode: 'cors'
       });
@@ -1539,14 +1542,17 @@
         throw new Error(`Network response was not ok (${response.status})`);
       }
 
+      // Read the response body in chunks
       const reader = response.body.getReader();
       let receivedLength = 0;
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         receivedLength += value.length;
       }
 
+      // Calculate the time difference and convert to Mbps
       const endTime = performance.now();
       const durationInSeconds = (endTime - startTime) / 1000;
       const bitsLoaded = receivedLength * 8;
@@ -1560,26 +1566,33 @@
     }
   }
 
+  // Fetch the file, update the chart, and set the text
   async function updateNetworkSpeedChart() {
     const speedMbps = await measureNetworkSpeed();
     const currentSpeedElement = document.getElementById('current-speed');
 
     if (speedMbps !== null) {
+      // Update data array
       networkSpeedData.push(speedMbps);
       if (networkSpeedData.length > 10) {
         networkSpeedData.shift();
         networkSpeedChart.data.labels.shift();
       }
+      // Update chart
       networkSpeedChart.data.datasets[0].data = networkSpeedData;
       networkSpeedChart.update();
+
+      // Update UI
       currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
       currentSpeedElement.style.color = '#27ae60';
     } else {
+      // If null, show an error indicator
       currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
       currentSpeedElement.style.color = '#c0392b';
     }
   }
 
+  // Kick off a measurement and refresh every 60 seconds
   updateNetworkSpeedChart();
   setInterval(updateNetworkSpeedChart, 60000);
 
