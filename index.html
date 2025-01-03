@@ -1527,13 +1527,12 @@
     }
   });
 
-  // Measure network speed by fetching a large file from your own GitHub Pages
   async function measureNetworkSpeed() {
     try {
-      // IMPORTANT: Replace the URL below with your actual GitHub Pages URL + file
-      // Example: 'https://github.com/mpalmero197/tektuls/blob/20d5212d6f190be4f86fab1055e98601a6b3f07c/10MB.bin'
+      // IMPORTANT: change this URL to your actual GitHub Pages file path
+      // e.g., 'https://mpalmero197.github.io/tektuls/10MB.bin'
       const startTime = performance.now();
-      const response = await fetch('https://github.com/mpalmero197/tektuls/blob/20d5212d6f190be4f86fab1055e98601a6b3f07c/10MB.bin', {
+      const response = await fetch('https://mpalmero197.github.io/tektuls/10MB.bin', {
         cache: 'no-cache',
         mode: 'cors'
       });
@@ -1566,33 +1565,27 @@
     }
   }
 
-  // Fetch the file, update the chart, and set the text
   async function updateNetworkSpeedChart() {
     const speedMbps = await measureNetworkSpeed();
     const currentSpeedElement = document.getElementById('current-speed');
 
     if (speedMbps !== null) {
-      // Update data array
       networkSpeedData.push(speedMbps);
       if (networkSpeedData.length > 10) {
         networkSpeedData.shift();
         networkSpeedChart.data.labels.shift();
       }
-      // Update chart
       networkSpeedChart.data.datasets[0].data = networkSpeedData;
       networkSpeedChart.update();
 
-      // Update UI
       currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
       currentSpeedElement.style.color = '#27ae60';
     } else {
-      // If null, show an error indicator
       currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
       currentSpeedElement.style.color = '#c0392b';
     }
   }
 
-  // Kick off a measurement and refresh every 60 seconds
   updateNetworkSpeedChart();
   setInterval(updateNetworkSpeedChart, 60000);
 
