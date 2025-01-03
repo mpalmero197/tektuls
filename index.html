@@ -1484,106 +1484,137 @@
   // ====================
   // Network Speed
   // ====================
-let networkSpeedData = [];
-const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
-const networkSpeedChart = new Chart(networkSpeedCtx, {
-  type: 'line',
-  data: {
-    labels: Array(10).fill(''),
-    datasets: [{
-      label: 'Speed (Mbps)',
-      data: networkSpeedData,
-      backgroundColor: 'rgba(27, 86, 255, 0.2)',
-      borderColor: 'var(--primary-color)',
-      borderWidth: 2,
-      fill: true,
-      pointRadius: 3,
-      tension: 0.4
-    }]
-  },
-  options: {
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: { display: false },
-      y: {
-        beginAtZero: true,
-        suggestedMax: 100,
-        title: { display: true, text: 'Mbps' },
-        grid: { color: '#333' }
-      }
+  // -------------------------------
+  // 1) Chart Setup
+  // -------------------------------
+  let networkSpeedData = [];
+  const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
+  const networkSpeedChart = new Chart(networkSpeedCtx, {
+    type: 'line',
+    data: {
+      labels: Array(10).fill(''),
+      datasets: [{
+        label: 'Speed (Mbps)',
+        data: networkSpeedData,
+        backgroundColor: 'rgba(27, 86, 255, 0.2)',
+        borderColor: 'var(--primary-color)',
+        borderWidth: 2,
+        fill: true,
+        pointRadius: 3,
+        tension: 0.4
+      }]
     },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            return `Speed: ${context.parsed.y} Mbps`;
+    options: {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { display: false },
+        y: {
+          beginAtZero: true,
+          suggestedMax: 100,
+          title: { display: true, text: 'Mbps' },
+          grid: { color: '#333' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `Speed: ${context.parsed.y} Mbps`;
+            }
           }
         }
       }
     }
-  }
-});
+  });
 
-// IMPORTANT: Confirm this URL actually loads the raw 10MB.bin
-async function measureNetworkSpeed() {
-  try {
-    const startTime = performance.now();
-    const response = await fetch('https://mpalmero197.github.io/tektuls/10MB.bin', {
-      cache: 'no-cache',
-      mode: 'cors'
-    });
+  // -------------------------------
+  // 2) Measure Network Speed
+  // -------------------------------
+  async function measureNetworkSpeed() {
+    try {
+      // ***** IMPORTANT: Choose your actual file URL below. *****
+      // Option A: GitHub Pages file (if placed in your tektuls folder):
+      // let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin`;
 
-    if (!response.ok) {
-      throw new Error(`Network response was not ok (${response.status})`);
+      // Option B: Raw GitHub URL for 10MB.bin in a public repo:
+      // let fileUrl = `https://raw.githubusercontent.com/mpalmero197/tektuls/main/25MB.bin`;
+
+      // For demonstration, we'll pick Option A:
+      let fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin`;
+
+      const startTime = performance.now();
+      const response = await fetch(fileUrl, {
+        cache: 'no-cache',
+        mode: 'cors'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+
+      // Read the response in chunks
+      const reader = response.body.getReader();
+      let receivedLength = 0;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        receivedLength += value.length;
+      }
+
+      // Calculate total time and convert to Mbps
+      const endTime = performance.now();
+      const durationInSeconds = (endTime - startTime) / 1000;
+      const bitsLoaded = receivedLength * 8;
+      const speedBps = bitsLoaded / durationInSeconds;
+      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+
+      return speedMbps;
+    } catch (err) {
+      console.error('Network speed test error:', err);
+      return null;
     }
-
-    const reader = response.body.getReader();
-    let receivedLength = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      receivedLength += value.length;
-    }
-
-    const endTime = performance.now();
-    const durationInSeconds = (endTime - startTime) / 1000;
-    const bitsLoaded = receivedLength * 8;
-    const speedBps = bitsLoaded / durationInSeconds;
-    const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
-
-    return speedMbps;
-  } catch (err) {
-    console.error('Network speed test error:', err);
-    return null;
   }
-}
 
-async function updateNetworkSpeedChart() {
-  const speedMbps = await measureNetworkSpeed();
-  const currentSpeedElement = document.getElementById('current-speed');
+  // -------------------------------
+  // 3) Update the Chart + Display
+  // -------------------------------
+  async function updateNetworkSpeedChart() {
+    const speedMbps = await measureNetworkSpeed();
+    const currentSpeedElement = document.getElementById('current-speed');
 
-  if (speedMbps !== null) {
-    networkSpeedData.push(speedMbps);
-    if (networkSpeedData.length > 10) {
-      networkSpeedData.shift();
-      networkSpeedChart.data.labels.shift();
+    if (speedMbps !== null) {
+      // Add new data point (limit to 10 data points)
+      networkSpeedData.push(speedMbps);
+      if (networkSpeedData.length > 10) {
+        networkSpeedData.shift();
+        networkSpeedChart.data.labels.shift();
+      }
+
+      // Update chart
+      networkSpeedChart.data.datasets[0].data = networkSpeedData;
+      networkSpeedChart.update();
+
+      // Update UI text
+      currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
+      currentSpeedElement.style.color = '#27ae60';
+    } else {
+      currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
+      currentSpeedElement.style.color = '#c0392b';
     }
-    networkSpeedChart.data.datasets[0].data = networkSpeedData;
-    networkSpeedChart.update();
-
-    currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
-    currentSpeedElement.style.color = '#27ae60';
-  } else {
-    currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
-    currentSpeedElement.style.color = '#c0392b';
   }
-}
 
-updateNetworkSpeedChart();
-setInterval(updateNetworkSpeedChart, 60000);
+  // -------------------------------
+  // 4) Initialize
+  // -------------------------------
+  // On DOM load, start measuring every 2 seconds
+  document.addEventListener('DOMContentLoaded', () => {
+    updateNetworkSpeedChart();
+    setInterval(updateNetworkSpeedChart, 2000); // 2 seconds
+  });
 
   // ====================
   // Battery Status
