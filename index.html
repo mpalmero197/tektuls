@@ -2528,15 +2528,23 @@
   // QR Code Generator
   // =====================
   document.getElementById('generate-qr-btn').addEventListener('click', () => {
-    const qrText = document.getElementById('qr-text-input').value.trim();
+    let qrText = document.getElementById('qr-text-input').value.trim();
     const qrCodeDiv = document.getElementById('qr-code');
 
+    // Check if the text is missing an http or https prefix
+    if (qrText && !/^https?:\/\//i.test(qrText)) {
+      qrText = 'https://' + qrText;
+    }
+
     if (!qrText) {
-      alert('Please enter text or a URL to generate QR Code.');
+      alert('Please enter text or a URL to generate a QR Code.');
       return;
     }
 
+    // Clear any existing QR code
     qrCodeDiv.innerHTML = '';
+
+    // Generate the QR code
     new QRCode(qrCodeDiv, {
       text: qrText,
       width: 128,
@@ -2545,6 +2553,16 @@
       colorLight : "#ffffff",
       correctLevel : QRCode.CorrectLevel.H
     });
+
+    // Optionally add a clickable link below the QR code
+    const link = document.createElement('a');
+    link.href = qrText;
+    link.textContent = `Open ${qrText}`;
+    link.target = '_blank';
+    link.style.display = 'block';
+    link.style.marginTop = '10px';
+    link.style.color = '#0dcaf0';
+    qrCodeDiv.appendChild(link);
   });
 
   // =====================
