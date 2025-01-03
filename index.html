@@ -1195,7 +1195,7 @@
     return false;
   };
 
-  const originalLocations = new Map(); 
+  const originalLocations = new Map();
   const favoritesGrid = document.getElementById('favorites-grid');
   const favoritesSection = document.getElementById('favorites-section');
 
@@ -1203,7 +1203,7 @@
   function toggleFavorite(card) {
     const favBtn = card.querySelector('.favorite-toggle');
     const isFavorite = favBtn.classList.contains('favorited');
-    
+
     if (isFavorite) {
       favBtn.classList.remove('favorited');
       const originalParent = originalLocations.get(card.id);
@@ -1219,7 +1219,7 @@
     }
 
     updateFavoritesVisibility();
-    saveFavorites(); // Save favorites after toggling
+    saveFavorites();
   }
 
   // Function to update the visibility of the favorites section
@@ -1484,31 +1484,6 @@
   // ====================
   // Network Speed
   // ====================
-  async function measureNetworkSpeed() {
-    try {
-      const startTime = performance.now();
-      const response = await fetch('https://speed.hetzner.de/10MB.bin', { cache: 'no-cache' });
-      if (!response.ok) {
-        throw new Error(`Network response was not ok (${response.status})`);
-      }
-      const reader = response.body.getReader();
-      let receivedLength = 0;
-      while(true) {
-        const {done, value} = await reader.read();
-        if (done) break;
-        receivedLength += value.length;
-      }
-      const endTime = performance.now();
-      const durationInSeconds = (endTime - startTime) / 1000;
-      const bitsLoaded = receivedLength * 8;
-      const speedBps = bitsLoaded / durationInSeconds;
-      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
-      return speedMbps;
-    } catch {
-      return null;
-    }
-  }
-
   let networkSpeedData = [];
   const networkSpeedCtx = document.getElementById('networkSpeedChart').getContext('2d');
   const networkSpeedChart = new Chart(networkSpeedCtx, {
@@ -1532,7 +1507,12 @@
       maintainAspectRatio: false,
       scales: {
         x: { display: false },
-        y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: 'Mbps' }, grid: { color: '#333' } }
+        y: {
+          beginAtZero: true,
+          suggestedMax: 100,
+          title: { display: true, text: 'Mbps' },
+          grid: { color: '#333' }
+        }
       },
       plugins: {
         legend: { display: false },
@@ -1547,9 +1527,43 @@
     }
   });
 
+  async function measureNetworkSpeed() {
+    try {
+      const startTime = performance.now();
+      const response = await fetch('https://speed.hetzner.de/10MB.bin', {
+        cache: 'no-cache',
+        mode: 'cors'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+
+      const reader = response.body.getReader();
+      let receivedLength = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        receivedLength += value.length;
+      }
+
+      const endTime = performance.now();
+      const durationInSeconds = (endTime - startTime) / 1000;
+      const bitsLoaded = receivedLength * 8;
+      const speedBps = bitsLoaded / durationInSeconds;
+      const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+
+      return speedMbps;
+    } catch (err) {
+      console.error('Network speed test error:', err);
+      return null;
+    }
+  }
+
   async function updateNetworkSpeedChart() {
     const speedMbps = await measureNetworkSpeed();
     const currentSpeedElement = document.getElementById('current-speed');
+
     if (speedMbps !== null) {
       networkSpeedData.push(speedMbps);
       if (networkSpeedData.length > 10) {
@@ -1561,10 +1575,11 @@
       currentSpeedElement.innerHTML = `Current Speed: <strong>${speedMbps} Mbps</strong>`;
       currentSpeedElement.style.color = '#27ae60';
     } else {
-      currentSpeedElement.innerHTML = `Current Speed: <strong>-- Mbps</strong>`;
+      currentSpeedElement.innerHTML = 'Current Speed: <strong>-- Mbps</strong>';
       currentSpeedElement.style.color = '#c0392b';
     }
   }
+
   updateNetworkSpeedChart();
   setInterval(updateNetworkSpeedChart, 60000);
 
@@ -1871,8 +1886,17 @@
       options: {
         animation: false,
         scales: {
-          x: { display: true, title: { display: true, text: 'Ping Number' }, grid: { color: '#333' } },
-          y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' }, suggestedMax: 1000, grid: { color: '#333' } }
+          x: {
+            display: true,
+            title: { display: true, text: 'Ping Number' },
+            grid: { color: '#333' }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Latency (ms)' },
+            suggestedMax: 1000,
+            grid: { color: '#333' }
+          }
         },
         plugins: {
           legend: { display: false },
@@ -2440,7 +2464,7 @@
     }
 
     let colorScheme = 'Good contrast';
-    let color = '#27ae60'; 
+    let color = '#27ae60';
     if (compliance === 'AA') {
       colorScheme = 'Acceptable contrast';
       color = '#f39c12';
@@ -2531,7 +2555,6 @@
     let qrText = document.getElementById('qr-text-input').value.trim();
     const qrCodeDiv = document.getElementById('qr-code');
 
-    // Check if the text is missing an http or https prefix
     if (qrText && !/^https?:\/\//i.test(qrText)) {
       qrText = 'https://' + qrText;
     }
@@ -2541,10 +2564,7 @@
       return;
     }
 
-    // Clear any existing QR code
     qrCodeDiv.innerHTML = '';
-
-    // Generate the QR code
     new QRCode(qrCodeDiv, {
       text: qrText,
       width: 128,
@@ -2554,7 +2574,6 @@
       correctLevel : QRCode.CorrectLevel.H
     });
 
-    // Optionally add a clickable link below the QR code
     const link = document.createElement('a');
     link.href = qrText;
     link.textContent = `Open ${qrText}`;
@@ -2639,14 +2658,12 @@
       return;
     }
 
-    // Show loading state
     resultDiv.style.display = 'block';
     descriptionP.innerText = 'Fetching weather data...';
     tempP.innerText = '';
     detailsP.innerText = '';
     iconImg.src = '';
 
-    // Your OpenWeatherMap API Key (⚠️ Replace with your own API key)
     const apiKey = 'ae6dbc04bfe41073d60c4f494b310bb7';
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
 
@@ -2666,16 +2683,14 @@
         const windSpeed = wind.speed;
         const country = sys.country;
 
-        // Calculate local time based on timezone offset
-        const timezoneOffset = timezone; // in seconds
+        const timezoneOffset = timezone;
         const localTime = new Date((Date.now() + timezoneOffset * 1000));
-        const options = { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
-          hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        const options = {
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
         };
         const formattedTime = localTime.toLocaleDateString(undefined, options);
 
-        // Update DOM elements with fetched data
         descriptionP.innerText = `${weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1)}`;
         tempP.innerText = `${temperature}°C`;
         iconImg.src = weatherIcon;
