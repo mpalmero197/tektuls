@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Network Speed Test (2s Interval)</title>
-  <!-- Include Chart.js CDN -->
+  <!-- Include Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -12,7 +12,7 @@
 <p id="current-speed">Current Speed: -- Mbps</p>
 
 <script>
-  // 1) Set up chart and data arrays
+  // 1) Data arrays & chart setup
   let networkSpeedData = [];
   const ctx = document.getElementById('networkSpeedChart').getContext('2d');
   const myChart = new Chart(ctx, {
@@ -22,81 +22,98 @@
       datasets: [{
         label: 'Speed (Mbps)',
         data: networkSpeedData,
-        borderWidth: 1
+        backgroundColor: 'rgba(27, 86, 255, 0.2)',
+        borderColor: 'blue',
+        borderWidth: 2,
+        fill: true,
+        pointRadius: 2,
+        tension: 0.4
       }]
     },
     options: {
       responsive: true,
-      animation: false
+      animation: false,
+      scales: {
+        x: { display: false },
+        y: {
+          beginAtZero: true,
+          suggestedMax: 1000,
+          title: { display: true, text: 'Mbps' }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
     }
   });
 
-  // 2) Function to measure speed via fetch from GitHub raw URL
+  // 2) Fetch-based speed measurement with cache busting
   async function measureNetworkSpeed() {
     try {
-      // IMPORTANT: Replace this URL with your actual raw GitHub URL
-      const response = await fetch(
-        'https://raw.githubusercontent.com/mpalmero197/tektuls/main/10MB.bin',
-        { cache: 'no-cache', mode: 'cors' }
-      );
+      // Replace with your own 25MB file URL:
+      // Option A: Your GitHub Pages URL if 25MB.bin is in the tektuls root
+      // const fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin?cb=${Date.now()}`;
+      
+      // Option B: raw.githubusercontent.com URL for a public repo
+      // const fileUrl = `https://raw.githubusercontent.com/mpalmero197/tektuls/main/25MB.bin?cb=${Date.now()}`;
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}`);
-      }
-      const reader = response.body.getReader();
+      // For demonstration, choose one and remove the other:
+      const fileUrl = `https://mpalmero197.github.io/tektuls/25MB.bin?cb=${Date.now()}`;
 
-      let totalBytes = 0;
       const startTime = performance.now();
+      const response = await fetch(fileUrl, {
+        cache: 'no-cache',
+        mode: 'cors'
+      });
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (HTTP ${response.status})`);
+      }
+
+      const reader = response.body.getReader();
+      let totalBytes = 0;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         totalBytes += value.length;
       }
+
       const endTime = performance.now();
       const timeSec = (endTime - startTime) / 1000;
-
-      // Convert total bytes to bits, divide by time, then convert to Mbps
       const bits = totalBytes * 8;
       const speedBps = bits / timeSec;
       const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
 
       return speedMbps;
     } catch (e) {
-      console.error(e);
+      console.error('Speed test error:', e);
       return null;
     }
   }
 
-  // 3) Update chart with the newly measured speed
+  // 3) Update chart & display
   async function updateChart() {
     const speed = await measureNetworkSpeed();
     const speedDisplay = document.getElementById('current-speed');
-
     if (speed !== null) {
-      // Add new data point and limit to 10
       networkSpeedData.push(speed);
-      if (networkSpeedData.length > 10) {
-        networkSpeedData.shift();
-      }
-      // Update chart
+      if (networkSpeedData.length > 10) networkSpeedData.shift();
+
       myChart.data.datasets[0].data = networkSpeedData;
       myChart.update();
-
-      // Show latest speed
       speedDisplay.textContent = `Current Speed: ${speed} Mbps`;
     } else {
-      // If null, show error
       speedDisplay.textContent = 'Current Speed: -- Mbps';
     }
   }
 
-  // 4) Start running this every 2 seconds
+  // 4) Initialize on page load, repeat every 2 seconds
   document.addEventListener('DOMContentLoaded', () => {
-    // Immediately measure on page load
+    // Immediately measure once
     updateChart();
-    // Then repeat every 2 seconds (2000 ms)
+    // Then run every 2 seconds
     setInterval(updateChart, 2000);
   });
 </script>
+
 </body>
 </html>
