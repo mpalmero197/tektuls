@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mini Test</title>
+</head>
+<body>
+<p id="speed">--</p>
+<script>
+(async ()=>{
+  try {
+    const url = 'https://mpalmero197.github.io/tektuls/25MB.bin?cb=' + Date.now();
+    const t1 = performance.now();
+    const resp = await fetch(url, { cache: 'no-cache', mode: 'cors' });
+    if (!resp.ok) throw new Error(resp.statusText);
+    const arrBuff = await resp.arrayBuffer();
+    const t2 = performance.now();
+    const mbps = ((arrBuff.byteLength * 8) / ((t2 - t1)/1000)) / (1024 * 1024);
+    document.getElementById('speed').textContent = `Speed: ${mbps.toFixed(2)} Mbps`;
+  } catch(e){
+    console.error(e);
+    document.getElementById('speed').textContent = 'Error';
+  }
+})();
+</script>
+</body>
+</html>
