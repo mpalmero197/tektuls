@@ -2741,6 +2741,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Weather Card error:', err);
         alert('Unable to fetch weather data. Please check the city name and try again.');
       });
+ window.addEventListener('load', function() {
+    var menu = document.querySelector('.hamburger-menu');
+    if(menu) {
+      window.parent.postMessage({ type: 'hamburgerIcons', iconsHTML: menu.innerHTML }, '*');
+    }
+  });
   });
 </script>
 </body>
